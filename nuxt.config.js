@@ -16,15 +16,10 @@ export default {
     ]
   },
   server: {
+    host: '0.0.0.0',
     port: 1999
   },
-  proxy: {
-    // Simple proxy
-    '/api': 'http://example.com',
-
-    // With options
-    '/api2': {target: 'http://example.com', ws: false}
-  },
+  proxy: {},
   /*
   ** Customize the progress-bar color
   */

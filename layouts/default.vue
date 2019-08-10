@@ -25,8 +25,8 @@
         </div>
         <div class="right">
           <div class="no-login" v-if="!user">
-            <button class="login-button" @click="login">立即登录</button>
-            <button class="register-button" @click="register">免费注册</button>
+            <button class="login-button" @click="showLoginCard=true">立即登录</button>
+            <button class="register-button" @click="showRegisterCard=true">免费注册</button>
           </div>
           <div class="already-login" v-else>
             <div class="user" @mouseenter="avatarMouseEnter" @mouseleave="avatarMouseLeave">
@@ -80,7 +80,7 @@
     </header>
     <nuxt></nuxt>
     <footer></footer>
-    <div class="login-card" v-if="showLoginCard">
+    <div class="login-card" v-show="showLoginCard">
       <div class="mask" @click="showLoginCard=false"></div>
       <div class="card">
         <div class="top">
@@ -96,7 +96,32 @@
             </p>
             <input class="common-input" v-model="password" placeholder="请输入密码">
             <button class="login">登陆</button>
-            <button class="to-register">注册新账号</button>
+            <button class="to-register" @click="showLoginCard=true">注册新账号</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="register-card" v-show="showRegisterCard">
+      <div class="mask" @click="showRegisterCard=false"></div>
+      <div class="card">
+        <div class="top">
+          注册
+          <div class="close" @click="showRegisterCard=false"></div>
+        </div>
+        <div class="body">
+          <div class="content">
+            <p>你的名字</p>
+            <input class="common-input" v-model="username" placeholder="真实姓名或常用昵称">
+            <p>手机号</p>
+            <input class="common-input" v-model="phone" placeholder="11位手机号">
+            <div class="valid-code">
+              <input class="common-input" v-model="validCode" placeholder="右侧的验证码">
+              <label>{{realValidateCode}}</label>
+            </div>
+            <p>密码</p>
+            <input class="common-input" v-model="password" placeholder="不少于6位的密码">
+            <button class="register">注册</button>
+            <button class="to-login" @click="showRegisterCard=true">已有账号登陆</button>
           </div>
         </div>
       </div>
@@ -105,60 +130,94 @@
 </template>
 
 <script>
+    import mock from 'mockjs'
 
-  export default {
-    name: "default",
-    props: {},
-    data() {
-      return {
-        showImg2: false,
-        showPopup: false,
-        showLoginCard: false,
-        searchTxt: '',
-        user: '',
-        password: '',
-        defaultAvatar: require('static/icon/user.png'),
-        handler: undefined,
-      }
-    },
-    watch: {},
-    computed: {
-      activeLi() {
-        return this.$store.state.homeActiveMenu
-      },
-      user() {
-        return this.$store.state.user
-      }
-    },
-    methods: {
-      avatarMouseEnter() {
-        clearTimeout(this.handler)
-        this.showPopup = true
-      },
-      avatarMouseLeave() {
-        clearTimeout(this.handler)
-        this.handler = setTimeout(() => {
-          this.showPopup = false
-        }, 1000)
-      },
-      search() {
-        alert(this.searchTxt)
-        //  todo search
-      },
-      login() {
-        this.showLoginCard = true
-      },
-      register() {
-        //  todo register
-      }
-    },
-    mounted() {
-    },
-    created() {
-    },
-    destroyed() {
+    const r = mock.Random
+    export default {
+        name: "default",
+        props: {},
+        data() {
+            return {
+                showImg2: false,
+                showPopup: false,
+                showLoginCard: false,
+                showRegisterCard: false,
+                searchTxt: '',
+                phone: '',
+                username: '',
+                password: '',
+                validCode: '',
+                realValidateCode: '',
+                defaultAvatar: require('static/icon/user.png'),
+                handler: undefined,
+            }
+        },
+        watch: {
+            showRegisterCard(val) {
+                if (val) {
+                    this.showLoginCard = false
+                }
+                this.phone = ''
+                this.username = ''
+                this.password = ''
+                this.validCode = ''
+                this.createRealValidateCode()
+            },
+            showLoginCard(val) {
+                if (val) {
+                    this.showRegisterCard = false
+                }
+                this.username = ''
+                this.password = ''
+            }
+        },
+        computed: {
+            activeLi() {
+                return this.$store.state.homeActiveMenu
+            },
+            user() {
+                return this.$store.state.user
+            }
+        },
+        methods: {
+            createRealValidateCode() {
+                this.realValidateCode = ''
+                for (let i = 0; i < 4; i++) {
+                    if (r.boolean()) {
+                        this.realValidateCode += r.integer(0, 9)
+                    } else {
+                        this.realValidateCode += r.character()
+                    }
+                }
+            },
+            avatarMouseEnter() {
+                clearTimeout(this.handler)
+                this.showPopup = true
+            },
+            avatarMouseLeave() {
+                clearTimeout(this.handler)
+                this.handler = setTimeout(() => {
+                    this.showPopup = false
+                }, 1000)
+            },
+            search() {
+                alert(this.searchTxt)
+                //  todo search
+            },
+            login() {
+                this.showLoginCard = true
+            },
+            register() {
+                //  todo register
+            }
+        },
+        mounted() {
+        },
+        created() {
+        },
+        destroyed() {
+        }
     }
-  }
 </script>
 
 <style scoped lang="scss">
@@ -418,7 +477,7 @@
       }
     }
 
-    .login-card {
+    .login-card, .register-card {
       position: fixed;
       left: 0;
       top: 0;
@@ -510,7 +569,7 @@
               margin-bottom: 10px;
             }
 
-            .login, .to-register {
+            .login, .register, .to-register, .to-login {
               width: 100%;
               color: white;
               font-size: 14px;
@@ -525,7 +584,7 @@
               }
             }
 
-            .to-register {
+            .to-register, .to-login {
               margin-top: 20px;
               color: #333333;
               background-color: white;
@@ -535,8 +594,32 @@
                 background-color: #F3F3F3;
               }
             }
+
+            .valid-code {
+              display: flex;
+              align-items: center;
+              justify-content: space-between;
+              margin-bottom: 10px;
+
+              input {
+                width: 60%;
+              }
+
+              label {
+                flex-grow: 1;
+                text-align: center;
+                color: #333333;
+                font-size: 20px;
+              }
+            }
           }
         }
+      }
+    }
+
+    .register-card {
+      .card {
+        margin-top: 50px;
       }
     }
   }
