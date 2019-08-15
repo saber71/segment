@@ -3,6 +3,9 @@
     <header>
       <section class="top"></section>
       <section class="default-container bottom">
+        <div class="side">
+          <img src="/icon/search-dark.png" @click="">
+        </div>
         <div class="left">
           <div class="logo" @mouseenter="showImg2=true" @mouseleave="showImg2=false">
             <img class="img1" src="/logo.svg">
@@ -16,6 +19,23 @@
             <li :class="{'active-li':activeLi==='圈子'}">圈子</li>
             <li :class="{'active-li':activeLi==='发现'}">发现
               <div class="triangle"></div>
+              <div class="popup border-shadow">
+                <ul class="left-side">
+                  <li>活动</li>
+                  <li>标签</li>
+                  <li>酷工作</li>
+                  <li>排行榜</li>
+                  <li>徽章</li>
+                  <li>笔记</li>
+                  <li>开发手册
+                    <img src="/icon/down-arrow-white.png">
+                  </li>
+                  <li>广告投放
+                    <img src="/icon/down-arrow-white.png">
+                  </li>
+                </ul>
+                <ul class="right-side"></ul>
+              </div>
             </li>
           </ul>
           <div class="search-box">
@@ -36,24 +56,24 @@
               </div>
               <div class="popup" v-show="showPopup">
                 <div class="popup-top">
-                  <div class="prestige">{{user.prestige}} 声望</div>
+                  <div class="prestige">{{user.prestige>=1000?'999+':user.prestige}} 声望</div>
                   <div class="star">
                     <div class="icon1">
                       <img src="/icon/star-white.png">
                     </div>
-                    {{user.star1}}
+                    {{user.star1>=100?'99+':user.star1}}
                   </div>
                   <div class="star">
                     <div class="icon2">
                       <img src="/icon/star-white.png">
                     </div>
-                    {{user.star2}}
+                    {{user.star2>=100?'99+':user.star2}}
                   </div>
                   <div class="star">
                     <div class="icon3">
                       <img src="/icon/star-white.png">
                     </div>
-                    {{user.star3}}
+                    {{user.star3>=100?'99+':user.star3}}
                   </div>
                 </div>
                 <div class="center">
@@ -75,6 +95,9 @@
             </div>
 
           </div>
+          <div class="md-avatar" @click="showLoginCard=true">
+            <img :src="user?user.avatar?user.avatar:defaultAvatar:defaultAvatar">
+          </div>
         </div>
       </section>
     </header>
@@ -89,14 +112,15 @@
         </div>
         <div class="body">
           <div class="content">
+            <span class="warn">{{warnMsg}}</span>
             <p>手机号或Email</p>
-            <input class="common-input" v-model="user" placeholder="11位手机号或Email">
+            <input class="common-input" v-model="username" placeholder="11位手机号或Email">
             <p>密码
               <label>忘记密码</label>
             </p>
-            <input class="common-input" v-model="password" placeholder="请输入密码">
-            <button class="login">登陆</button>
-            <button class="to-register" @click="showLoginCard=true">注册新账号</button>
+            <input class="common-input" type="password" v-model="password" @keypress.enter="login" placeholder="请输入密码" maxlength="12">
+            <button class="login" @click="login">登陆</button>
+            <button class="to-register" @click="showRegisterCard=true">注册新账号</button>
           </div>
         </div>
       </div>
@@ -110,18 +134,19 @@
         </div>
         <div class="body">
           <div class="content">
+            <span class="warn">{{warnMsg}}</span>
             <p>你的名字</p>
-            <input class="common-input" v-model="username" placeholder="真实姓名或常用昵称">
+            <input class="common-input" v-model="username" placeholder="真实姓名或常用昵称" maxlength="12">
             <p>手机号</p>
             <input class="common-input" v-model="phone" placeholder="11位手机号">
             <div class="valid-code">
-              <input class="common-input" v-model="validCode" placeholder="右侧的验证码">
-              <label>{{realValidateCode}}</label>
+              <input class="common-input" v-model="validCode" placeholder="右侧的验证码" maxlength="4">
+              <label @click="createRealValidateCode">{{realValidateCode}}</label>
             </div>
             <p>密码</p>
-            <input class="common-input" v-model="password" placeholder="不少于6位的密码">
-            <button class="register">注册</button>
-            <button class="to-login" @click="showRegisterCard=true">已有账号登陆</button>
+            <input class="common-input" type="password" v-model="password" @keypress.enter="register" placeholder="不少于6位的密码" maxlength="12">
+            <button class="register" @click="register">注册</button>
+            <button class="to-login" @click="showLoginCard=true">已有账号登陆</button>
           </div>
         </div>
       </div>
@@ -130,94 +155,152 @@
 </template>
 
 <script>
-    import mock from 'mockjs'
+  import mock from 'mockjs'
+  import {GET_CHECK_USER_DATA_AFTER_LOGIN, POST_LOGIN, POST_REGISTER} from '../assets/js/api'
 
-    const r = mock.Random
-    export default {
-        name: "default",
-        props: {},
-        data() {
-            return {
-                showImg2: false,
-                showPopup: false,
-                showLoginCard: false,
-                showRegisterCard: false,
-                searchTxt: '',
-                phone: '',
-                username: '',
-                password: '',
-                validCode: '',
-                realValidateCode: '',
-                defaultAvatar: require('static/icon/user.png'),
-                handler: undefined,
-            }
-        },
-        watch: {
-            showRegisterCard(val) {
-                if (val) {
-                    this.showLoginCard = false
-                }
-                this.phone = ''
-                this.username = ''
-                this.password = ''
-                this.validCode = ''
-                this.createRealValidateCode()
-            },
-            showLoginCard(val) {
-                if (val) {
-                    this.showRegisterCard = false
-                }
-                this.username = ''
-                this.password = ''
-            }
-        },
-        computed: {
-            activeLi() {
-                return this.$store.state.homeActiveMenu
-            },
-            user() {
-                return this.$store.state.user
-            }
-        },
-        methods: {
-            createRealValidateCode() {
-                this.realValidateCode = ''
-                for (let i = 0; i < 4; i++) {
-                    if (r.boolean()) {
-                        this.realValidateCode += r.integer(0, 9)
-                    } else {
-                        this.realValidateCode += r.character()
-                    }
-                }
-            },
-            avatarMouseEnter() {
-                clearTimeout(this.handler)
-                this.showPopup = true
-            },
-            avatarMouseLeave() {
-                clearTimeout(this.handler)
-                this.handler = setTimeout(() => {
-                    this.showPopup = false
-                }, 1000)
-            },
-            search() {
-                alert(this.searchTxt)
-                //  todo search
-            },
-            login() {
-                this.showLoginCard = true
-            },
-            register() {
-                //  todo register
-            }
-        },
-        mounted() {
-        },
-        created() {
-        },
-        destroyed() {
+  const r = mock.Random
+  export default {
+    name: "default",
+    props: {},
+    data() {
+      return {
+        showImg2: false,
+        showPopup: false,
+        showLoginCard: false,
+        showRegisterCard: false,
+        searchTxt: '',
+        phone: '',
+        username: '',
+        password: '',
+        validCode: '',
+        realValidateCode: '',
+        warnMsg: '',
+        defaultAvatar: require('static/icon/user.png'),
+        handler: undefined,
+      }
+    },
+    watch: {
+      showRegisterCard(val) {
+        if (val) {
+          this.showLoginCard = false
         }
+        this.phone = ''
+        this.username = ''
+        this.password = ''
+        this.validCode = ''
+        this.warnMsg = ''
+        this.createRealValidateCode()
+      },
+      showLoginCard(val) {
+        if (val) {
+          this.showRegisterCard = false
+        }
+        this.username = ''
+        this.password = ''
+        this.warnMsg = ''
+      }
+    },
+    computed: {
+      activeLi() {
+        return this.$store.state.homeActiveMenu
+      },
+      user() {
+        return this.$store.state.user
+      }
+    },
+    methods: {
+      validPhone(phone) {
+        return /^1\d{10}$/.test(phone)
+      },
+      validEmail(email) {
+        return /^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/.test(email)
+      },
+      validUsername(name) {
+        return /^[^@#$%&*(),.\/\\<>?|;':"`~\-=+]{6,12}$/.test(name)
+      },
+      validPassword(password) {
+        return /^\w[\w!]{5,11}$/.test(password)
+      },
+      createRealValidateCode() {
+        this.realValidateCode = ''
+        for (let i = 0; i < 4; i++) {
+          if (r.boolean()) {
+            this.realValidateCode += r.integer(0, 9)
+          } else {
+            this.realValidateCode += r.character()
+          }
+        }
+      },
+      avatarMouseEnter() {
+        clearTimeout(this.handler)
+        this.showPopup = true
+      },
+      avatarMouseLeave() {
+        clearTimeout(this.handler)
+        this.handler = setTimeout(() => {
+          this.showPopup = false
+        }, 1000)
+      },
+      search() {
+        alert(this.searchTxt)
+        //  todo search
+      },
+      login() {
+        this.warnMsg = ''
+        if (this.validEmail(this.username) || this.validPhone(this.username)) {
+          if (!this.validPassword(this.password)) {
+            this.warnMsg = '6~12位密码，以字母或数字或下划线开头'
+          } else {
+            this.$ajax_login({
+              account: this.username,
+              password: this.password
+            }, () => {
+              this.showLoginCard = false
+            })
+            // this.$axios.post(POST_LOGIN, {
+            //   account: this.username,
+            //   password: this.password
+            // }).then(async () => {
+            //   const data = await this.$axios.$get(GET_CHECK_USER_DATA_AFTER_LOGIN)
+            //   this.$store.commit('setUser', data)
+            //   this.showLoginCard = false
+            // })
+          }
+        } else {
+          this.warnMsg = '无效的手机号或邮箱'
+        }
+      },
+      register() {
+        this.warnMsg = ''
+        if (!this.validUsername(this.username)) {
+          this.warnMsg = '无效的名字'
+          return
+        }
+        if (!this.validPhone(this.phone)) {
+          this.warnMsg = '无效的手机号'
+          return
+        }
+        if (!this.validPassword(this.password)) {
+          this.warnMsg = '无效的密码'
+          return
+        }
+        if (this.validCode !== this.realValidateCode) {
+          this.warnMsg = '验证码错误'
+          return
+        }
+        this.$axios.post(POST_REGISTER).then(() => {
+          // todo after register
+          this.showLoginCard = true
+        })
+      }
+    },
+    mounted() {
+    },
+    created() {
+    },
+    destroyed() {
     }
+  }
 </script>
 
 <style scoped lang="scss">
@@ -234,7 +317,7 @@
       padding: 0 20px;
 
       @media(min-width: 768px) {
-        width: 750px;
+        width: 730px;
         padding: 0;
       }
       @media(min-width: 992px) {
@@ -260,6 +343,18 @@
         justify-content: space-between;
         height: 64px;
 
+        .side {
+          display: none;
+          width: 20px;
+          height: 20px;
+          cursor: pointer;
+          opacity: 0.7;
+
+          @media(max-width: 992px) {
+            display: block;
+          }
+        }
+
         .left {
           display: flex;
           align-items: center;
@@ -284,8 +379,7 @@
             align-items: center;
 
             li {
-              display: flex;
-              align-items: center;
+              position: relative;
               padding: 0 12px;
               font-weight: 500;
               font-size: 1.6rem;
@@ -294,11 +388,8 @@
               line-height: 34px;
               border-radius: 4px;
 
-              &:hover {
-                background-color: #F5F5F5;
-              }
-
               .triangle {
+                display: inline-block;
                 width: 0;
                 height: 0;
                 border: 5px solid transparent;
@@ -306,11 +397,56 @@
                 margin-left: 5px;
                 transform: translateY(2px);
               }
+
+              .popup {
+                position: absolute;
+                left: 0;
+                width: 300px;
+                background-color: white;
+                display: none;
+                align-items: center;
+                z-index: 100;
+
+                .left-side {
+                  background-color: #FAFAFA;
+                  display: block;
+
+                  li {
+                    padding: 2px 20px 2px 10px;
+                    display: block;
+
+                    img {
+                      display: inline-block;
+                      width: 10px;
+                      height: 10px;
+                      padding: 5px;
+                      margin-left: 10px;
+                      background-color: #F5A623;
+                    }
+                  }
+                }
+
+                .right-side {
+                  flex-grow: 1;
+                }
+              }
+
+              &:hover {
+                background-color: #F5F5F5;
+
+                .popup {
+                  display: flex;
+                }
+              }
             }
 
             .active-li {
               color: $green;
               font-weight: 600;
+            }
+
+            @media(max-width: 992px) {
+              display: none;
             }
           }
 
@@ -327,6 +463,10 @@
               right: 5px;
               opacity: 0.5;
               cursor: pointer;
+            }
+
+            @media(max-width: 992px) {
+              display: none;
             }
           }
         }
@@ -359,6 +499,10 @@
               &:hover {
                 background-color: $darker-green;
               }
+            }
+
+            @media(max-width: 992px) {
+              display: none;
             }
           }
 
@@ -398,7 +542,7 @@
                 position: absolute;
                 right: 0;
                 top: 100%;
-                width: 200px;
+                width: 240px;
                 z-index: 100;
                 margin-top: 5px;
                 box-shadow: 0 0 5px 1px rgba(0, 0, 0, 0.2);
@@ -407,18 +551,18 @@
                 .popup-top {
                   display: flex;
                   align-items: center;
-                  padding: 10px 20px;
+                  padding: 10px 15px;
                   box-sizing: border-box;
                   border-bottom: 1px solid #dddddd;
 
                   .prestige {
                     font-weight: bold;
                     font-size: 1.4rem;
-                    margin-right: 20px;
+                    margin-right: 15px;
                   }
 
                   .star {
-                    font-size: 1.4rem;
+                    font-size: 1.2rem;
                     color: rgba(0, 0, 0, 0.5);
                     line-height: 15px;
                     margin-right: 5px;
@@ -472,7 +616,28 @@
                 }
               }
             }
+
+            @media(max-width: 992px) {
+              display: none;
+            }
           }
+
+          .md-avatar {
+            display: none;
+            border-radius: 50%;
+            overflow: hidden;
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+
+            @media(max-width: 992px) {
+              display: inline-block;
+            }
+          }
+        }
+
+        @media(max-width: 992px) {
+          height: 40px;
         }
       }
     }
@@ -543,6 +708,13 @@
             min-width: 200px;
             margin: auto;
             padding: 30px 0;
+
+            .warn {
+              height: 20px;
+              line-height: 20px;
+              font-size: 14px;
+              color: red;
+            }
 
             p {
               font-size: 14px;

@@ -1,3 +1,5 @@
+const env = process.env.NODE_ENV
+const isDev = env === 'development'
 export default {
   mode: 'universal',
   /*
@@ -19,7 +21,18 @@ export default {
     host: '0.0.0.0',
     port: 1999
   },
-  proxy: {},
+  axios: {
+    proxyHeaders: true,
+    credentials: true,
+    proxy: true,
+    prefix: '/api',
+  },
+  proxy: {
+    '/api': {
+      target: isDev ? 'http://localhost:8080' : 'http://47.103.82.183:8080',
+      pathRewrite: {'^/api': ''},
+    }
+  },
   /*
   ** Customize the progress-bar color
   */
@@ -34,7 +47,9 @@ export default {
   ** Plugins to load before mounting the App
   */
   plugins: [
-    '~/plugins/custom'
+    '~/plugins/custom',
+    '~/plugins/ajax',
+    '~/plugins/axios',
   ],
   /*
   ** Nuxt.js dev-modules
@@ -43,11 +58,17 @@ export default {
     // Doc: https://github.com/nuxt-community/nuxt-tailwindcss
     '@nuxtjs/tailwindcss',
   ],
+  tailwindcss: {
+    configPath: '~/tailwind.config.js',
+    cssPath: '~/assets/css/tailwind.css'
+  },
   /*
   ** Nuxt.js modules
   */
   modules: [
-    ['@nuxtjs/proxy', {pathRewrite: {'^/api': ''}}]
+    '@nuxtjs/proxy',
+    // Doc: https://github.com/nuxt-community/axios-module#usage
+    '@nuxtjs/axios'
   ],
   /*
   ** Build configuration

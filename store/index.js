@@ -3,11 +3,11 @@ export const state = () => ({
   user: undefined
 })
 
-export const mutations = () => ({
+export const mutations = {
   setHomeActiveMenu(state, val) {
     state.activeMenu = val
   },
   setUser(state, val) {
     state.user = val
   }
-})
+}
