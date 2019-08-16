@@ -1,6 +1,15 @@
 export const POST_LOGIN = "/login";
 export const POST_REGISTER = "/register";
 
+export const POST_CHECK_READ_ARTICLE_NOTIFICATION = '/new/notification/articles/read'
+export const POST_CHECK_READ_CHAT_NOTIFICATION = '/new/notification/chat/read'
+export const POST_CHECK_READ_GOOD_NOTIFICATION = '/new/notification/good/read'
+export const POST_CHECK_READ_FANS_NOTIFICATION = '/new/notification/fans/read'
+export const POST_CHECK_READ_ALL_ARTICLE_NOTIFICATION = '/new/notification/articles/read/all'
+export const POST_CHECK_READ_ALL_CHAT_NOTIFICATION = '/new/notification/chat/read/all'
+export const POST_CHECK_READ_ALL_GOOD_NOTIFICATION = '/new/notification/good/read/all'
+export const POST_CHECK_READ_ALL_FANS_NOTIFICATION = '/new/notification/fans/read/all'
+
 export const GET_PUSH_ARTICLE = "/push/article";
 export const GET_EVENTS_DESCRIPTION_LESS = '/events/description/less';
 export const GET_EVENTS_DESCRIPTION = '/events/description';

@@ -38,7 +38,8 @@
                   <li class="right-item" v-for="val in eventsDescription">
                     <p>{{val.name}}</p>
                     <div>
-                      {{val.city}} · {{val.date}} {{$getWeekDay(val.date)}} · <span class="joining" v-if="val.joining">报名中</span> <span class="joining-end" v-else>报名结束</span>
+                      {{val.city}} · {{$formatDate(val.datetime)}} {{$getWeekDay(val.datetime)}} · <span class="joining" v-if="val.joining">报名中</span>
+                      <span class="joining-end" v-else>报名结束</span>
                     </div>
                   </li>
                   <li class="more">查看更多活动</li>
@@ -57,7 +58,7 @@
             <button class="register-button" @click="showRegisterCard=true">免费注册</button>
           </div>
           <div class="already-login" v-else>
-            <div class="notification" tabindex="0" @focusout="newNotificationNumber=undefined">
+            <div class="notification" tabindex="0" @focusout="clearNewNotificationNumber">
               <img src="/icon/msg-tip.png">
               <div class="red-circle" v-if="exitNewNotification"></div>
               <div class="popup border-shadow">
@@ -79,13 +80,35 @@
                     <img src="/icon/fans-green.png" v-show="notificationPopupBannerIndex===3">
                   </div>
                 </div>
-                <div class="content">
-                  <div class="article-notification" v-show="notificationPopupBannerIndex===0"></div>
-                  <div class="chat-notification" v-show="notificationPopupBannerIndex===1"></div>
-                  <div class="good-notification" v-show="notificationPopupBannerIndex===2"></div>
-                  <div class="fans-notification" v-show="notificationPopupBannerIndex===3"></div>
+                <div class="content" @scroll="onNotificationContentScroll">
+                  <ul class="article-notification" v-show="notificationPopupBannerIndex===0">
+                    <li class="item" v-for="val in articleNotifications" :class="{'no-read':!val.read}">
+                      {{val.author}}<span>发布了新文章</span>{{val.name}}
+                    </li>
+                  </ul>
+                  <ul class="chat-notification" v-show="notificationPopupBannerIndex===1">
+                    <li class="item" v-for="val in chatNotification" :class="{'no-read':!val.read}">
+                      <span>{{val.author}}</span>：{{val.content}}<label>{{$formatDatetime(val.datetime)}}</label>
+                    </li>
+                  </ul>
+                  <ul class="good-notification" v-show="notificationPopupBannerIndex===2">
+                    <li v-for="val in goodNotification" :class="{'no-read':!val.read}">
+                      <span>{{val.target}}</span>点赞了您<label v-if="val.goodAnswerInQuestion">在问题<span>{{val.goodAnswerInQuestion}}</span>中的回答</label><label
+                      v-else-if="val.goodArticle">的文章<span>{{val.goodArticle}}</span></label>
+                      <label class="datetime">{{$formatDatetime(val.datetime)}}</label>
+                    </li>
+                  </ul>
+                  <ul class="fans-notification" v-show="notificationPopupBannerIndex===3">
+                    <li v-for="val in fansNotification" :class="{'no-read':!val.read}">
+                      <span>{{val.fanName}}</span>关注了您<label>{{$formatDatetime(val.datetime)}}</label>
+                    </li>
+                  </ul>
+                  <img class="loading" src="/icon/loading-green.png" v-show="showNotificationLoading">
                 </div>
-                <div class="popup-bottom"></div>
+                <div class="popup-bottom">
+                  <div class="read-all" @click="readAll"><img src="/icon/round-right-black.png">全部标记为已读</div>
+                  <div class="see-all">查看全部</div>
+                </div>
                 <label class="article-number" v-if="newNotificationNumber&&newNotificationNumber.newArticle>0">
                   {{newNotificationNumber.newArticle>=100?'99+':newNotificationNumber.newArticle}}
                 </label>
@@ -206,10 +229,23 @@
 
 <script>
   import mock from 'mockjs'
-  import {GET_CHECK_NEW_NOTIFICATION_NUMBER, GET_EVENTS_DESCRIPTION_LESS, POST_REGISTER} from '../assets/js/api'
+  import {
+    GET_CHECK_NEW_ARTICLE_NOTIFICATION,
+    GET_CHECK_NEW_CHAT_NOTIFICATION,
+    GET_CHECK_NEW_FANS_NOTIFICATION,
+    GET_CHECK_NEW_GOOD_NOTIFICATION,
+    GET_CHECK_NEW_NOTIFICATION_NUMBER,
+    GET_EVENTS_DESCRIPTION_LESS,
+    POST_CHECK_READ_ALL_ARTICLE_NOTIFICATION,
+    POST_CHECK_READ_ALL_CHAT_NOTIFICATION,
+    POST_CHECK_READ_ALL_FANS_NOTIFICATION,
+    POST_CHECK_READ_ALL_GOOD_NOTIFICATION,
+    POST_REGISTER
+  } from '../assets/js/api'
 
   const r = mock.Random
   let sendLogin = false, sendRegister = false;
+  let fetchArticle = false, fetchChat = false, fetchGood = false, fetchFans = false
 
   export default {
     name: "default",
@@ -231,7 +267,11 @@
         defaultAvatar: require('static/icon/user.png'),
         handler: undefined,
         eventsDescription: undefined,
-        newNotificationNumber: undefined
+        newNotificationNumber: undefined,
+        articleNotifications: undefined,
+        chatNotification: undefined,
+        goodNotification: undefined,
+        fansNotification: undefined
       }
     },
     watch: {
@@ -255,6 +295,48 @@
         this.username = '12345678909'
         this.password = 'qwertyu'
         this.warnMsg = ''
+      },
+      notificationPopupBannerIndex(val) {
+        switch (val) {
+          case 0:
+            if (!this.articleNotifications && !fetchArticle) {
+              fetchArticle = true
+              this.$axios.get(GET_CHECK_NEW_ARTICLE_NOTIFICATION).then(response => {
+                fetchArticle = false
+                this.articleNotifications = response.data
+              })
+            }
+            break
+          case 1:
+            if (!this.chatNotification && !fetchChat) {
+              fetchChat = true
+              this.$axios.get(GET_CHECK_NEW_CHAT_NOTIFICATION).then(response => {
+                fetchChat = false
+                this.chatNotification = response.data
+              })
+            }
+            break
+          case 2:
+            if (!this.goodNotification && !fetchGood) {
+              fetchGood = true
+              this.$axios.get(GET_CHECK_NEW_GOOD_NOTIFICATION).then(response => {
+                fetchGood = false
+                this.goodNotification = response.data
+              })
+            }
+            break
+          case 3:
+            if (!this.fansNotification && !fetchFans) {
+              fetchFans = true
+              this.$axios.get(GET_CHECK_NEW_FANS_NOTIFICATION).then(response => {
+                fetchFans = false
+                this.fansNotification = response.data
+              })
+            }
+            break
+          default:
+            return
+        }
       }
     },
     computed: {
@@ -269,9 +351,109 @@
           this.newNotificationNumber.newChat > 0 ||
           this.newNotificationNumber.newGood > 0 ||
           this.newNotificationNumber.newFans > 0)
-      }
+      },
+      showNotificationLoading() {
+        switch (this.notificationPopupBannerIndex) {
+          case 0:
+            return !this.articleNotifications || this.articleNotifications.length < this.newNotificationNumber.totalArticle
+          case 1:
+            return !this.chatNotification || this.chatNotification.length < this.newNotificationNumber.totalChat
+          case 2:
+            return !this.goodNotification || this.goodNotification.length < this.newNotificationNumber.totalGood
+          case 3:
+            return !this.fansNotification || this.fansNotification.length < this.newNotificationNumber.totalFans
+          default:
+            return false
+        }
+      },
     },
     methods: {
+      readAll() {
+        let arr, route, attrName
+        switch (this.notificationPopupBannerIndex) {
+          case 0:
+            arr = this.articleNotifications
+            route = POST_CHECK_READ_ALL_ARTICLE_NOTIFICATION
+            attrName = 'newArticle'
+            break
+          case 1:
+            arr = this.chatNotification
+            route = POST_CHECK_READ_ALL_CHAT_NOTIFICATION
+            attrName = 'newChat'
+            break
+          case 2:
+            arr = this.goodNotification
+            route = POST_CHECK_READ_ALL_GOOD_NOTIFICATION
+            attrName = 'newGood'
+            break
+          case 3:
+            arr = this.fansNotification
+            route = POST_CHECK_READ_ALL_FANS_NOTIFICATION
+            attrName = 'newFans'
+            break
+        }
+        arr.forEach(val => val.read = true)
+        this.$axios.post(route).then(() => {
+          this.newNotificationNumber[attrName] = 0
+        })
+      },
+      fetchNotifications() {
+        switch (this.notificationPopupBannerIndex) {
+          case 0:
+            if (this.showNotificationLoading && !fetchArticle) {
+              fetchArticle = true
+              this.$axios.get(GET_CHECK_NEW_ARTICLE_NOTIFICATION).then(response => {
+                fetchArticle = false
+                this.articleNotifications ? response.data.forEach(val => this.articleNotifications.push(val)) : this.articleNotifications = response.data
+              })
+            }
+            break
+          case 1:
+            if (this.showNotificationLoading && !fetchChat) {
+              fetchChat = true
+              this.$axios.get(GET_CHECK_NEW_CHAT_NOTIFICATION).then(response => {
+                fetchChat = false
+                this.chatNotification ? response.data.forEach(val => this.chatNotification.push(val)) : this.chatNotification = response.data
+              })
+            }
+            break
+          case 2:
+            if (this.showNotificationLoading && !fetchGood) {
+              fetchGood = true
+              this.$axios.get(GET_CHECK_NEW_GOOD_NOTIFICATION).then(response => {
+                fetchGood = false
+                this.goodNotification ? response.data.forEach(val => this.goodNotification.push(val)) : this.goodNotification = response.data
+              })
+            }
+            break
+          case 3:
+            if (this.showNotificationLoading && !fetchFans) {
+              fetchFans = true
+              this.$axios.get(GET_CHECK_NEW_FANS_NOTIFICATION).then(response => {
+                fetchFans = false
+                this.fansNotification ? response.data.forEach(val => this.fansNotification.push(val)) : this.fansNotification = response.data
+              })
+            }
+            break
+          default:
+            return
+        }
+      },
+      onNotificationContentScroll(event) {
+        const target = event.target
+        const scrollTop = target.scrollTop
+        const bias = target.scrollHeight - target.clientHeight
+        const reachDown = Math.abs(scrollTop - bias) <= 30
+        if (reachDown) {
+          this.fetchNotifications()
+        }
+      },
+      clearNewNotificationNumber() {
+        this.newNotificationNumber.newArticle = 0
+        this.newNotificationNumber.newChat = 0
+        this.newNotificationNumber.newGood = 0
+        this.newNotificationNumber.newFans = 0
+      },
       async fetchEventsDescription() {
         if (!this.eventsDescription) {
           this.eventsDescription = await this.$axios.$get(GET_EVENTS_DESCRIPTION_LESS)
@@ -331,6 +513,9 @@
               sendLogin = false
               this.$axios.get(GET_CHECK_NEW_NOTIFICATION_NUMBER).then(response => {
                 this.newNotificationNumber = response.data
+              })
+              this.$axios.get(GET_CHECK_NEW_ARTICLE_NOTIFICATION).then(response => {
+                this.articleNotifications = response.data
               })
             })
             // this.$axios.post(POST_LOGIN, {
@@ -782,6 +967,7 @@
 
                 .banner {
                   background-color: #F5F5F5;
+                  border-bottom: 1px solid rgba(0, 0, 0, 0.075);
                   display: flex;
                   align-items: flex-end;
                   justify-content: space-between;
@@ -820,12 +1006,134 @@
                 .content {
                   height: 250px;
                   overflow: auto;
+
+                  .article-notification {
+                    li {
+                      border-bottom: 1px solid #F5F5F5;
+                      padding: 2px 10px;
+                      box-sizing: border-box;
+                      color: $green;
+                      font-size: 1.4rem;
+
+                      span {
+                        color: #333333;
+                        padding: 0 5px;
+                      }
+                    }
+                  }
+
+                  .chat-notification {
+                    li {
+                      border-bottom: 1px solid #F5F5F5;
+                      padding: 2px 10px;
+                      box-sizing: border-box;
+                      color: #333333;
+                      font-size: 1.4rem;
+
+                      span {
+                        color: $green;
+                        padding: 0 5px;
+                      }
+
+                      label {
+                        font-size: 1.1rem;
+                        color: gray;
+                        padding-left: 5px;
+                      }
+                    }
+                  }
+
+                  .good-notification {
+                    li {
+                      border-bottom: 1px solid #F5F5F5;
+                      padding: 2px 10px;
+                      box-sizing: border-box;
+                      color: #333333;
+                      font-size: 1.4rem;
+
+                      span {
+                        color: $green;
+                        padding: 0 5px;
+                      }
+
+                      label {
+                        padding: 0;
+                      }
+
+                      .datetime {
+                        font-size: 1.1rem;
+                        color: gray;
+                        padding-left: 5px;
+                      }
+                    }
+                  }
+
+                  .fans-notification {
+                    li {
+                      border-bottom: 1px solid #F5F5F5;
+                      padding: 2px 10px;
+                      box-sizing: border-box;
+                      color: #333333;
+                      font-size: 1.4rem;
+
+                      span {
+                        color: $green;
+                        padding: 0 5px;
+                      }
+
+                      label {
+                        font-size: 1.1rem;
+                        color: gray;
+                        padding-left: 5px;
+                      }
+                    }
+                  }
+
+                  .no-read {
+                    background-color: #FCF8E3;
+                  }
+
+                  .loading {
+                    width: 16px;
+                    height: 16px;
+                    margin: 5px auto;
+                    animation: rotate 3s linear infinite;
+                    @keyframes rotate {
+                      from {
+                        transform: rotate(0deg);
+                      }
+                      to {
+                        transform: rotate(360deg);
+                      }
+                    }
+                  }
                 }
 
                 .popup-bottom {
                   background-color: #F5F5F5;
-                  padding: 0 10px;
+                  padding: 10px 10px;
                   box-sizing: border-box;
+                  display: flex;
+                  align-items: center;
+                  justify-content: space-between;
+                  font-size: 1.3rem;
+                  color: gray;
+
+                  .read-all {
+                    cursor: pointer;
+
+                    img {
+                      width: 13px;
+                      height: 13px;
+                      margin-right: 2px;
+                      display: inline-block;
+                      transform: translateY(-2px);
+                    }
+                  }
+
+                  .see-all {
+                    cursor: pointer;
+                  }
                 }
 
                 .number {
