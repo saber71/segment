@@ -2,6 +2,13 @@ export const POST_LOGIN = "/login";
 export const POST_REGISTER = "/register";
 
 export const GET_PUSH_ARTICLE = "/push/article";
+export const GET_EVENTS_DESCRIPTION_LESS = '/events/description/less';
+export const GET_EVENTS_DESCRIPTION = '/events/description';
 
 export const GET_CHECK_USER_DATA_AFTER_LOGIN = "/check/user/afterLogin";
 export const GET_CHECK_PUSH_ARTICLE = "/check/push/article";
+export const GET_CHECK_NEW_NOTIFICATION_NUMBER = '/new/notification/number'
+export const GET_CHECK_NEW_ARTICLE_NOTIFICATION = '/new/notification/articles'
+export const GET_CHECK_NEW_CHAT_NOTIFICATION = '/new/notification/chat'
+export const GET_CHECK_NEW_GOOD_NOTIFICATION = '/new/notification/good'
+export const GET_CHECK_NEW_FANS_NOTIFICATION = '/new/notification/fans'

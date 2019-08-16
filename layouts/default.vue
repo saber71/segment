@@ -17,24 +17,32 @@
             <li :class="{'active-li':activeLi==='专栏'}">专栏</li>
             <li :class="{'active-li':activeLi==='课程'}">课程</li>
             <li :class="{'active-li':activeLi==='圈子'}">圈子</li>
-            <li :class="{'active-li':activeLi==='发现'}">发现
+            <li :class="{'active-li':activeLi==='发现'}" @mouseenter="fetchEventsDescription">发现
               <div class="triangle"></div>
               <div class="popup border-shadow">
                 <ul class="left-side">
-                  <li>活动</li>
-                  <li>标签</li>
-                  <li>酷工作</li>
-                  <li>排行榜</li>
-                  <li>徽章</li>
-                  <li>笔记</li>
-                  <li>开发手册
+                  <li class="left-item">活动</li>
+                  <li class="left-item">标签</li>
+                  <li class="left-item">酷工作</li>
+                  <li class="left-item">排行榜</li>
+                  <li class="left-item">徽章</li>
+                  <li class="left-item">笔记</li>
+                  <li class="left-item">开发手册
                     <img src="/icon/down-arrow-white.png">
                   </li>
-                  <li>广告投放
+                  <li class="left-item">广告投放
                     <img src="/icon/down-arrow-white.png">
                   </li>
                 </ul>
-                <ul class="right-side"></ul>
+                <ul class="right-side">
+                  <li class="right-item" v-for="val in eventsDescription">
+                    <p>{{val.name}}</p>
+                    <div>
+                      {{val.city}} · {{val.date}} {{$getWeekDay(val.date)}} · <span class="joining" v-if="val.joining">报名中</span> <span class="joining-end" v-else>报名结束</span>
+                    </div>
+                  </li>
+                  <li class="more">查看更多活动</li>
+                </ul>
               </div>
             </li>
           </ul>
@@ -49,6 +57,49 @@
             <button class="register-button" @click="showRegisterCard=true">免费注册</button>
           </div>
           <div class="already-login" v-else>
+            <div class="notification" tabindex="0" @focusout="newNotificationNumber=undefined">
+              <img src="/icon/msg-tip.png">
+              <div class="red-circle" v-if="exitNewNotification"></div>
+              <div class="popup border-shadow">
+                <div class="banner">
+                  <div class="item" :class="{'item-active':notificationPopupBannerIndex===0}" @click="notificationPopupBannerIndex=0">
+                    <img src="/icon/notification-black.png" v-show="notificationPopupBannerIndex!==0">
+                    <img src="/icon/notification-green.png" v-show="notificationPopupBannerIndex===0">
+                  </div>
+                  <div class="item" :class="{'item-active':notificationPopupBannerIndex===1}" @click="notificationPopupBannerIndex=1">
+                    <img src="/icon/chat-black.png" v-show="notificationPopupBannerIndex!==1">
+                    <img src="/icon/chat-green.png" v-show="notificationPopupBannerIndex===1">
+                  </div>
+                  <div class="item" :class="{'item-active':notificationPopupBannerIndex===2}" @click="notificationPopupBannerIndex=2">
+                    <img src="/icon/good-black.png" v-show="notificationPopupBannerIndex!==2">
+                    <img src="/icon/good-green.png" v-show="notificationPopupBannerIndex===2">
+                  </div>
+                  <div class="item" :class="{'item-active':notificationPopupBannerIndex===3}" @click="notificationPopupBannerIndex=3">
+                    <img src="/icon/fans-black.png" v-show="notificationPopupBannerIndex!==3">
+                    <img src="/icon/fans-green.png" v-show="notificationPopupBannerIndex===3">
+                  </div>
+                </div>
+                <div class="content">
+                  <div class="article-notification" v-show="notificationPopupBannerIndex===0"></div>
+                  <div class="chat-notification" v-show="notificationPopupBannerIndex===1"></div>
+                  <div class="good-notification" v-show="notificationPopupBannerIndex===2"></div>
+                  <div class="fans-notification" v-show="notificationPopupBannerIndex===3"></div>
+                </div>
+                <div class="popup-bottom"></div>
+                <label class="article-number" v-if="newNotificationNumber&&newNotificationNumber.newArticle>0">
+                  {{newNotificationNumber.newArticle>=100?'99+':newNotificationNumber.newArticle}}
+                </label>
+                <label class="chat-number" v-if="newNotificationNumber&&newNotificationNumber.newChat>0">
+                  {{newNotificationNumber.newChat>=100?'99+':newNotificationNumber.newChat}}
+                </label>
+                <label class="good-number" v-if="newNotificationNumber&&newNotificationNumber.newGood>0">
+                  {{newNotificationNumber.newGood>=100?'99+':newNotificationNumber.newGood}}
+                </label>
+                <label class="fans-number" v-if="newNotificationNumber&&newNotificationNumber.newFans>0">
+                  {{newNotificationNumber.newFans>=100?'99+':newNotificationNumber.newFans}}
+                </label>
+              </div>
+            </div>
             <div class="user" @mouseenter="avatarMouseEnter" @mouseleave="avatarMouseLeave">
               <div class="avatar">
                 <img :src="user.avatar?user.avatar:defaultAvatar">
@@ -93,7 +144,6 @@
                 </div>
               </div>
             </div>
-
           </div>
           <div class="md-avatar" @click="showLoginCard=true">
             <img :src="user?user.avatar?user.avatar:defaultAvatar:defaultAvatar">
@@ -156,9 +206,11 @@
 
 <script>
   import mock from 'mockjs'
-  import {GET_CHECK_USER_DATA_AFTER_LOGIN, POST_LOGIN, POST_REGISTER} from '../assets/js/api'
+  import {GET_CHECK_NEW_NOTIFICATION_NUMBER, GET_EVENTS_DESCRIPTION_LESS, POST_REGISTER} from '../assets/js/api'
 
   const r = mock.Random
+  let sendLogin = false, sendRegister = false;
+
   export default {
     name: "default",
     props: {},
@@ -168,6 +220,7 @@
         showPopup: false,
         showLoginCard: false,
         showRegisterCard: false,
+        notificationPopupBannerIndex: 0,
         searchTxt: '',
         phone: '',
         username: '',
@@ -177,10 +230,13 @@
         warnMsg: '',
         defaultAvatar: require('static/icon/user.png'),
         handler: undefined,
+        eventsDescription: undefined,
+        newNotificationNumber: undefined
       }
     },
     watch: {
       showRegisterCard(val) {
+        sendRegister = false
         if (val) {
           this.showLoginCard = false
         }
@@ -192,11 +248,12 @@
         this.createRealValidateCode()
       },
       showLoginCard(val) {
+        sendLogin = false
         if (val) {
           this.showRegisterCard = false
         }
-        this.username = ''
-        this.password = ''
+        this.username = '12345678909'
+        this.password = 'qwertyu'
         this.warnMsg = ''
       }
     },
@@ -206,9 +263,20 @@
       },
       user() {
         return this.$store.state.user
+      },
+      exitNewNotification() {
+        return this.newNotificationNumber && (this.newNotificationNumber.newArticle > 0 ||
+          this.newNotificationNumber.newChat > 0 ||
+          this.newNotificationNumber.newGood > 0 ||
+          this.newNotificationNumber.newFans > 0)
       }
     },
     methods: {
+      async fetchEventsDescription() {
+        if (!this.eventsDescription) {
+          this.eventsDescription = await this.$axios.$get(GET_EVENTS_DESCRIPTION_LESS)
+        }
+      },
       validPhone(phone) {
         return /^1\d{10}$/.test(phone)
       },
@@ -246,6 +314,10 @@
         //  todo search
       },
       login() {
+        if (sendLogin) {
+          return
+        }
+        sendLogin = true
         this.warnMsg = ''
         if (this.validEmail(this.username) || this.validPhone(this.username)) {
           if (!this.validPassword(this.password)) {
@@ -256,6 +328,10 @@
               password: this.password
             }, () => {
               this.showLoginCard = false
+              sendLogin = false
+              this.$axios.get(GET_CHECK_NEW_NOTIFICATION_NUMBER).then(response => {
+                this.newNotificationNumber = response.data
+              })
             })
             // this.$axios.post(POST_LOGIN, {
             //   account: this.username,
@@ -271,6 +347,10 @@
         }
       },
       register() {
+        if (sendRegister) {
+          return;
+        }
+        sendRegister = true
         this.warnMsg = ''
         if (!this.validUsername(this.username)) {
           this.warnMsg = '无效的名字'
@@ -291,6 +371,7 @@
         this.$axios.post(POST_REGISTER).then(() => {
           // todo after register
           this.showLoginCard = true
+          sendRegister = false
         })
       }
     },
@@ -401,33 +482,84 @@
               .popup {
                 position: absolute;
                 left: 0;
-                width: 300px;
+                width: 380px;
                 background-color: white;
                 display: none;
-                align-items: center;
                 z-index: 100;
 
                 .left-side {
+                  min-width: 115px;
                   background-color: #FAFAFA;
                   display: block;
 
-                  li {
+                  .left-item {
                     padding: 2px 20px 2px 10px;
-                    display: block;
 
                     img {
                       display: inline-block;
                       width: 10px;
                       height: 10px;
                       padding: 5px;
-                      margin-left: 10px;
+                      margin-left: 5px;
                       background-color: #F5A623;
                     }
                   }
                 }
 
                 .right-side {
+                  position: relative;
                   flex-grow: 1;
+                  display: block;
+                  cursor: default;
+
+                  .right-item {
+                    margin-top: 15px;
+                    padding: 0 15px;
+                    box-sizing: border-box;
+                    cursor: default;
+
+                    p {
+                      color: $green;
+                      font-size: 1.5rem;
+                      line-height: 1.2;
+                      cursor: pointer;
+
+                      &:hover {
+                        text-decoration: underline;
+                      }
+                    }
+
+                    div {
+                      font-size: 1.2rem;
+                      color: gray;
+                      line-height: 1.2;
+                      margin-top: 5px;
+
+                      .joining {
+                        color: #F5A623;
+                      }
+
+                      .joining-end {
+                        color: black;
+                      }
+                    }
+
+                    &:hover {
+                      background-color: white;
+                    }
+                  }
+
+                  .more {
+                    position: absolute;
+                    left: 0;
+                    bottom: 0;
+                    width: 100%;
+                    text-align: center;
+                    color: gray;
+                    font-size: 1.2rem;
+                    cursor: pointer;
+                    padding: 2px 0;
+                  }
                 }
               }
 
@@ -613,6 +745,133 @@
                       }
                     }
                   }
+                }
+              }
+            }
+
+            .notification {
+              position: relative;
+              padding: 5px 10px;
+              width: fit-content;
+              cursor: pointer;
+              border-radius: 4px;
+
+              img {
+                width: fit-content;
+              }
+
+              .red-circle {
+                position: absolute;
+                top: 5px;
+                right: 10px;
+                border-radius: 50%;
+                width: 6px;
+                height: 6px;
+                background-color: red;
+              }
+
+              .popup {
+                position: absolute;
+                right: 0;
+                top: 110%;
+                width: 300px;
+                display: none;
+                background-color: white;
+                z-index: 100;
+                cursor: default;
+
+                .banner {
+                  background-color: #F5F5F5;
+                  display: flex;
+                  align-items: flex-end;
+                  justify-content: space-between;
+
+                  .item {
+                    flex-grow: 1;
+                    border-bottom: 2px solid transparent;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    padding: 10px 0;
+                    cursor: pointer;
+
+                    img {
+                      opacity: 0.7;
+                    }
+
+                    &:hover {
+                      border-bottom-color: $green;
+
+                      img {
+                        opacity: 1;
+                      }
+                    }
+                  }
+
+                  .item-active {
+                    border-bottom-color: $green;
+
+                    img {
+                      opacity: 1;
+                    }
+                  }
+                }
+
+                .content {
+                  height: 250px;
+                  overflow: auto;
+                }
+
+                .popup-bottom {
+                  background-color: #F5F5F5;
+                  padding: 0 10px;
+                  box-sizing: border-box;
+                }
+
+                .number {
+                  position: absolute;
+                  top: 5px;
+                  width: fit-content;
+                  background-color: red;
+                  color: white;
+                  padding: 0 5px;
+                  border-radius: 20px;
+                  overflow: hidden;
+                  font-size: 1.1rem;
+                  line-height: 1.1;
+                }
+
+                .article-number {
+                  @extend .number;
+                  left: 40px;
+                  top: 5px;
+                }
+
+                .chat-number {
+                  @extend .number;
+                  left: 115px;
+                }
+
+                .good-number {
+                  @extend .number;
+                  left: 190px;
+                }
+
+                .fans-number {
+                  @extend .number;
+                  left: 265px;
+                }
+              }
+
+              &:hover {
+                background-color: #F5F5F5;
+              }
+
+              &:focus {
+                background-color: #F5F5F5;
+
+                .popup {
+                  display: block;
                 }
               }
             }
