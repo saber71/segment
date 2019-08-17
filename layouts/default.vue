@@ -58,6 +58,19 @@
             <button class="register-button" @click="showRegisterCard=true">免费注册</button>
           </div>
           <div class="already-login" v-else>
+            <div class="creation" tabindex="2">
+              创建
+              <div class="triangle"></div>
+              <div class="popup  border-shadow">
+                <ul class="popup-top">
+                  <li>提问题</li>
+                  <li>发头条</li>
+                  <li>写文章</li>
+                  <li>做笔记</li>
+                </ul>
+                <div class="popup-bottom">草稿箱</div>
+              </div>
+            </div>
             <div class="notification" tabindex="0" @focusout="clearNewNotificationNumber">
               <img src="/icon/msg-tip.png">
               <div class="red-circle" v-if="exitNewNotification"></div>
@@ -88,7 +101,20 @@
                   </ul>
                   <ul class="chat-notification" v-show="notificationPopupBannerIndex===1">
                     <li class="item" v-for="val in chatNotification" :class="{'no-read':!val.read}">
-                      <span>{{val.author}}</span>：{{val.content}}<label>{{$formatDatetime(val.datetime)}}</label>
+                      <span class="green">{{val.author}}</span>
+                      <span v-if="val.questionName">
+                        <span v-if="val.answer">回答了您的问题</span>
+                        <span v-else>回复了你在问题</span>
+                        <span class="green">{{val.questionName}}</span>
+                        <span v-if="!val.answer">中的评论</span>
+                      </span>
+                      <span v-else>
+                        <span v-if="val.answer">评论了您的文章</span>
+                        <span v-else>回复了你在文章</span>
+                        <span class="green">{{val.articleName}}</span>
+                        <span v-if="!val.answer">中的评论</span>
+                      </span>
+                      ：{{val.content}}<label>{{$formatDatetime(val.datetime)}}</label>
                     </li>
                   </ul>
                   <ul class="good-notification" v-show="notificationPopupBannerIndex===2">
@@ -123,6 +149,22 @@
                 </label>
               </div>
             </div>
+            <div class="chat-message" tabindex="1" @focusout="clearNewChatNumber">
+              <img src="/icon/msg.png">
+              <div class="red-circle" v-if="exitNewChatMsg"></div>
+              <div class="popup border-shadow">
+                <div class="banner">最近的私信</div>
+                <ul class="content" @scroll="onChatMsgContentScroll">
+                  <li class="item" v-for="val in chatMsg" v-show="chatMsg&&chatMsg.length>0">
+                    <span class="green">{{val.author}}</span>：{{val.content}}<span class="datetime">{{$formatDatetime(val.datetime)}}</span>
+                  </li>
+                  <li class="word" v-show="!chatMsg||chatMsg.length===0">没有人给你发私信</li>
+                </ul>
+                <div class="popup-bottom">
+                  <span>查看全部</span>
+                </div>
+              </div>
+            </div>
             <div class="user" @mouseenter="avatarMouseEnter" @mouseleave="avatarMouseLeave">
               <div class="avatar">
                 <img :src="user.avatar?user.avatar:defaultAvatar">
@@ -130,24 +172,24 @@
               </div>
               <div class="popup" v-show="showPopup">
                 <div class="popup-top">
-                  <div class="prestige">{{user.prestige>=1000?'999+':user.prestige}} 声望</div>
+                  <div class="prestige">{{$formatNumber(user.prestige)}} 声望</div>
                   <div class="star">
                     <div class="icon1">
                       <img src="/icon/star-white.png">
                     </div>
-                    {{user.star1>=100?'99+':user.star1}}
+                    {{$formatNumber(user.star1,99)}}
                   </div>
                   <div class="star">
                     <div class="icon2">
                       <img src="/icon/star-white.png">
                     </div>
-                    {{user.star2>=100?'99+':user.star2}}
+                    {{$formatNumber(user.star2,99)}}
                   </div>
                   <div class="star">
                     <div class="icon3">
                       <img src="/icon/star-white.png">
                     </div>
-                    {{user.star3>=100?'99+':user.star3}}
+                    {{$formatNumber(user.star3,99)}}
                   </div>
                 </div>
                 <div class="center">
@@ -230,6 +272,7 @@
 <script>
   import mock from 'mockjs'
   import {
+    GET_CHECK_CHAT_MESSAGE,
     GET_CHECK_NEW_ARTICLE_NOTIFICATION,
     GET_CHECK_NEW_CHAT_NOTIFICATION,
     GET_CHECK_NEW_FANS_NOTIFICATION,
@@ -244,8 +287,8 @@
   } from '../assets/js/api'
 
   const r = mock.Random
-  let sendLogin = false, sendRegister = false;
-  let fetchArticle = false, fetchChat = false, fetchGood = false, fetchFans = false
+  let sendingLogin = false, sendingRegister = false;
+  let fetchingArticle = false, fetchingChat = false, fetchingGood = false, fetchingFans = false, fetchingChatMsg = false
 
   export default {
     name: "default",
@@ -271,12 +314,13 @@
         articleNotifications: undefined,
         chatNotification: undefined,
         goodNotification: undefined,
-        fansNotification: undefined
+        fansNotification: undefined,
+        chatMsg: []
       }
     },
     watch: {
       showRegisterCard(val) {
-        sendRegister = false
+        sendingRegister = false
         if (val) {
           this.showLoginCard = false
         }
@@ -288,7 +332,7 @@
         this.createRealValidateCode()
       },
       showLoginCard(val) {
-        sendLogin = false
+        sendingLogin = false
         if (val) {
           this.showRegisterCard = false
         }
@@ -299,37 +343,37 @@
       notificationPopupBannerIndex(val) {
         switch (val) {
           case 0:
-            if (!this.articleNotifications && !fetchArticle) {
-              fetchArticle = true
+            if (!this.articleNotifications && !fetchingArticle) {
+              fetchingArticle = true
               this.$axios.get(GET_CHECK_NEW_ARTICLE_NOTIFICATION).then(response => {
-                fetchArticle = false
+                fetchingArticle = false
                 this.articleNotifications = response.data
               })
             }
             break
           case 1:
-            if (!this.chatNotification && !fetchChat) {
-              fetchChat = true
+            if (!this.chatNotification && !fetchingChat) {
+              fetchingChat = true
               this.$axios.get(GET_CHECK_NEW_CHAT_NOTIFICATION).then(response => {
-                fetchChat = false
+                fetchingChat = false
                 this.chatNotification = response.data
               })
             }
             break
           case 2:
-            if (!this.goodNotification && !fetchGood) {
-              fetchGood = true
+            if (!this.goodNotification && !fetchingGood) {
+              fetchingGood = true
               this.$axios.get(GET_CHECK_NEW_GOOD_NOTIFICATION).then(response => {
-                fetchGood = false
+                fetchingGood = false
                 this.goodNotification = response.data
               })
             }
             break
           case 3:
-            if (!this.fansNotification && !fetchFans) {
-              fetchFans = true
+            if (!this.fansNotification && !fetchingFans) {
+              fetchingFans = true
               this.$axios.get(GET_CHECK_NEW_FANS_NOTIFICATION).then(response => {
-                fetchFans = false
+                fetchingFans = false
                 this.fansNotification = response.data
               })
             }
@@ -351,6 +395,9 @@
           this.newNotificationNumber.newChat > 0 ||
           this.newNotificationNumber.newGood > 0 ||
           this.newNotificationNumber.newFans > 0)
+      },
+      exitNewChatMsg() {
+        return this.newNotificationNumber && this.newNotificationNumber.newChatMsg > 0
       },
       showNotificationLoading() {
         switch (this.notificationPopupBannerIndex) {
@@ -400,43 +447,61 @@
       fetchNotifications() {
         switch (this.notificationPopupBannerIndex) {
           case 0:
-            if (this.showNotificationLoading && !fetchArticle) {
-              fetchArticle = true
+            if (this.showNotificationLoading && !fetchingArticle) {
+              fetchingArticle = true
               this.$axios.get(GET_CHECK_NEW_ARTICLE_NOTIFICATION).then(response => {
-                fetchArticle = false
+                fetchingArticle = false
                 this.articleNotifications ? response.data.forEach(val => this.articleNotifications.push(val)) : this.articleNotifications = response.data
               })
             }
             break
           case 1:
-            if (this.showNotificationLoading && !fetchChat) {
-              fetchChat = true
+            if (this.showNotificationLoading && !fetchingChat) {
+              fetchingChat = true
               this.$axios.get(GET_CHECK_NEW_CHAT_NOTIFICATION).then(response => {
-                fetchChat = false
+                fetchingChat = false
                 this.chatNotification ? response.data.forEach(val => this.chatNotification.push(val)) : this.chatNotification = response.data
               })
             }
             break
           case 2:
-            if (this.showNotificationLoading && !fetchGood) {
-              fetchGood = true
+            if (this.showNotificationLoading && !fetchingGood) {
+              fetchingGood = true
               this.$axios.get(GET_CHECK_NEW_GOOD_NOTIFICATION).then(response => {
-                fetchGood = false
+                fetchingGood = false
                 this.goodNotification ? response.data.forEach(val => this.goodNotification.push(val)) : this.goodNotification = response.data
               })
             }
             break
           case 3:
-            if (this.showNotificationLoading && !fetchFans) {
-              fetchFans = true
+            if (this.showNotificationLoading && !fetchingFans) {
+              fetchingFans = true
               this.$axios.get(GET_CHECK_NEW_FANS_NOTIFICATION).then(response => {
-                fetchFans = false
+                fetchingFans = false
                 this.fansNotification ? response.data.forEach(val => this.fansNotification.push(val)) : this.fansNotification = response.data
               })
             }
             break
           default:
             return
+        }
+      },
+      async fetchChatMsg() {
+        if (fetchingChatMsg || (this.newNotificationNumber && this.chatMsg.length >= this.newNotificationNumber.totalChatMsg)) {
+          return
+        }
+        fetchingChatMsg = true
+        const data = await this.$axios.$get(GET_CHECK_CHAT_MESSAGE)
+        fetchingChatMsg = false
+        data.forEach(val => this.chatMsg.push(val))
+      },
+      onChatMsgContentScroll(event) {
+        const target = event.target
+        const scrollTop = target.scrollTop
+        const bias = target.scrollHeight - target.clientHeight
+        const reachDown = Math.abs(scrollTop - bias) <= 30
+        if (reachDown) {
+          this.fetchChatMsg()
         }
       },
       onNotificationContentScroll(event) {
@@ -453,6 +518,9 @@
         this.newNotificationNumber.newChat = 0
         this.newNotificationNumber.newGood = 0
         this.newNotificationNumber.newFans = 0
+      },
+      clearNewChatNumber() {
+        this.newNotificationNumber.newChatMsg = 0
       },
       async fetchEventsDescription() {
         if (!this.eventsDescription) {
@@ -496,10 +564,10 @@
         //  todo search
       },
       login() {
-        if (sendLogin) {
+        if (sendingLogin) {
           return
         }
-        sendLogin = true
+        sendingLogin = true
         this.warnMsg = ''
         if (this.validEmail(this.username) || this.validPhone(this.username)) {
           if (!this.validPassword(this.password)) {
@@ -510,32 +578,27 @@
               password: this.password
             }, () => {
               this.showLoginCard = false
-              sendLogin = false
+              sendingLogin = false
               this.$axios.get(GET_CHECK_NEW_NOTIFICATION_NUMBER).then(response => {
                 this.newNotificationNumber = response.data
-              })
-              this.$axios.get(GET_CHECK_NEW_ARTICLE_NOTIFICATION).then(response => {
-                this.articleNotifications = response.data
+                if (this.newNotificationNumber.totalArticle > 0) {
+                  this.$axios.get(GET_CHECK_NEW_ARTICLE_NOTIFICATION).then(response => {
+                    this.articleNotifications = response.data
+                  })
+                }
+                this.fetchChatMsg()
               })
             })
-            // this.$axios.post(POST_LOGIN, {
-            //   account: this.username,
-            //   password: this.password
-            // }).then(async () => {
-            //   const data = await this.$axios.$get(GET_CHECK_USER_DATA_AFTER_LOGIN)
-            //   this.$store.commit('setUser', data)
-            //   this.showLoginCard = false
-            // })
           }
         } else {
           this.warnMsg = '无效的手机号或邮箱'
         }
       },
       register() {
-        if (sendRegister) {
+        if (sendingRegister) {
           return;
         }
-        sendRegister = true
+        sendingRegister = true
         this.warnMsg = ''
         if (!this.validUsername(this.username)) {
           this.warnMsg = '无效的名字'
@@ -556,7 +619,7 @@
         this.$axios.post(POST_REGISTER).then(() => {
           // todo after register
           this.showLoginCard = true
-          sendRegister = false
+          sendingRegister = false
         })
       }
     },
@@ -940,19 +1003,10 @@
               width: fit-content;
               cursor: pointer;
               border-radius: 4px;
+              margin-right: 5px;
 
               img {
                 width: fit-content;
-              }
-
-              .red-circle {
-                position: absolute;
-                top: 5px;
-                right: 10px;
-                border-radius: 50%;
-                width: 6px;
-                height: 6px;
-                background-color: red;
               }
 
               .popup {
@@ -1030,7 +1084,7 @@
                       color: #333333;
                       font-size: 1.4rem;
 
-                      span {
+                      .green {
                         color: $green;
                         padding: 0 5px;
                       }
@@ -1110,6 +1164,7 @@
                 }
 
                 .popup-bottom {
+                  border-top: 1px solid rgba(0, 0, 0, 0.075);
                   background-color: #F5F5F5;
                   padding: 10px 10px;
                   box-sizing: border-box;
@@ -1182,6 +1237,182 @@
                   display: block;
                 }
               }
+            }
+
+            .creation {
+              font-size: 1.4rem;
+              border-radius: 4px;
+              border: 1px solid #dddddd;
+              padding: 5px 10px;
+              position: relative;
+              color: #333333;
+              cursor: pointer;
+              background-color: white;
+              margin-right: 5px;
+
+              .triangle {
+                margin-left: 2px;
+                display: inline-block;
+                width: 0;
+                height: 0;
+                border: 4px solid transparent;
+                border-top-color: #333333;
+                transform: translateY(2px);
+              }
+
+              .popup {
+                display: none;
+                position: absolute;
+                left: 0;
+                top: 107%;
+                width: 100px;
+                background-color: white;
+
+                .popup-top {
+                  li {
+                    padding: 5px 15px;
+                    box-sizing: border-box;
+                    cursor: pointer;
+
+                    &:hover {
+                      background-color: #dddddd;
+                    }
+                  }
+                }
+
+                .popup-bottom {
+                  border-top: 1px solid #dddddd;
+                  padding: 7px 15px;
+                  box-sizing: border-box;
+                  cursor: pointer;
+
+                  &:hover {
+                    background-color: #dddddd;
+                  }
+                }
+              }
+
+              &:hover {
+                background-color: #dddddd;
+              }
+
+              &:focus {
+                background-color: #dddddd;
+                box-shadow: inset 0 0 7px rgba(0, 0, 0, 0.2);
+
+                .popup {
+                  display: block;
+                }
+              }
+            }
+
+            .chat-message {
+              position: relative;
+              padding: 5px 10px;
+              width: fit-content;
+              cursor: pointer;
+              border-radius: 4px;
+              margin-right: 5px;
+
+              .popup {
+                position: absolute;
+                right: 0;
+                top: 110%;
+                width: 300px;
+                display: none;
+                background-color: white;
+                z-index: 100;
+                cursor: default;
+
+                .banner {
+                  background-color: #F5F5F5;
+                  border-bottom: 1px solid rgba(0, 0, 0, 0.075);
+                  font-size: 1.4rem;
+                  color: gray;
+                  padding: 7px 10px;
+                }
+
+                .content {
+                  height: 250px;
+                  overflow: auto;
+
+                  .item {
+                    border-bottom: 1px solid #F5F5F5;
+                    padding: 2px 10px;
+                    box-sizing: border-box;
+                    font-size: 1.4rem;
+
+                    .green {
+                      color: $green;
+                      padding: 0 5px;
+                    }
+
+                    .datetime {
+                      font-size: 1.1rem;
+                      color: gray;
+                      padding-left: 5px;
+                    }
+                  }
+
+                  .word {
+                    font-size: 1.4rem;
+                    padding: 5px 0;
+                    color: #333333;
+                    text-align: center;
+                  }
+
+                  .loading {
+                    width: 16px;
+                    height: 16px;
+                    margin: 5px auto;
+                    animation: rotate 3s linear infinite;
+                    @keyframes rotate {
+                      from {
+                        transform: rotate(0deg);
+                      }
+                      to {
+                        transform: rotate(360deg);
+                      }
+                    }
+                  }
+                }
+
+                .popup-bottom {
+                  background-color: #F5F5F5;
+                  padding: 10px 10px;
+                  box-sizing: border-box;
+                  text-align: right;
+                  font-size: 1.3rem;
+                  border-top: 1px solid rgba(0, 0, 0, 0.075);
+                  color: gray;
+
+                  span {
+                    cursor: pointer;
+                  }
+                }
+              }
+
+              &:hover {
+                background-color: #F5F5F5;
+              }
+
+              &:focus {
+                background-color: #F5F5F5;
+
+                .popup {
+                  display: block;
+                }
+              }
+            }
+
+            .red-circle {
+              position: absolute;
+              top: 5px;
+              right: 10px;
+              border-radius: 50%;
+              width: 6px;
+              height: 6px;
+              background-color: red;
             }
 
             @media(max-width: 992px) {

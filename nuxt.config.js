@@ -50,6 +50,8 @@ export default {
     '~/plugins/custom',
     '~/plugins/ajax',
     '~/plugins/axios',
+    '~/plugins/vue-highlightjs',
+    '~/plugins/mavon-editor',
   ],
   /*
   ** Nuxt.js dev-modules

@@ -31,13 +31,13 @@ Vue.prototype.$formatDatetime = function (datetime) {
   const minute = obj.getMinutes() >= 10 ? obj.getMinutes() : '0' + obj.getMinutes()
   const time = hour + ':' + minute
   if (isSameDay(now, obj)) {
-    return '今天' + time
+    return sameDayTime(now, obj)
   } else if (isBeforeOneDay(now, obj)) {
     return '昨天' + time
   } else if (isBeforeTwoDay(now, obj)) {
     return '前天' + time
   } else if (obj.getFullYear() === now.getFullYear()) {
-    return month + '月' + date + '日' + time
+    return (obj.getMonth() + 1) + '月' + date + '日' + time
   } else {
     return obj.getFullYear() + '年' + month + '月' + date + '日' + time
   }
@@ -45,7 +45,6 @@ Vue.prototype.$formatDatetime = function (datetime) {
 Vue.prototype.$formatDate = function (date) {
   const obj = new Date(date)
   const now = new Date()
-  const month = obj.getMonth() + 1 >= 10 ? obj.getMonth() + 1 : '0' + (obj.getMonth() + 1)
   const day = obj.getDate() >= 10 ? obj.getDate() : '0' + obj.getDate()
   if (isSameDay(now, obj)) {
     return '今天'
@@ -54,9 +53,37 @@ Vue.prototype.$formatDate = function (date) {
   } else if (isBeforeTwoDay(now, obj)) {
     return '前天'
   } else if (obj.getFullYear() === now.getFullYear()) {
-    return month + '月' + day + '日'
+    return (obj.getMonth() + 1) + '月' + day + '日'
   } else {
-    return obj.getFullYear() + '年' + month + '月' + day + '日'
+    return obj.getFullYear() + '年' + (obj.getMonth() + 1 >= 10 ? obj.getMonth() + 1 : '0' + (obj.getMonth() + 1)) + '月' + day + '日'
+  }
+}
+Vue.prototype.$formatNumber = function (number, limit) {
+  if (limit) {
+    return number > limit ? limit + '+' : number
+  } else {
+    if (number >= 1000000) {
+      const res = parseInt(number / 100000) / 10
+      return res + 'M'
+    } else if (number >= 1000) {
+      const res = parseInt(number / 100) / 10
+      return res + 'K'
+    } else {
+      return res
+    }
+  }
+}
+
+function sameDayTime(date1, date2) {
+  const bias = date1.getTime() - date2.getTime()
+  const minutes = parseInt(bias / 60000)
+  if (minutes === 0) {
+    return '刚刚'
+  } else if (minutes < 60) {
+    return minutes + '分钟前'
+  } else {
+    const hours = parseInt(minutes / 60)
+    return hours + '小时前'
   }
 }
 
