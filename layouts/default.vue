@@ -1,6 +1,6 @@
 <template>
-  <div id="Default">
-    <header>
+  <div id="Default" @scroll="onContainerScroll">
+    <header ref="default-layout-header">
       <section class="top"></section>
       <section class="default-container bottom">
         <div class="side">
@@ -59,8 +59,11 @@
           </div>
           <div class="already-login" v-else>
             <div class="creation" tabindex="2">
-              创建
-              <div class="triangle"></div>
+              <div class="word">
+                创建
+                <div class="triangle"></div>
+              </div>
+              <img class="cross" src="/icon/add.png">
               <div class="popup  border-shadow">
                 <ul class="popup-top">
                   <li>提问题</li>
@@ -210,9 +213,27 @@
               </div>
             </div>
           </div>
-          <div class="md-avatar" @click="showLoginCard=true">
-            <img :src="user?user.avatar?user.avatar:defaultAvatar:defaultAvatar">
+          <div class="md-avatar" @click="showLoginCard=true" v-show="!user">
+            <img src="/icon/user.png">
           </div>
+        </div>
+      </section>
+      <section class="bottom-menu" v-show="showHeaderBottom">
+        <img src="/icon/home-black.png" v-if="activeLi!=='首页'">
+        <img src="/icon/home-green.png" v-else>
+        <img src="/icon/ask-black.png" v-if="activeLi!=='问答'">
+        <img src="/icon/ask-green.png" v-else>
+        <img src="/icon/article-black.png" v-if="activeLi!=='专栏'">
+        <img src="/icon/article-green.png" v-else>
+        <img src="/icon/classroom-black.png">
+        <div class="more" tabindex="3">
+          <img src="/icon/more-black.png">
+          <ul class="popup border-shadow">
+            <li>职位</li>
+            <li>活动</li>
+            <li>标签</li>
+            <li>徽章</li>
+          </ul>
         </div>
       </section>
     </header>
@@ -299,6 +320,8 @@
         showPopup: false,
         showLoginCard: false,
         showRegisterCard: false,
+        showHeaderBottom: false,
+        headerRef: undefined,
         notificationPopupBannerIndex: 0,
         searchTxt: '',
         phone: '',
@@ -415,6 +438,12 @@
       },
     },
     methods: {
+      onContainerScroll() {
+        const rect = this.headerRef.getBoundingClientRect()
+        const y = Math.abs(rect.y)
+        const width = window.outerWidth
+        this.showHeaderBottom = width <= 992 && y <= 30
+      },
       readAll() {
         let arr, route, attrName
         switch (this.notificationPopupBannerIndex) {
@@ -624,6 +653,9 @@
       }
     },
     mounted() {
+      this.headerRef = this.$refs['default-layout-header']
+      window.onresize = () => this.onContainerScroll()
+      this.onContainerScroll()
     },
     created() {
     },
@@ -638,6 +670,7 @@
   #Default {
     height: 100vh;
     overflow-y: scroll;
+    overflow-x: hidden;
 
     .default-container {
       width: 100%;
@@ -1250,6 +1283,12 @@
               background-color: white;
               margin-right: 5px;
 
+              .cross {
+                display: none;
+                width: 16px;
+                height: 16px;
+              }
+
               .triangle {
                 margin-left: 2px;
                 display: inline-block;
@@ -1264,7 +1303,7 @@
                 display: none;
                 position: absolute;
                 left: 0;
-                top: 107%;
+                top: 110%;
                 width: 100px;
                 background-color: white;
 
@@ -1298,10 +1337,25 @@
 
               &:focus {
                 background-color: #dddddd;
-                box-shadow: inset 0 0 7px rgba(0, 0, 0, 0.2);
 
                 .popup {
                   display: block;
+                }
+              }
+
+              @media(min-width: 993px) {
+                &:focus {
+                  box-shadow: inset 0 0 7px rgba(0, 0, 0, 0.2);
+                }
+              }
+              @media(max-width: 992px) {
+                background-color: transparent;
+                border: none;
+                .cross {
+                  display: block;
+                }
+                .word {
+                  display: none;
                 }
               }
             }
@@ -1416,7 +1470,9 @@
             }
 
             @media(max-width: 992px) {
-              display: none;
+              .notification, .chat-message {
+                display: none;
+              }
             }
           }
 
@@ -1436,6 +1492,55 @@
 
         @media(max-width: 992px) {
           height: 40px;
+        }
+      }
+
+      .bottom-menu {
+        display: flex;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        padding: 5px 0;
+        background-color: #FAFAFA;
+        align-items: center;
+        justify-content: space-around;
+        box-shadow: 0 0 10px 1px rgba(0, 0, 0, 0.3);
+        z-index: 100;
+
+        img {
+          width: fit-content;
+          cursor: pointer;
+        }
+
+        .more {
+          .popup {
+            position: absolute;
+            right: 10px;
+            bottom: 110%;
+            display: none;
+            background-color: white;
+            width: 120px;
+            padding: 5px 0;
+
+            li {
+              font-size: 1.5rem;
+              padding: 4px 20px;
+              box-sizing: border-box;
+              cursor: pointer;
+              color: #333333;
+
+              &:hover {
+                background-color: #dddddd;
+              }
+            }
+          }
+
+          &:focus {
+            .popup {
+              display: block;
+            }
+          }
         }
       }
     }

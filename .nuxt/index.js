@@ -1,20 +1,21 @@
 import Vue from 'vue'
 import Meta from 'vue-meta'
-import { createRouter } from './router.js'
+import {createRouter} from './router.js'
 import NoSsr from './components/no-ssr.js'
 import NuxtChild from './components/nuxt-child.js'
 import NuxtError from './components/nuxt-error.vue'
 import Nuxt from './components/nuxt.js'
 import App from './App.js'
-import { setContext, getLocation, getRouteData, normalizeError } from './utils'
-import { createStore } from './store.js'
-
-/* Plugins */
-
+import {getLocation, getRouteData, normalizeError, setContext} from './utils'
+import {createStore} from './store.js'
 import nuxt_plugin_axios_1e5731ce from 'nuxt_plugin_axios_1e5731ce' // Source: .\\axios.js (mode: 'all')
 import nuxt_plugin_custom_70e69332 from 'nuxt_plugin_custom_70e69332' // Source: ..\\plugins\\custom (mode: 'all')
 import nuxt_plugin_ajax_6a7e2296 from 'nuxt_plugin_ajax_6a7e2296' // Source: ..\\plugins\\ajax (mode: 'all')
 import nuxt_plugin_axios_3566aa80 from 'nuxt_plugin_axios_3566aa80' // Source: ..\\plugins\\axios (mode: 'all')
+import nuxt_plugin_vuehighlightjs_14e66e00 from 'nuxt_plugin_vuehighlightjs_14e66e00' // Source: ..\\plugins\\vue-highlightjs (mode: 'all')
+import nuxt_plugin_mavoneditor_cefa4f22 from 'nuxt_plugin_mavoneditor_cefa4f22' // Source: ..\\plugins\\mavon-editor (mode: 'all')
+
+/* Plugins */
 
 // Component: <NoSsr>
 Vue.component(NoSsr.name, NoSsr)
@@ -36,7 +37,7 @@ Vue.use(Meta, {
   tagIDKeyName: 'hid' // the property name that vue-meta uses to determine whether to overwrite or append a tag
 })
 
-const defaultTransition = {"name":"page","mode":"out-in","appear":false,"appearClass":"appear","appearActiveClass":"appear-active","appearToClass":"appear-to"}
+const defaultTransition = {"name": "page", "mode": "out-in", "appear": false, "appearClass": "appear", "appearActiveClass": "appear-active", "appearToClass": "appear-to"}
 
 async function createApp(ssrContext) {
   const router = await createRouter(ssrContext)
@@ -47,7 +48,7 @@ async function createApp(ssrContext) {
 
   // Fix SSR caveat https://github.com/nuxt/nuxt.js/issues/3757#issuecomment-414689141
   const registerModule = store.registerModule
-  store.registerModule = (path, rawModule, options) => registerModule.call(store, path, rawModule, Object.assign({ preserveState: process.client }, options))
+  store.registerModule = (path, rawModule, options) => registerModule.call(store, path, rawModule, Object.assign({preserveState: process.client}, options))
 
   // Create Root instance
 
@@ -58,16 +59,16 @@ async function createApp(ssrContext) {
     store,
     nuxt: {
       defaultTransition,
-      transitions: [ defaultTransition ],
+      transitions: [defaultTransition],
       setTransitions(transitions) {
         if (!Array.isArray(transitions)) {
-          transitions = [ transitions ]
+          transitions = [transitions]
         }
         transitions = transitions.map((transition) => {
           if (!transition) {
             transition = defaultTransition
           } else if (typeof transition === 'string') {
-            transition = Object.assign({}, defaultTransition, { name: transition })
+            transition = Object.assign({}, defaultTransition, {name: transition})
           } else {
             transition = Object.assign({}, defaultTransition, transition)
           }
@@ -170,6 +171,14 @@ async function createApp(ssrContext) {
     await nuxt_plugin_axios_3566aa80(app.context, inject)
   }
 
+  if (typeof nuxt_plugin_vuehighlightjs_14e66e00 === 'function') {
+    await nuxt_plugin_vuehighlightjs_14e66e00(app.context, inject)
+  }
+
+  if (typeof nuxt_plugin_mavoneditor_cefa4f22 === 'function') {
+    await nuxt_plugin_mavoneditor_cefa4f22(app.context, inject)
+  }
+
   // If server-side, wait for async component to be resolved first
   if (process.server && ssrContext && ssrContext.url) {
     await new Promise((resolve, reject) => {
@@ -194,4 +203,4 @@ async function createApp(ssrContext) {
   }
 }
 
-export { createApp, NuxtError }
+export {createApp, NuxtError}
