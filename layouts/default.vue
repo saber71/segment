@@ -238,7 +238,18 @@
       </section>
     </header>
     <nuxt></nuxt>
-    <footer></footer>
+    <footer>
+      <ul v-for="(val,index) in footerData">
+        {{val.name}}
+        <li class="item" v-for="item in val.children">
+          <a tabindex="9" :href="item.url" target="_blank">{{item.name}}</a>
+        </li>
+        <li class="app" v-if="index+1===footerData.length">
+          <img src="/app.png">
+          扫一扫下载App
+        </li>
+      </ul>
+    </footer>
     <div class="login-card" v-show="showLoginCard">
       <div class="mask" @click="showLoginCard=false"></div>
       <div class="card">
@@ -338,7 +349,135 @@
         chatNotification: undefined,
         goodNotification: undefined,
         fansNotification: undefined,
-        chatMsg: []
+        chatMsg: [],
+        footerData: [
+          {
+            name: '产品',
+            children: [
+              {
+                name: '热门问答',
+                url: ''
+              }, {
+                name: '热门专栏',
+                url: ''
+              }, {
+                name: '热门课程',
+                url: ''
+              }, {
+                name: '最新活动',
+                url: ''
+              }, {
+                name: '技术圈',
+                url: ''
+              }, {
+                name: '酷工作',
+                url: ''
+              }, {
+                name: '移动客户端',
+                url: ''
+              }
+            ]
+          },
+          {
+            name: '课程',
+            children: [
+              {
+                name: 'Java开发课程',
+                url: ''
+              }, {
+                name: 'PHP开发课程',
+                url: ''
+              }, {
+                name: 'Python开发课程',
+                url: ''
+              }, {
+                name: '前端开发课程',
+                url: ''
+              }, {
+                name: '移动开发课程',
+                url: ''
+              }
+            ]
+          },
+          {
+            name: '资源',
+            children: [
+              {
+                name: '每周精选',
+                url: ''
+              }, {
+                name: '用户排行榜',
+                url: ''
+              }, {
+                name: '徽章',
+                url: ''
+              }, {
+                name: '帮助中心',
+                url: ''
+              }, {
+                name: '声望与权限',
+                url: ''
+              }, {
+                name: '社区服务中心',
+                url: ''
+              }
+            ]
+          },
+          {
+            name: '合作',
+            children: [
+              {
+                name: '关于我们',
+                url: ''
+              }, {
+                name: '广告投放',
+                url: ''
+              }, {
+                name: '职业发布',
+                url: ''
+              }, {
+                name: '讲师招募',
+                url: ''
+              }, {
+                name: '联系我们',
+                url: ''
+              }
+            ]
+          },
+          {
+            name: '关注',
+            children: [
+              {
+                name: '产品技术日志',
+                url: ''
+              }, {
+                name: '社区运营日志',
+                url: ''
+              }, {
+                name: '市场运营日志',
+                url: ''
+              }, {
+                name: '团队日志',
+                url: ''
+              }, {
+                name: '社区访谈',
+                url: ''
+              }
+            ]
+          },
+          {
+            name: '条款',
+            children: [
+              {
+                name: '服务条款',
+                url: ''
+              }, {
+                name: '隐私政策',
+                url: ''
+              }
+            ]
+          },
+        ]
       }
     },
     watch: {
@@ -440,9 +579,11 @@
     methods: {
       onContainerScroll() {
         const rect = this.headerRef.getBoundingClientRect()
-        const y = Math.abs(rect.y)
+        const top = Math.abs(rect.top)
         const width = window.outerWidth
-        this.showHeaderBottom = width <= 992 && y <= 30
+        this.showHeaderBottom = width <= 992 && top <= 30
+        console.log(top)
+        console.log(width)
       },
       readAll() {
         let arr, route, attrName
@@ -1039,7 +1180,8 @@
               margin-right: 5px;
 
               img {
-                width: fit-content;
+                width: 20px;
+                height: 20px;
               }
 
               .popup {
@@ -1509,7 +1651,8 @@
         z-index: 100;
 
         img {
-          width: fit-content;
+          width: 24px;
+          height: 35px;
           cursor: pointer;
         }
 
@@ -1541,6 +1684,65 @@
               display: block;
             }
           }
+        }
+      }
+    }
+
+    footer {
+      display: flex;
+      justify-content: space-around;
+      flex-wrap: wrap;
+      padding: 10px 0 30px 0;
+      border-top: 1px solid #dddddd;
+
+      ul {
+        margin-top: 20px;
+        font-size: 1.4rem;
+        font-weight: bold;
+        color: #333333;
+
+        li {
+          font-size: 1.3rem;
+          font-weight: normal;
+          color: #888888;
+          padding: 3px 0;
+          background-color: white;
+
+          a {
+            &:hover, &:focus {
+              text-decoration: underline;
+            }
+          }
+        }
+
+        li:nth-child(1) {
+          padding-top: 20px;
+        }
+
+        .app {
+          img {
+            width: 64px;
+            height: 64px;
+            margin-top: 7px;
+            margin-bottom: 10px;
+            cursor: pointer;
+          }
+        }
+
+        @media(max-width: 992px) {
+          width: 33%;
+          display: flex;
+          align-items: center;
+          flex-direction: column;
+          text-align: center;
+          .app {
+            img {
+              margin: 7px auto 10px;
+            }
+          }
+        }
+        @media(max-width: 500px) {
+          width: 50%;
         }
       }
     }
