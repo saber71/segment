@@ -1,5 +1,23 @@
 $green: #009A61;
 $darker-green: #008d59;
+$light-green: #EBF7F3;
+
+.default-container {
+  width: 100%;
+  margin: auto;
+  box-sizing: border-box;
+  padding: 0 20px;
+  @media(min-width: 768px) {
+    width: 730px;
+    padding: 0;
+  }
+  @media(min-width: 992px) {
+    width: 970px;
+  }
+  @media(min-width: 1200px) {
+    width: 1140px;
+  }
+}
 
 .common-input {
   width: 100%;

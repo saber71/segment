@@ -1,5 +1,5 @@
 <template>
-  <div id="Default" @scroll="onContainerScroll">
+  <div ref="container" id="Default" @scroll="onContainerScroll">
     <header ref="default-layout-header">
       <section class="top"></section>
       <section class="default-container bottom">
@@ -250,6 +250,7 @@
         </li>
       </ul>
     </footer>
+    <div class="to-top" v-show="showToTop" @click="toTop">回<br/>顶<br/>部</div>
     <div class="login-card" v-show="showLoginCard">
       <div class="mask" @click="showLoginCard=false"></div>
       <div class="card">
@@ -317,6 +318,7 @@
     POST_CHECK_READ_ALL_GOOD_NOTIFICATION,
     POST_REGISTER
   } from '../assets/js/api'
+  import {eventBus, SHOW_LOGIN__CARD, SHOW_REGISTER_CARD, SUCCESS_LOGIN} from "../assets/js/event-bus";
 
   const r = mock.Random
   let sendingLogin = false, sendingRegister = false;
@@ -332,6 +334,7 @@
         showLoginCard: false,
         showRegisterCard: false,
         showHeaderBottom: false,
+        showToTop: false,
         headerRef: undefined,
         notificationPopupBannerIndex: 0,
         searchTxt: '',
@@ -577,13 +580,16 @@
       },
     },
     methods: {
+      toTop() {
+        const container = this.$refs.container
+        container.scrollTop = 0
+      },
       onContainerScroll() {
         const rect = this.headerRef.getBoundingClientRect()
         const top = Math.abs(rect.top)
         const width = window.outerWidth
         this.showHeaderBottom = width <= 992 && top <= 30
-        console.log(top)
-        console.log(width)
+        this.showToTop = width > 992 && top > 50
       },
       readAll() {
         let arr, route, attrName
@@ -733,6 +739,19 @@
         alert(this.searchTxt)
         //  todo search
       },
+      onSuccessLogin() {
+        this.showLoginCard = false
+        sendingLogin = false
+        this.$axios.get(GET_CHECK_NEW_NOTIFICATION_NUMBER).then(response => {
+          this.newNotificationNumber = response.data
+          if (this.newNotificationNumber.totalArticle > 0) {
+            this.$axios.get(GET_CHECK_NEW_ARTICLE_NOTIFICATION).then(response => {
+              this.articleNotifications = response.data
+            })
+          }
+          this.fetchChatMsg()
+        })
+      },
       login() {
         if (sendingLogin) {
           return
@@ -746,18 +765,6 @@
             this.$ajax_login({
               account: this.username,
               password: this.password
-            }, () => {
-              this.showLoginCard = false
-              sendingLogin = false
-              this.$axios.get(GET_CHECK_NEW_NOTIFICATION_NUMBER).then(response => {
-                this.newNotificationNumber = response.data
-                if (this.newNotificationNumber.totalArticle > 0) {
-                  this.$axios.get(GET_CHECK_NEW_ARTICLE_NOTIFICATION).then(response => {
-                    this.articleNotifications = response.data
-                  })
-                }
-                this.fetchChatMsg()
-              })
             })
           }
         } else {
@@ -794,6 +801,9 @@
       }
     },
     mounted() {
+      eventBus.$on(SUCCESS_LOGIN, () => this.onSuccessLogin())
+      eventBus.$on(SHOW_LOGIN__CARD, () => this.showLoginCard = true)
+      eventBus.$on(SHOW_REGISTER_CARD, () => this.showRegisterCard = true)
       this.headerRef = this.$refs['default-layout-header']
       window.onresize = () => this.onContainerScroll()
       this.onContainerScroll()
@@ -812,24 +822,6 @@
     height: 100vh;
     overflow-y: scroll;
     overflow-x: hidden;
-
-    .default-container {
-      width: 100%;
-      margin: auto;
-      box-sizing: border-box;
-      padding: 0 20px;
-
-      @media(min-width: 768px) {
-        width: 730px;
-        padding: 0;
-      }
-      @media(min-width: 992px) {
-        width: 970px;
-      }
-      @media(min-width: 1200px) {
-        width: 1140px;
-      }
-    }
 
     header {
       background-color: #FAFAFA;
@@ -1744,6 +1736,23 @@
         @media(max-width: 500px) {
           width: 50%;
         }
+      }
+    }
+
+    .to-top {
+      position: fixed;
+      bottom: 40px;
+      right: 20px;
+      padding: 10px;
+      font-size: 1.4rem;
+      line-height: 1.25;
+      color: #999999;
+      border: 1px solid #dddddd;
+      cursor: pointer;
+      background-color: white;
+
+      &:hover {
+        background-color: #dddddd;
       }
     }
 
