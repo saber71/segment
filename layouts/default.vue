@@ -316,7 +316,8 @@
     POST_CHECK_READ_ALL_GOOD_NOTIFICATION,
     POST_REGISTER
   } from '../assets/js/api'
-  import {eventBus, SHOW_LOGIN__CARD, SHOW_REGISTER_CARD, SUCCESS_LOGIN} from "../assets/js/event-bus";
+  import {eventBus, ON_DEFAULT_LAYOUT_SCROLL, SHOW_LOGIN__CARD, SHOW_REGISTER_CARD, SUCCESS_LOGIN} from "../assets/js/event-bus";
+  import {LS_ACCOUNT} from "../assets/js/const";
 
   const r = mock.Random
   let sendingLogin = false, sendingRegister = false;
@@ -597,6 +598,7 @@
         const width = window.outerWidth
         this.showHeaderBottom = width <= 992 && top <= 50
         this.showToTop = width > 992 && top > 50
+        eventBus.$emit(ON_DEFAULT_LAYOUT_SCROLL, top)
       },
       readAll() {
         let arr, route, attrName
@@ -809,6 +811,15 @@
       this.containerRef = this.$refs['container']
       window.onresize = () => this.onContainerScroll()
       this.onContainerScroll()
+      const account = JSON.parse(localStorage.getItem(LS_ACCOUNT))
+      if (account) {
+        const expires = account.expires
+        if (Date.now() <= expires) {
+          this.$ajax_login(account)
+        } else {
+          localStorage.removeItem(LS_ACCOUNT)
+        }
+      }
     },
     created() {
     },
@@ -1760,6 +1771,7 @@
       top: 0;
       width: 100%;
       height: 100%;
+      z-index: 100;
 
       .mask {
         position: absolute;
@@ -1768,6 +1780,7 @@
         width: 100%;
         height: 100%;
         background-color: rgba(0, 0, 0, 0.5);
+        z-index: 100;
       }
 
       .card {
@@ -1777,7 +1790,7 @@
         width: 40%;
         min-width: 300px;
         position: relative;
-        z-index: 1;
+        z-index: 101;
 
         .top {
           background-color: #F3F3F3;

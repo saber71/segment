@@ -17,10 +17,15 @@
     <section class=" default-container content">
       <section class="left">
         <ul class="top">
-          <li class="tag" :class="{'active-tag':selectedTag==='为你推荐'}" @click="selectedTag='为你推荐'">
+          <li class="tag" :class="{'active-tag':selectedTag==='为你推荐'}" v-if="!user" @click="selectedTag='为你推荐'">
             <img src="/icon/board-black.png" v-show="selectedTag!=='为你推荐'">
             <img src="/icon/board-white.png" v-show="selectedTag==='为你推荐'">
             为你推荐
+          </li>
+          <li class="tag" :class="{'active-tag':selectedTag==='我的订阅'}" v-else="user" @click="selectedTag='我的订阅'">
+            <img src="/icon/board-black.png" v-show="selectedTag!=='我的订阅'">
+            <img src="/icon/board-white.png" v-show="selectedTag==='我的订阅'">
+            我的订阅
           </li>
           <li class="tag" :class="{'active-tag':selectedTag==='近期热门'}" @click="selectedTag='近期热门'">
             <img src="/icon/hottest-black.png" v-show="selectedTag!=='近期热门'">
@@ -74,7 +79,61 @@
           </ul>
         </section>
       </section>
-      <section class="center"></section>
+      <section class="center">
+        <section class="carousel">
+          <div v-swiper:carousel="carouselOption">
+            <div class="swiper-wrapper">
+              <div class="swiper-slide" v-for="val in recommendCarouselInfo">
+                <img :src="val.img">
+                <div class="mask"></div>
+                <p class="title" v-if="val.title">{{val.title}}</p>
+              </div>
+            </div>
+            <div class="swiper-pagination"></div>
+          </div>
+        </section>
+        <section class="articles">
+          <section class="labels">
+            <label v-if="selectedTag!=='近期热门'&&selectedTag!=='我的订阅'">{{selectedTag}}</label>
+            <section v-else-if="selectedTag==='我的订阅'">
+              <section class="set-option" v-if="showOption">
+                <section class="left-side">
+                  <input type="checkbox" v-model="getArticleOption(user).ignoreSelf">不看自己
+                  <input type="checkbox" v-model="getArticleOption(user).onlyRecommend">只看推荐
+                  <input type="checkbox" v-model="getArticleOption(user).autoUpdate">自动更新
+                </section>
+                <section class="right-side">
+                  <button class="cancel" @click="showOption=false">取消</button>
+                  <button class="save" @click="saveArticleOption">保存</button>
+                </section>
+              </section>
+              <section class="show-option" v-else>
+                <section class="left-side">
+                  <span>我的订阅</span>
+                  <label v-show="getArticleOption(user).ignoreSelf">| 不看自己</label>
+                  <label v-show="getArticleOption(user).onlyRecommend">| 只看推荐</label>
+                  <label v-show="getArticleOption(user).autoUpdate">| 自动更新</label>
+                </section>
+                <button class="option-button" @click="showOption=true">推送配置</button>
+              </section>
+            </section>
+            <section class="hottest-by" v-else>
+              <label :class="{'active-label':hottestByIndex===0}" @click="hottestByIndex=0">日热门</label>
+              <label :class="{'active-label':hottestByIndex===1}" @click="hottestByIndex=1">周热门</label>
+              <label :class="{'active-label':hottestByIndex===2}" @click="hottestByIndex=2">月热门</label>
+            </section>
+          </section>
+          <section class="article-list">
+            <down-fetch-content :fetch="fetchArticle">
+              <ul>
+                <li v-for="val in articles">
+
+                </li>
+              </ul>
+            </down-fetch-content>
+          </section>
+        </section>
+      </section>
       <section class="right">
         <div class="community-event" v-if="communityEvent">
           <a :href="communityEvent.link">{{communityEvent.banner}}</a>
@@ -135,22 +194,42 @@
 </template>
 
 <script>
-  import {LS_ACCOUNT} from "../assets/js/const";
-  import {eventBus, FAIL_LOGIN, SHOW_LOGIN__CARD, SHOW_REGISTER_CARD} from "../assets/js/event-bus";
-  import {GET_COMMUNITY_EVENT, GET_EVENTS_DESCRIPTION_LESS, GET_RECOMMEND_CAROUSEL_INFO, GET_RECOMMEND_LESSON} from "../assets/js/api";
+  import {eventBus, SHOW_LOGIN__CARD, SHOW_REGISTER_CARD, SUCCESS_LOGIN} from "../assets/js/event-bus";
+  import {
+    GET_ARTICLE_BY,
+    GET_CHECK_ARTICLE_HOTTEST,
+    GET_CHECK_ARTICLE_NEWEST,
+    GET_CHECK_ARTICLE_RECOMMEND,
+    GET_COMMUNITY_EVENT,
+    GET_EVENTS_DESCRIPTION_LESS,
+    GET_HOTTEST_ARTICLE,
+    GET_NEWEST_ARTICLE,
+    GET_RECOMMEND_ARTICLE,
+    GET_RECOMMEND_CAROUSEL_INFO,
+    GET_RECOMMEND_LESSON,
+    POST_CHECK_ARTICLE_OPTION
+  } from "../assets/js/api";
   import StarRating from "../components/StarRating";
+  import DownFetchContent from "../components/DownFetchContent";
 
   export default {
-    components: {StarRating},
+    components: {DownFetchContent, StarRating},
     head() {
+      let prefix = this.selectedTag
+      if (prefix !== '为你推荐') {
+        prefix += ' - '
+      } else {
+        prefix = ''
+      }
       return {
-        title: 'SegmentFault 思否'
+        title: prefix + 'SegmentFault 思否'
       }
     },
     data() {
       return {
         showBanner: true,
         showTechTagsSelector: false,
+        showOption: false,
         selectedTag: '为你推荐',
         techChannels: [
           {
@@ -218,7 +297,19 @@
             nextEl: '.swiper-next',
             prevEl: '.swiper-prev',
           },
-        }
+        },
+        carouselOption: {
+          loop: true,
+          autoplay: true,
+          delay: 5000,
+          pagination: {
+            el: '.swiper-pagination',
+            clickable: true,
+          }
+        },
+        hottestByIndex: 0,
+        aricles: [],
+        articleOption: {}
       }
     },
     async asyncData({app}) {
@@ -243,7 +334,77 @@
         return this.$store.state.eventsDescriptionLess
       },
     },
+    watch: {
+      selectedTag() {
+        this.articles = []
+        this.fetchArticle()
+      },
+      hottestByIndex() {
+        this.articles = []
+        this.fetchArticle()
+      }
+    },
     methods: {
+      saveArticleOption() {
+        this.$store.commit('setRecommendArticleOption', this.articleOption)
+        this.$axios.post(POST_CHECK_ARTICLE_OPTION, this.articleOption)
+        this.showOption = false
+      },
+      getArticleOption(user) {
+        if (user) {
+          Object.assign(this.articleOption, user.recommendArticleOption)
+        }
+        return this.articleOption
+      },
+      fetchArticle(finish) {
+        const isLogin = this.user
+        let url = undefined, query = undefined
+        if (isLogin) {
+          switch (this.selectedTag) {
+            case "为你推荐":
+              url = GET_CHECK_ARTICLE_RECOMMEND
+              break
+            case '近期内容':
+              url = GET_CHECK_ARTICLE_NEWEST
+              break
+            case '最热内容':
+              url = GET_CHECK_ARTICLE_HOTTEST
+              query = {index: this.hottestByIndex}
+              break;
+            default:
+              url = GET_ARTICLE_BY
+              query = {by: this.selectedTag}
+              break
+          }
+        } else {
+          switch (this.selectedTag) {
+            case "为你推荐":
+              url = GET_RECOMMEND_ARTICLE
+              break
+            case '近期内容':
+              url = GET_NEWEST_ARTICLE
+              break
+            case '最热内容':
+              url = GET_HOTTEST_ARTICLE
+              query = {index: this.hottestByIndex}
+              break;
+            default:
+              url = GET_ARTICLE_BY
+              query = {by: this.selectedTag}
+              break
+          }
+        }
+        let config = undefined
+        if (query) {
+          config = {params: query}
+        }
+        this.$axios.get(url, config).then(response => {
+          response.data.forEach(val => this.articles.push(val))
+          if (finish) {
+            this.finish()
+          }
+        })
+      },
       clickTechTag(val) {
         this.showTechTagsSelector = false
         if (val === '更多标签') {
@@ -260,21 +421,12 @@
       },
     },
     mounted() {
-      // this.$axios.get(GET_COMMUNITY_EVENT).then(response => {
-      //   this.communityEvent = response.data
-      // })
-      this.$store.commit('setHomeActiveMenu', '首页')
-      const account = JSON.parse(localStorage.getItem(LS_ACCOUNT))
-      if (account) {
-        const expires = account.expires
-        if (Date.now() <= expires) {
-          this.showBanner = false
-          eventBus.$on(FAIL_LOGIN, () => this.showBanner = true)
-          this.$ajax_login(account)
-        } else {
-          localStorage.removeItem(LS_ACCOUNT)
+      eventBus.$on(SUCCESS_LOGIN, () => {
+        if (this.selectedTag === '为你推荐') {
+          this.selectedTag = '我的订阅'
         }
-      }
+      })
+      this.$store.commit('setHomeActiveMenu', '首页')
     },
     destroyed() {
     }
@@ -479,7 +631,170 @@
       }
 
       .center {
-        flex-grow: 1;
+        width: calc(100% - 170px - 255px);
+        padding: 0 10px;
+        box-sizing: border-box;
+
+        .carousel {
+          border-radius: 4px;
+          overflow: hidden;
+
+          .swiper-slide {
+            width: 100%;
+            position: relative;
+
+            .mask {
+              position: absolute;
+              width: 100%;
+              height: 50%;
+              left: 0;
+              bottom: 0;
+              background: linear-gradient(to top, black, rgba(0, 0, 0, 0));
+            }
+
+            .title {
+              position: absolute;
+              left: 0;
+              bottom: 15px;
+              width: 70%;
+              padding: 0 20px;
+              box-sizing: border-box;
+              color: white;
+              font-size: 2.4rem;
+            }
+          }
+
+          .swiper-pagination {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 20px;
+            box-sizing: border-box;
+
+            .swiper-pagination-bullet {
+              background-color: transparent;
+              width: 10px;
+              height: 10px;
+              border: 1px solid white;
+              opacity: 1;
+            }
+
+            .swiper-pagination-bullet-active {
+              background-color: white;
+              width: 12px;
+              height: 12px;
+            }
+          }
+        }
+
+        .articles {
+          padding-top: 20px;
+
+          .labels {
+            border-bottom: 1px solid #dddddd;
+            padding-bottom: 10px;
+
+            label {
+              font-size: 1.6rem;
+              color: #212121;
+            }
+
+            .hottest-by {
+              padding-top: 10px;
+
+              label {
+                cursor: pointer;
+                margin-right: 10px;
+                color: $green;
+                font-size: 1.4rem;
+                padding: 15px;
+              }
+
+              .active-label {
+                background-color: white;
+                border: 1px solid #dddddd;
+                border-bottom: none;
+                border-radius: 4px;
+                color: #212121;
+              }
+            }
+
+            .set-option {
+              font-size: 1.4rem;
+              color: #212121;
+              display: flex;
+              align-items: center;
+              justify-content: space-between;
+
+              .left-side {
+                input {
+                  margin-right: 5px;
+                }
+
+                input:nth-child(2), input:nth-child(3) {
+                  margin-left: 30px;
+                }
+              }
+
+              .right-side {
+                font-size: 1.2rem;
+
+                button {
+                  padding: 5px 10px;
+                  border-radius: 3px;
+                }
+
+                .cancel {
+                  border: 1px solid #dddddd;
+
+                  &:hover {
+                    background-color: #dddddd;
+                  }
+                }
+
+                .save {
+                  background-color: #5cb85c;
+                  margin-left: 5px;
+                  color: white;
+
+                  &:hover {
+                    background-color: $darker-green;
+                  }
+                }
+              }
+            }
+
+            .show-option {
+              display: flex;
+              align-items: center;
+              justify-content: space-between;
+
+              .left-side {
+                span {
+                  font-size: 1.6rem;
+                  color: #212121;
+                }
+
+                label {
+                  font-size: 1.3rem;
+                  color: gray;
+                  margin-left: 10px;
+                }
+              }
+
+              .option-button {
+                font-size: 1.2rem;
+                padding: 5px;
+                border: 1px solid #dddddd;
+                border-radius: 3px;
+
+                &:hover {
+                  background-color: #dddddd;
+                }
+              }
+            }
+          }
+        }
       }
 
       .right {

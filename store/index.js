@@ -13,5 +13,8 @@ export const mutations = {
   },
   setEventsDescriptionLess(state, val) {
     state.eventsDescriptionLess = val
+  },
+  setRecommendArticleOption(state, val) {
+    state.user.recommendArticleOption = val
   }
 }
