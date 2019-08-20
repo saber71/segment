@@ -1,6 +1,8 @@
+import {eventBus, SHOW_LOGIN__CARD} from "../assets/js/event-bus";
+
 export default function ({$axios, redirect}) {
   $axios.onRequest(config => {
-    console.log('Making request to ' + config.url)
+    console.log(config.method + ':' + config.url)
   })
 
   $axios.onRequestError(err => {
@@ -14,7 +16,7 @@ export default function ({$axios, redirect}) {
   $axios.onError(error => {
     const code = parseInt(error.response && error.response.status)
     if (code === 401) {
-      alert(code)
+      eventBus.$emit(SHOW_LOGIN__CARD)
     }
   })
 }

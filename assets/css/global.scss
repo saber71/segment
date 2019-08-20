@@ -4,7 +4,7 @@ html, body {
   margin: 0;
   font-size: 10px;
   scroll-behavior: smooth;
-  font-family: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
+  font-family: -apple-system, "Helvetica Neue", Helvetica, Arial, "PingFang SC", "Hiragino Sans GB", "WenQuanYi Micro Hei", "Microsoft Yahei", sans-serif;
 }
 
 img {
@@ -29,4 +29,8 @@ button {
 
 input {
   border: 1px solid #dddddd;
+}
+
+a {
+  cursor: pointer;
 }

@@ -17,7 +17,7 @@
             <li :class="{'active-li':activeLi==='专栏'}">专栏</li>
             <li :class="{'active-li':activeLi==='课程'}">课程</li>
             <li :class="{'active-li':activeLi==='圈子'}">圈子</li>
-            <li :class="{'active-li':activeLi==='发现'}" @mouseenter="fetchEventsDescription">发现
+            <li :class="{'active-li':activeLi==='发现'}">发现
               <div class="triangle"></div>
               <div class="popup border-shadow">
                 <ul class="left-side">
@@ -35,11 +35,10 @@
                   </li>
                 </ul>
                 <ul class="right-side">
-                  <li class="right-item" v-for="val in eventsDescription">
+                  <li class="right-item" v-for="val in eventsDescriptionInMenu">
                     <p>{{val.name}}</p>
                     <div>
-                      {{val.city}} · {{$formatDate(val.datetime)}} {{$getWeekDay(val.datetime)}} · <span class="joining" v-if="val.joining">报名中</span>
-                      <span class="joining-end" v-else>报名结束</span>
+                      {{val.city}} · {{$formatDate(val.datetime)}} {{$getWeekDay(val.datetime)}} <span class="joining" v-if="val.joining">报名中</span>
                     </div>
                   </li>
                   <li class="more">查看更多活动</li>
@@ -311,7 +310,6 @@
     GET_CHECK_NEW_FANS_NOTIFICATION,
     GET_CHECK_NEW_GOOD_NOTIFICATION,
     GET_CHECK_NEW_NOTIFICATION_NUMBER,
-    GET_EVENTS_DESCRIPTION_LESS,
     POST_CHECK_READ_ALL_ARTICLE_NOTIFICATION,
     POST_CHECK_READ_ALL_CHAT_NOTIFICATION,
     POST_CHECK_READ_ALL_FANS_NOTIFICATION,
@@ -335,7 +333,7 @@
         showRegisterCard: false,
         showHeaderBottom: false,
         showToTop: false,
-        headerRef: undefined,
+        containerRef: undefined,
         notificationPopupBannerIndex: 0,
         searchTxt: '',
         phone: '',
@@ -346,7 +344,6 @@
         warnMsg: '',
         defaultAvatar: require('static/icon/user.png'),
         handler: undefined,
-        eventsDescription: undefined,
         newNotificationNumber: undefined,
         articleNotifications: undefined,
         chatNotification: undefined,
@@ -549,6 +546,17 @@
       }
     },
     computed: {
+      eventsDescription() {
+        return this.$store.state.eventsDescriptionLess
+      },
+      eventsDescriptionInMenu() {
+        if (this.eventsDescription) {
+          const len = this.eventsDescription.length
+          return len === 5 ? this.eventsDescription.slice(0, 4) : this.eventsDescription
+        } else {
+          return undefined
+        }
+      },
       activeLi() {
         return this.$store.state.homeActiveMenu
       },
@@ -581,14 +589,13 @@
     },
     methods: {
       toTop() {
-        const container = this.$refs.container
+        const container = this.containerRef
         container.scrollTop = 0
       },
       onContainerScroll() {
-        const rect = this.headerRef.getBoundingClientRect()
-        const top = Math.abs(rect.top)
+        const top = this.containerRef.scrollTop
         const width = window.outerWidth
-        this.showHeaderBottom = width <= 992 && top <= 30
+        this.showHeaderBottom = width <= 992 && top <= 50
         this.showToTop = width > 992 && top > 50
       },
       readAll() {
@@ -698,11 +705,6 @@
       clearNewChatNumber() {
         this.newNotificationNumber.newChatMsg = 0
       },
-      async fetchEventsDescription() {
-        if (!this.eventsDescription) {
-          this.eventsDescription = await this.$axios.$get(GET_EVENTS_DESCRIPTION_LESS)
-        }
-      },
       validPhone(phone) {
         return /^1\d{10}$/.test(phone)
       },
@@ -804,7 +806,7 @@
       eventBus.$on(SUCCESS_LOGIN, () => this.onSuccessLogin())
       eventBus.$on(SHOW_LOGIN__CARD, () => this.showLoginCard = true)
       eventBus.$on(SHOW_REGISTER_CARD, () => this.showRegisterCard = true)
-      this.headerRef = this.$refs['default-layout-header']
+      this.containerRef = this.$refs['container']
       window.onresize = () => this.onContainerScroll()
       this.onContainerScroll()
     },
@@ -951,10 +953,6 @@
 
                       .joining {
                         color: #F5A623;
-                      }
-
-                      .joining-end {
-                        color: black;
                       }
                     }
 

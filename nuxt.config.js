@@ -41,7 +41,8 @@ export default {
   ** Global CSS
   */
   css: [
-    '@/assets/css/global.scss'
+    '@/assets/css/global.scss',
+    'swiper/dist/css/swiper.css',
   ],
   /*
   ** Plugins to load before mounting the App
@@ -52,6 +53,7 @@ export default {
     '~/plugins/axios',
     '~/plugins/vue-highlightjs',
     '~/plugins/mavon-editor',
+    {src: "@/plugins/vue-awesome-swiper", ssr: false}
   ],
   /*
   ** Nuxt.js dev-modules

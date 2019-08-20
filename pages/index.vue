@@ -1,7 +1,7 @@
 <template>
   <div id="Index">
     <section class="banner" v-if="showBanner&&!user">
-      <section class="container default-container">
+      <section class="default-container container">
         <section class="left">
           <h1>在 SegmentFault，学习技能、解决问题</h1>
           <p>每个月，我们帮助 1000 万的开发者解决各种各样的技术问题。并助力他们在
@@ -75,7 +75,61 @@
         </section>
       </section>
       <section class="center"></section>
-      <section class="right"></section>
+      <section class="right">
+        <div class="community-event" v-if="communityEvent">
+          <a :href="communityEvent.link">{{communityEvent.banner}}</a>
+        </div>
+        <div class="recommend-lesson">
+          <div class="top">
+            <span>课程推荐</span>
+            <div class="button-group">
+              <div class="swiper-prev">
+                <img src="/icon/arrow-down-white.png">
+              </div>
+              <div class="swiper-next">
+                <img src="/icon/arrow-down-white.png">
+              </div>
+            </div>
+          </div>
+          <div v-swiper:mySwiper="recommendLessonOption">
+            <div class="swiper-wrapper">
+              <div class="swiper-slide" v-for="val in recommendLesson">
+                <img :src="val.img">
+                <p class="name">{{val.name}}</p>
+                <div class="rating">
+                  <star-rating :rating="val.rank"></star-rating>
+                  <label class="number">({{val.join}}人参与)</label>
+                </div>
+                <div class="price">
+                  <label class="new">￥{{val.price}}</label>
+                  <label class="old" v-show="val.oldPrice">￥{{val.oldPrice}}</label>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="recommend-event">
+          <section class="head">
+            <label>活动推荐</label>
+            <a href="#">更多</a>
+          </section>
+          <ul class="events">
+            <li v-for="val in eventDescription">
+              <div class="left-side">
+                <div class="month">{{$getMonthEn(val.datetime).toUpperCase()}}</div>
+                <div class="day">{{new Date(val.datetime).getDate()}}</div>
+              </div>
+              <div class="right-side">
+                <a class="name" href="#">{{val.name}}</a>
+                <p class="info">
+                  {{val.city}} · {{$formatDate(val.datetime)}} {{$getWeekDay(val.datetime)}}
+                  <label class="yellow" v-if="val.joining">报名中</label>
+                </p>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </section>
     </section>
   </div>
 </template>
@@ -83,8 +137,16 @@
 <script>
   import {LS_ACCOUNT} from "../assets/js/const";
   import {eventBus, FAIL_LOGIN, SHOW_LOGIN__CARD, SHOW_REGISTER_CARD} from "../assets/js/event-bus";
+  import {GET_COMMUNITY_EVENT, GET_EVENTS_DESCRIPTION_LESS, GET_RECOMMEND_CAROUSEL_INFO, GET_RECOMMEND_LESSON} from "../assets/js/api";
+  import StarRating from "../components/StarRating";
 
   export default {
+    components: {StarRating},
+    head() {
+      return {
+        title: 'SegmentFault 思否'
+      }
+    },
     data() {
       return {
         showBanner: true,
@@ -147,13 +209,39 @@
             name: '更多标签',
             icon: require('static/icon/tag.png'),
           }
-        ]
+        ],
+        recommendLessonOption: {
+          loop: true,
+          autoplay: true,
+          delay: 5000,
+          navigation: {
+            nextEl: '.swiper-next',
+            prevEl: '.swiper-prev',
+          },
+        }
       }
+    },
+    async asyncData({app}) {
+      const [communityEvent, recommendCarouselInfo, recommendLesson] = await Promise.all([
+        app.$axios.$get(GET_COMMUNITY_EVENT),
+        app.$axios.$get(GET_RECOMMEND_CAROUSEL_INFO),
+        app.$axios.$get(GET_RECOMMEND_LESSON),
+      ])
+      return {
+        communityEvent, recommendCarouselInfo, recommendLesson
+      }
+    },
+    async fetch({app, store}) {
+      const data = await app.$axios.$get(GET_EVENTS_DESCRIPTION_LESS)
+      store.commit('setEventsDescriptionLess', data)
     },
     computed: {
       user() {
         return this.$store.state.user
-      }
+      },
+      eventDescription() {
+        return this.$store.state.eventsDescriptionLess
+      },
     },
     methods: {
       clickTechTag(val) {
@@ -172,6 +260,9 @@
       },
     },
     mounted() {
+      // this.$axios.get(GET_COMMUNITY_EVENT).then(response => {
+      //   this.communityEvent = response.data
+      // })
       this.$store.commit('setHomeActiveMenu', '首页')
       const account = JSON.parse(localStorage.getItem(LS_ACCOUNT))
       if (account) {
@@ -210,7 +301,8 @@
         color: white;
         background: url('/banner-bg.svg') right center no-repeat;
         background-size: 50%;
-        padding: 30px 0;
+        padding-top: 30px;
+        padding-bottom: 30px;
 
         .left {
           width: 50%;
@@ -324,6 +416,7 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
+            flex-wrap: wrap;
           }
         }
 
@@ -390,11 +483,195 @@
       }
 
       .right {
-        width: 200px;
+        width: 255px;
         padding-left: 10px;
         box-sizing: border-box;
         @media(max-width: 992px) {
           display: none;
+        }
+
+        .community-event {
+          padding: 20px 5px;
+          box-sizing: border-box;
+          line-height: 1.1;
+          background: #FCF8E3;
+          color: #8a6d3b;
+          font-size: 1.2rem;
+          margin-bottom: 20px;
+          text-align: center;
+          border-radius: 5px;
+          border: 1px solid #faebcc;
+          letter-spacing: 1px;
+
+          a {
+            cursor: pointer;
+
+            &:hover {
+              text-decoration: underline;
+            }
+          }
+        }
+
+        .recommend-lesson {
+          padding: 15px 15px;
+          box-sizing: border-box;
+          background-color: #fafafa;
+          margin-bottom: 20px;
+          border-radius: 1px;
+
+          .top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-sizing: border-box;
+            padding-bottom: 10px;
+            color: $green;
+            font-size: 1.6rem;
+            font-weight: 500;
+
+            .button-group {
+              display: flex;
+              align-items: center;
+
+              .swiper-prev, .swiper-next {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border-radius: 50%;
+                background-color: $green;
+                padding: 2px;
+                cursor: pointer;
+
+                img {
+                  width: 10px;
+                  height: 10px;
+                  transform: rotate(90deg);
+                }
+
+                &:hover {
+                  background-color: $darker-green;
+                }
+              }
+
+              .swiper-next {
+                transform: rotate(180deg);
+                margin-left: 5px;
+              }
+            }
+
+          }
+
+          .swiper-slide {
+            width: 100%;
+
+            img {
+              width: 192px;
+              height: 108px;
+            }
+
+            .name {
+              color: black;
+              font-weight: bold;
+              margin-top: 10px;
+              margin-bottom: 5px;
+              font-size: 1.4rem;
+            }
+
+            .rating {
+              display: flex;
+              align-items: center;
+              margin-bottom: 5px;
+
+              .number {
+                font-size: 1.2rem;
+                color: #999999;
+              }
+            }
+
+            .price {
+              .new {
+                font-size: 1.4rem;
+                font-weight: bold;
+                color: red;
+              }
+
+              .old {
+                font-size: 1.2rem;
+                color: gray;
+                text-decoration: line-through;
+              }
+            }
+          }
+        }
+
+        .recommend-event {
+          .head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 1.6rem;
+            color: #212121;
+            margin-bottom: 20px;
+
+            a {
+              font-size: 1.4rem;
+              color: $green;
+            }
+          }
+
+          .events {
+            li {
+              display: flex;
+              margin-bottom: 10px;
+              padding-bottom: 10px;
+              border-bottom: 1px dashed #dddddd;
+
+              .left-side {
+                text-align: center;
+                color: #017E66;
+                width: 50px;
+
+                .month {
+                  font-size: 1.0rem;
+                  background-color: #C8E9DE;
+                  padding: 2px 0;
+                }
+
+                .day {
+                  font-size: 1.4rem;
+                  background-color: #EBF7F3;
+                }
+              }
+
+              .right-side {
+                flex-grow: 1;
+                padding-left: 10px;
+                box-sizing: border-box;
+
+                .name {
+                  font-size: 1.4rem;
+                  font-weight: 500;
+                  line-height: 1.3;
+                  color: #212121;
+                  margin-bottom: 5px;
+
+                  &:hover {
+                    text-decoration: underline;
+                  }
+                }
+
+                .info {
+                  font-size: 1.2rem;
+                  color: gray;
+
+                  .yellow {
+                    color: #F5A623;;
+                    margin-left: 5px;
+                  }
+                }
+              }
+            }
+          }
         }
       }
 

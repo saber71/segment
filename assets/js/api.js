@@ -13,6 +13,10 @@ export const POST_CHECK_READ_ALL_FANS_NOTIFICATION = '/check/new/notification/fa
 export const GET_PUSH_ARTICLE = "/push/article";
 export const GET_EVENTS_DESCRIPTION_LESS = '/events/description/less';
 export const GET_EVENTS_DESCRIPTION = '/events/description';
+export const GET_COMMUNITY_EVENT = '/event/community'
+
+export const GET_RECOMMEND_LESSON = '/lesson/recommend'
+export const GET_RECOMMEND_CAROUSEL_INFO = '/carousel/recommend'
 
 export const GET_CHECK_USER_DATA_AFTER_LOGIN = "/check/user/afterLogin";
 export const GET_CHECK_PUSH_ARTICLE = "/check/push/article";
