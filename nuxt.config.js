@@ -53,7 +53,6 @@ export default {
     '~/plugins/axios',
     '~/plugins/vue-highlightjs',
     '~/plugins/mavon-editor',
-    {src: "@/plugins/vue-awesome-swiper", ssr: false}
   ],
   /*
   ** Nuxt.js dev-modules

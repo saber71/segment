@@ -107,6 +107,17 @@ Vue.prototype.$getMonthEn = function (date) {
   }
 }
 
+Vue.prototype.$readyForCarousel = function (array) {
+  if (array === undefined || array === null || array.length <= 1) {
+    return array
+  }
+  const res = []
+  array.forEach(val => res.push(val))
+  res.push(array[0])
+  res.push(array[1])
+  return res
+}
+
 function sameDayTime(date1, date2) {
   const bias = date1.getTime() - date2.getTime()
   const minutes = parseInt(bias / 60000)

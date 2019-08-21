@@ -38,10 +38,10 @@
             最新内容
           </li>
           <li class="tag"
-              :class="{'active-tag':selectedTag!=='最新内容'&&selectedTag!=='近期热门'&&selectedTag!=='为你推荐'}"
+              :class="{'active-tag':selectedTag!=='最新内容'&&selectedTag!=='近期热门'&&selectedTag!=='为你推荐'&&selectedTag!=='我的订阅'}"
               @click="showTechTagsSelector=true">
-            <img src="/icon/channel-black.png" v-show="selectedTag==='最新内容'||selectedTag==='近期热门'||selectedTag==='为你推荐'">
-            <img src="/icon/channel-white.png" v-show="selectedTag!=='最新内容'&&selectedTag!=='近期热门'&&selectedTag!=='为你推荐'">
+            <img src="/icon/channel-black.png" v-show="selectedTag==='最新内容'||selectedTag==='近期热门'||selectedTag==='为你推荐'&&selectedTag==='我的订阅'">
+            <img src="/icon/channel-white.png" v-show="selectedTag!=='最新内容'&&selectedTag!=='近期热门'&&selectedTag!=='为你推荐'&&selectedTag!=='我的订阅'">
             技术频道
           </li>
         </ul>
@@ -81,16 +81,16 @@
       </section>
       <section class="center">
         <section class="carousel">
-          <div v-swiper:carousel="carouselOption">
-            <div class="swiper-wrapper">
-              <div class="swiper-slide" v-for="val in recommendCarouselInfo">
+          <carousel :len="recommendCarouselInfo.length"
+                    v-if="recommendCarouselInfo">
+            <carousel-item v-for="(val,index) in $readyForCarousel(recommendCarouselInfo)" :key="index">
+              <div class="slide">
                 <img :src="val.img">
                 <div class="mask"></div>
                 <p class="title" v-if="val.title">{{val.title}}</p>
               </div>
-            </div>
-            <div class="swiper-pagination"></div>
-          </div>
+            </carousel-item>
+          </carousel>
         </section>
         <section class="articles">
           <section class="labels">
@@ -157,21 +157,22 @@
         <div class="community-event" v-if="communityEvent">
           <a :href="communityEvent.link">{{communityEvent.banner}}</a>
         </div>
-        <div class="recommend-lesson">
+        <section class="recommend-lesson">
           <div class="top">
             <span>课程推荐</span>
             <div class="button-group">
-              <div class="swiper-prev">
+              <div class="swiper-prev" @click="recommendLessonChange(-1)">
                 <img src="/icon/arrow-down-white.png">
               </div>
-              <div class="swiper-next">
+              <div class="swiper-next" @click="recommendLessonChange(1)">
                 <img src="/icon/arrow-down-white.png">
               </div>
             </div>
           </div>
-          <div v-swiper:mySwiper="recommendLessonOption">
-            <div class="swiper-wrapper">
-              <div class="swiper-slide" v-for="val in recommendLesson">
+          <carousel ref="recommendLessonCarousel" :len="recommendLesson.length" :interval="3000"
+                    v-if="recommendLesson">
+            <carousel-item v-for="(val,index) in $readyForCarousel(recommendLesson)" :key="index">
+              <div class="slide">
                 <img :src="val.img">
                 <p class="name">{{val.name}}</p>
                 <div class="rating">
@@ -183,9 +184,9 @@
                   <label class="old" v-show="val.oldPrice">￥{{val.oldPrice}}</label>
                 </div>
               </div>
-            </div>
-          </div>
-        </div>
+            </carousel-item>
+          </carousel>
+        </section>
         <div class="recommend-event">
           <section class="head">
             <label>活动推荐</label>
@@ -231,12 +232,15 @@
   } from "../assets/js/api";
   import StarRating from "../components/StarRating";
   import DownFetchContent from "../components/DownFetchContent";
+  import Carousel from "../components/Carousel";
+  import CarouselItem from "../components/CarouselItem";
+  import {CAROUSEL_NEXT, CAROUSEL_PREV} from "../assets/js/const";
 
   const CHANGE_TAG = 'changeTag', LEAVE = 'leave'
   let isOpenSocket = false
 
   export default {
-    components: {DownFetchContent, StarRating},
+    components: {CarouselItem, Carousel, DownFetchContent, StarRating},
     head() {
       let prefix = this.selectedTag
       if (prefix !== '为你推荐' && prefix !== '我的订阅') {
@@ -316,24 +320,6 @@
             icon: require('static/icon/tag.png'),
           }
         ],
-        recommendLessonOption: {
-          loop: true,
-          autoplay: true,
-          delay: 5000,
-          navigation: {
-            nextEl: '.swiper-next',
-            prevEl: '.swiper-prev',
-          },
-        },
-        carouselOption: {
-          loop: true,
-          autoplay: true,
-          delay: 5000,
-          pagination: {
-            el: '.swiper-pagination',
-            clickable: true,
-          }
-        },
         hottestByIndex: 0,
         articles: [],
         socketArticles: [],
@@ -371,7 +357,6 @@
     },
     watch: {
       'articleOption.autoUpdate'(val) {
-        alert('amd')
         if (val) {
           this.openSocketIO()
         } else {
@@ -396,6 +381,13 @@
       }
     },
     methods: {
+      recommendLessonChange(bias) {
+        if (bias > 0) {
+          this.$refs.recommendLessonCarousel.$emit(CAROUSEL_NEXT)
+        } else {
+          this.$refs.recommendLessonCarousel.$emit(CAROUSEL_PREV)
+        }
+      },
       saveArticleOption() {
         this.$store.commit('setRecommendArticleOption', this.articleOption)
         this.$axios.post(POST_CHECK_ARTICLE_OPTION, this.articleOption)
@@ -594,6 +586,10 @@
         flex-basis: 170px;
         box-sizing: border-box;
         padding-right: 10px;
+        @media(max-width: 992px) {
+          flex-basis: 0;
+          margin-bottom: 20px;
+        }
 
         .tag {
           padding: 5px 10px;
@@ -711,12 +707,16 @@
         width: calc(100% - 170px - 255px);
         padding: 0 10px;
         box-sizing: border-box;
+        @media(max-width: 992px) {
+          width: 100%;
+        }
 
         .carousel {
           border-radius: 4px;
           overflow: hidden;
+          position: relative;
 
-          .swiper-slide {
+          .slide {
             width: 100%;
             position: relative;
 
@@ -742,25 +742,8 @@
           }
 
           .swiper-pagination {
-            display: flex;
-            align-items: center;
             justify-content: flex-end;
             padding-right: 20px;
-            box-sizing: border-box;
-
-            .swiper-pagination-bullet {
-              background-color: transparent;
-              width: 10px;
-              height: 10px;
-              border: 1px solid white;
-              opacity: 1;
-            }
-
-            .swiper-pagination-bullet-active {
-              background-color: white;
-              width: 12px;
-              height: 12px;
-            }
           }
         }
 
@@ -1089,7 +1072,7 @@
 
           }
 
-          .swiper-slide {
+          .slide {
             width: 100%;
 
             img {
