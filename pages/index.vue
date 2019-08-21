@@ -98,9 +98,9 @@
             <section v-else-if="selectedTag==='我的订阅'">
               <section class="set-option" v-if="showOption">
                 <section class="left-side">
-                  <input type="checkbox" v-model="getArticleOption(user).ignoreSelf">不看自己
-                  <input type="checkbox" v-model="getArticleOption(user).onlyRecommend">只看推荐
-                  <input type="checkbox" v-model="getArticleOption(user).autoUpdate">自动更新
+                  <input type="checkbox" v-model="articleOption.ignoreSelf">不看自己
+                  <input type="checkbox" v-model="articleOption.onlyRecommend">只看推荐
+                  <input type="checkbox" v-model="articleOption.autoUpdate">自动更新
                 </section>
                 <section class="right-side">
                   <button class="cancel" @click="showOption=false">取消</button>
@@ -110,9 +110,9 @@
               <section class="show-option" v-else>
                 <section class="left-side">
                   <span>我的订阅</span>
-                  <label v-show="getArticleOption(user).ignoreSelf">| 不看自己</label>
-                  <label v-show="getArticleOption(user).onlyRecommend">| 只看推荐</label>
-                  <label v-show="getArticleOption(user).autoUpdate">| 自动更新</label>
+                  <label v-show="articleOption.ignoreSelf">| 不看自己</label>
+                  <label v-show="articleOption.onlyRecommend">| 只看推荐</label>
+                  <label v-show="articleOption.autoUpdate">| 自动更新</label>
                 </section>
                 <button class="option-button" @click="showOption=true">推送配置</button>
               </section>
@@ -124,10 +124,29 @@
             </section>
           </section>
           <section class="article-list">
+            <section class="update" v-show="socketArticles.length>0" @click="pushToArticles">更新了{{socketArticles.length}}条内容，点击查看</section>
             <down-fetch-content :fetch="fetchArticle">
               <ul>
-                <li v-for="val in articles">
-
+                <li class="article" v-for="val in articles">
+                  <section class="left-side">
+                    <p class="tag-line" v-show="user">来自标签<a class="tag" href="#">{{val.tag}}</a></p>
+                    <section class="goto" tabindex="2">
+                      <h2 class="title">{{val.name}}</h2>
+                      <p class="first-paragraph">{{val.firstParagraph}}</p>
+                    </section>
+                    <div class="bottom">
+                      <div class="good">
+                        <img class="green" src="/icon/good-green-full.png">
+                        <img class="white" src="/icon/good-white-full.png">
+                      </div>
+                      <span class="good-number" v-show="val.goodNum>0">x {{val.goodNum}} ·</span>赞
+                      <a class="author">{{val.author}}</a>
+                      <span class="datetime">{{$formatDatetime(val.datetime)}}</span>
+                    </div>
+                  </section>
+                  <section class="right-side" v-show="val.image">
+                    <img :src="val.image">
+                  </section>
                 </li>
               </ul>
             </down-fetch-content>
@@ -207,19 +226,27 @@
     GET_RECOMMEND_ARTICLE,
     GET_RECOMMEND_CAROUSEL_INFO,
     GET_RECOMMEND_LESSON,
-    POST_CHECK_ARTICLE_OPTION
+    POST_CHECK_ARTICLE_OPTION,
+    SOCKET_ARTICLE
   } from "../assets/js/api";
   import StarRating from "../components/StarRating";
   import DownFetchContent from "../components/DownFetchContent";
+
+  const CHANGE_TAG = 'changeTag', LEAVE = 'leave'
+  let isOpenSocket = false
 
   export default {
     components: {DownFetchContent, StarRating},
     head() {
       let prefix = this.selectedTag
-      if (prefix !== '为你推荐') {
+      if (prefix !== '为你推荐' && prefix !== '我的订阅') {
         prefix += ' - '
       } else {
         prefix = ''
+      }
+      const len = this.socketArticles.length
+      if (len > 0) {
+        prefix = '(' + len + ') ' + prefix
       }
       return {
         title: prefix + 'SegmentFault 思否'
@@ -308,8 +335,9 @@
           }
         },
         hottestByIndex: 0,
-        aricles: [],
-        articleOption: {}
+        articles: [],
+        socketArticles: [],
+        articleOption: {autoUpdate: false}
       }
     },
     async asyncData({app}) {
@@ -333,15 +361,38 @@
       eventDescription() {
         return this.$store.state.eventsDescriptionLess
       },
+      tag() {
+        if (this.selectedTag === '近期热门') {
+          return this.selectedTag + '-' + this.hottestByIndex
+        } else {
+          return this.selectedTag
+        }
+      }
     },
     watch: {
+      'articleOption.autoUpdate'(val) {
+        alert('amd')
+        if (val) {
+          this.openSocketIO()
+        } else {
+          this.$emit(LEAVE)
+        }
+      },
       selectedTag() {
         this.articles = []
+        this.socketArticles = []
         this.fetchArticle()
+        if (this.user) {
+          this.$emit(CHANGE_TAG)
+        }
       },
       hottestByIndex() {
         this.articles = []
+        this.socketArticles = []
         this.fetchArticle()
+        if (this.user) {
+          this.$emit(CHANGE_TAG)
+        }
       }
     },
     methods: {
@@ -350,18 +401,12 @@
         this.$axios.post(POST_CHECK_ARTICLE_OPTION, this.articleOption)
         this.showOption = false
       },
-      getArticleOption(user) {
-        if (user) {
-          Object.assign(this.articleOption, user.recommendArticleOption)
-        }
-        return this.articleOption
-      },
       fetchArticle(finish) {
         const isLogin = this.user
         let url = undefined, query = undefined
         if (isLogin) {
           switch (this.selectedTag) {
-            case "为你推荐":
+            case "我的订阅":
               url = GET_CHECK_ARTICLE_RECOMMEND
               break
             case '近期内容':
@@ -401,7 +446,7 @@
         this.$axios.get(url, config).then(response => {
           response.data.forEach(val => this.articles.push(val))
           if (finish) {
-            this.finish()
+            finish()
           }
         })
       },
@@ -419,16 +464,48 @@
       register() {
         eventBus.$emit(SHOW_REGISTER_CARD)
       },
+      pushToArticles() {
+        this.socketArticles.forEach(val => this.articles.unshift(val))
+        this.socketArticles = []
+      },
+      openSocketIO() {
+        if (isOpenSocket) {
+          return
+        }
+        const io = require('socket.io-client')
+        const socket = io(SOCKET_ARTICLE + this.user.name)
+        socket.on('connect', () => {
+          isOpenSocket = true
+          socket.on('article', (article) => {
+            this.socketArticles.push(article)
+          })
+          this.$on(CHANGE_TAG, () => {
+            socket.emit(CHANGE_TAG, this.tag)
+          })
+          this.$on(LEAVE, () => {
+            socket.close()
+            isOpenSocket = false
+          })
+        })
+      }
     },
     mounted() {
       eventBus.$on(SUCCESS_LOGIN, () => {
+        this.articles = []
+        this.fetchArticle()
+        Object.assign(this.articleOption, this.user.recommendArticleOption)
         if (this.selectedTag === '为你推荐') {
           this.selectedTag = '我的订阅'
         }
+        if (this.articleOption.autoUpdate) {
+          this.openSocketIO()
+        }
       })
       this.$store.commit('setHomeActiveMenu', '首页')
+      this.fetchArticle()
     },
-    destroyed() {
+    beforeDestroy() {
+      this.$emit(LEAVE)
     }
   }
 </script>
@@ -693,6 +770,7 @@
           .labels {
             border-bottom: 1px solid #dddddd;
             padding-bottom: 10px;
+            margin-bottom: 10px;
 
             label {
               font-size: 1.6rem;
@@ -792,6 +870,141 @@
                   background-color: #dddddd;
                 }
               }
+            }
+          }
+
+          .update {
+            background-color: #d9edf7;
+            color: $green;
+            border: 1px solid transparent;
+            padding: 10px 0;
+            margin-top: 5px;
+            margin-bottom: 15px;
+            font-size: 1.4rem;
+            text-align: center;
+            cursor: pointer;
+            border-radius: 4px;
+
+            &:hover {
+              border-color: $green;
+            }
+          }
+
+          .article {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+
+            .left-side {
+              width: 80%;
+              flex-grow: 1;
+
+              .tag-line {
+                font-size: 1.4rem;
+                color: #9E9E9E;
+                padding: 5px 0;
+
+                a {
+                  margin-left: 5px;
+
+                  &:hover {
+                    text-decoration: underline;
+                  }
+                }
+              }
+
+              .goto {
+                cursor: pointer;
+
+                &:focus {
+                  text-decoration: underline;
+                }
+              }
+
+              .title {
+                font-size: 1.8rem;
+                color: #212121;
+                line-height: 1.5;
+                margin-bottom: 5px;
+              }
+
+              .first-paragraph {
+                text-overflow: ellipsis;
+                overflow: hidden;
+                color: #888888;
+                font-size: 1.3rem;
+                line-height: 1.5;
+                margin-bottom: 10px;
+              }
+
+              .bottom {
+                display: flex;
+                align-items: center;
+                font-size: 1.4rem;
+                color: #666;
+
+                .good {
+                  border-radius: 50%;
+                  overflow: hidden;
+                  width: 20px;
+                  height: 20px;
+                  background-color: #C8E9DE;
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  cursor: pointer;
+
+                  img {
+                    width: 12px;
+                    height: 12px;
+                  }
+
+                  .white {
+                    display: none;
+                  }
+
+                  &:hover {
+                    background-color: #017E66;
+
+                    .green {
+                      display: none;
+                    }
+
+                    .white {
+                      display: block;
+                    }
+                  }
+                }
+
+                .good-number {
+                  margin: 0 5px;
+                  color: $green;
+                }
+
+                .author {
+                  color: gray;
+                  margin-left: 10px;
+
+                  &:hover {
+                    text-decoration: underline;
+                  }
+                }
+
+                .datetime {
+                  color: #999999;
+                  margin-left: 10px;
+                  font-size: 1.3rem;
+                }
+              }
+            }
+
+            .right-side {
+              width: 20%;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              padding-left: 10px;
+              box-sizing: border-box
             }
           }
         }

@@ -1,9 +1,9 @@
 <template>
   <div id="DownFetchContent">
     <slot></slot>
-    <button class="loading-button" ref="loading-button">
+    <button class="loading-button" ref="loading-button" @click="clickButton">
       <img src="/icon/loading-green.png">
-      点击加载更多
+      {{count>0?'加载中':'点击加载更多'}}
     </button>
   </div>
 </template>
@@ -30,19 +30,29 @@
     watch: {},
     computed: {},
     methods: {
+      clickButton() {
+        if (this.count === 0) {
+          this.count = 1
+          this.fetchs()
+        }
+      },
+      fetchs() {
+        if (fetching || this.count === 0) {
+          return
+        }
+        fetching = true
+        this.fetch(() => {
+          fetching = false
+          this.count++
+          this.count %= 4
+        })
+      },
       onScroll(scrollTop) {
         const toTop = this.loadingButton.offsetTop
-        const bias = Math.abs(scrollTop - toTop)
-        if (bias <= 50) {
-          if (fetching || this.count === 0) {
-            return
-          }
-          fetching = true
-          this.fetch(() => {
-            fetching = false
-            this.count++
-            this.count %= 4
-          })
+        const bias = Math.abs(toTop - scrollTop)
+        // console.log(toTop + '  ' + bias + '  ' + scrollTop + '  ' + this.loadingButton.offsetHeight)
+        if (bias <= window.innerHeight) {
+          this.fetchs()
         }
       },
     },

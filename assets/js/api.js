@@ -1,3 +1,8 @@
+export const isDev = process.env.NODE_ENV === 'development'
+export const host = isDev ? 'http://localhost' : 'http://47.103.82.183'
+
+export const SOCKET_ARTICLE = host + ':8081/article?user='
+
 //登陆前
 export const POST_LOGIN = "/login";
 export const POST_REGISTER = "/register";
