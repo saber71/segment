@@ -40,7 +40,7 @@
           <li class="tag"
               :class="{'active-tag':selectedTag!=='最新内容'&&selectedTag!=='近期热门'&&selectedTag!=='为你推荐'&&selectedTag!=='我的订阅'}"
               @click="showTechTagsSelector=true">
-            <img src="/icon/channel-black.png" v-show="selectedTag==='最新内容'||selectedTag==='近期热门'||selectedTag==='为你推荐'&&selectedTag==='我的订阅'">
+            <img src="/icon/channel-black.png" v-show="selectedTag==='最新内容'||selectedTag==='近期热门'||selectedTag==='为你推荐'||selectedTag==='我的订阅'">
             <img src="/icon/channel-white.png" v-show="selectedTag!=='最新内容'&&selectedTag!=='近期热门'&&selectedTag!=='为你推荐'&&selectedTag!=='我的订阅'">
             技术频道
           </li>
@@ -131,7 +131,9 @@
                   <section class="left-side">
                     <p class="tag-line" v-show="user">来自标签<a class="tag" href="#">{{val.tag}}</a></p>
                     <section class="goto" tabindex="2">
-                      <h2 class="title">{{val.name}}</h2>
+                      <h2 class="title">{{val.name}}
+                        <img :src="val.image" v-show="val.image">
+                      </h2>
                       <p class="first-paragraph">{{val.firstParagraph}}</p>
                     </section>
                     <div class="bottom">
@@ -514,6 +516,9 @@
     .banner {
       position: relative;
       background-color: $green;
+      @media(max-width: 500px) {
+        display: none;
+      }
 
       .container {
         display: flex;
@@ -588,7 +593,7 @@
         padding-right: 10px;
         @media(max-width: 992px) {
           flex-basis: 0;
-          margin-bottom: 20px;
+          margin-bottom: 15px;
         }
 
         .tag {
@@ -599,6 +604,9 @@
           color: #757575;
           display: flex;
           align-items: center;
+          @media(max-width: 992px) {
+            margin-bottom: 5px;
+          }
 
           img {
             width: 14px;
@@ -718,7 +726,13 @@
 
           .slide {
             width: 100%;
+            height: 150px;
             position: relative;
+
+            img {
+              width: 100%;
+              height: 150px;
+            }
 
             .mask {
               position: absolute;
@@ -732,8 +746,8 @@
             .title {
               position: absolute;
               left: 0;
-              bottom: 15px;
-              width: 70%;
+              bottom: 20px;
+              width: 100%;
               padding: 0 20px;
               box-sizing: border-box;
               color: white;
@@ -834,12 +848,18 @@
                 span {
                   font-size: 1.6rem;
                   color: #212121;
+                  @media(max-width: 500px) {
+                    font-size: 1.4rem;
+                  }
                 }
 
                 label {
                   font-size: 1.3rem;
                   color: gray;
                   margin-left: 10px;
+                  @media(max-width: 500px) {
+                    font-size: 1.2rem;
+                  }
                 }
               }
 
@@ -848,6 +868,9 @@
                 padding: 5px;
                 border: 1px solid #dddddd;
                 border-radius: 3px;
+                @media(max-width: 500px) {
+                  display: none;
+                }
 
                 &:hover {
                   background-color: #dddddd;
@@ -874,9 +897,8 @@
           }
 
           .article {
-            display: flex;
-            align-items: center;
             margin-bottom: 20px;
+            display: flex;
 
             .left-side {
               width: 80%;
@@ -909,6 +931,17 @@
                 color: #212121;
                 line-height: 1.5;
                 margin-bottom: 5px;
+                display: flex;
+                justify-content: space-between;
+
+                img {
+                  width: 80px;
+                  display: none;
+                  margin-left: 10px;
+                  @media (max-width: 500px) {
+                    display: block;
+                  }
+                }
               }
 
               .first-paragraph {
@@ -923,6 +956,7 @@
               .bottom {
                 display: flex;
                 align-items: center;
+                flex-wrap: wrap;
                 font-size: 1.4rem;
                 color: #666;
 
@@ -983,11 +1017,13 @@
 
             .right-side {
               width: 20%;
+              padding-left: 10px;
               display: flex;
               align-items: center;
               justify-content: center;
-              padding-left: 10px;
-              box-sizing: border-box
+              @media(max-width: 500px) {
+                display: none
+              }
             }
           }
         }
