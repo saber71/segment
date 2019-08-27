@@ -1,6 +1,7 @@
 $green: #009A61;
 $darker-green: #008d59;
 $light-green: #EBF7F3;
+$light-gray: #999;
 
 .default-container {
   width: 100%;
@@ -16,6 +17,25 @@ $light-green: #EBF7F3;
   }
   @media(min-width: 1200px) {
     width: 1140px;
+  }
+}
+
+.content-container {
+  display: flex;
+
+  .left-content {
+    width: 75%;
+  }
+
+  .right-content {
+    width: 25%;
+  }
+
+  @media(max-width: 992px) {
+    flex-direction: column;
+    .left-content, .right-content {
+      width: 100%;
+    }
   }
 }
 

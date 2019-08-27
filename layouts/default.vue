@@ -236,6 +236,20 @@
         </div>
       </section>
     </header>
+    <section class="banner" v-if="!user&&showBanner">
+      <section class="default-container container">
+        <section class="left">
+          <h1>在 SegmentFault，学习技能、解决问题</h1>
+          <p>每个月，我们帮助 1000 万的开发者解决各种各样的技术问题。并助力他们在
+            技术能力、职业生涯、影响力上获得提升。</p>
+        </section>
+        <section class="right">
+          <button class="register-button" @click="showRegisterCard=true">免费注册</button>
+          <button class="login-button" @click="showLoginCard=true">立即登陆</button>
+        </section>
+      </section>
+      <img class="close" src="/icon/close-banner.png" @click="showBanner=false">
+    </section>
     <nuxt></nuxt>
     <footer>
       <ul v-for="(val,index) in footerData">
@@ -328,6 +342,7 @@
     props: {},
     data() {
       return {
+        showBanner: true,
         showImg2: false,
         showPopup: false,
         showLoginCard: false,
@@ -824,6 +839,10 @@
     created() {
     },
     destroyed() {
+      window.onresize = null
+      eventBus.$emit(SUCCESS_LOGIN)
+      eventBus.$emit(SHOW_LOGIN__CARD)
+      eventBus.$emit(SHOW_REGISTER_CARD)
     }
   }
 </script>
@@ -1638,6 +1657,7 @@
         }
       }
 
+
       .bottom-menu {
         display: flex;
         position: fixed;
@@ -1686,6 +1706,75 @@
             }
           }
         }
+      }
+    }
+
+    .banner {
+      position: relative;
+      background-color: $green;
+      @media(max-width: 500px) {
+        display: none;
+      }
+
+      .container {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        color: white;
+        background: url('/banner-bg.svg') right center no-repeat;
+        background-size: 50%;
+        padding-top: 30px;
+        padding-bottom: 30px;
+
+        .left {
+          width: 50%;
+
+          h1 {
+            font-size: 3rem;
+            margin-bottom: 15px;
+          }
+
+          p {
+            font-size: 1.8rem;
+            line-height: 1.5;
+          }
+        }
+
+        .right {
+          .register-button, .login-button {
+            font-size: 1.8rem;
+            padding: 10px 20px;
+            border-radius: 10px;
+            border: 1px solid white;
+          }
+
+          .login-button {
+            background-color: $green;
+
+            &:hover {
+              background-color: $darker-green;
+            }
+          }
+
+          .register-button {
+            background-color: white;
+            margin-right: 20px;
+            color: $green;
+          }
+        }
+
+        @media(max-width: 992px) {
+          display: none;
+        }
+      }
+
+      .close {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        width: 17px;
+        height: 15px;
+        cursor: pointer;
       }
     }
 

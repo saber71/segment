@@ -1,19 +1,5 @@
 <template>
   <div id="Index">
-    <section class="banner" v-if="showBanner&&!user">
-      <section class="default-container container">
-        <section class="left">
-          <h1>在 SegmentFault，学习技能、解决问题</h1>
-          <p>每个月，我们帮助 1000 万的开发者解决各种各样的技术问题。并助力他们在
-            技术能力、职业生涯、影响力上获得提升。</p>
-        </section>
-        <section class="right">
-          <button class="register-button" @click="register">免费注册</button>
-          <button class="login-button" @click="login">立即登陆</button>
-        </section>
-      </section>
-      <img class="close" src="/icon/close-banner.png" @click="showBanner=false">
-    </section>
     <section class=" default-container content">
       <section class="left">
         <ul class="top">
@@ -130,12 +116,12 @@
                 <li class="article" v-for="val in articles">
                   <section class="left-side">
                     <p class="tag-line" v-show="user">来自标签<a class="tag" href="#">{{val.tag}}</a></p>
-                    <section class="goto" tabindex="2">
+                    <nuxt-link class="goto" tabindex="2" :to="'/article/'+val.id">
                       <h2 class="title">{{val.name}}
                         <img :src="val.image" v-show="val.image">
                       </h2>
                       <p class="first-paragraph">{{val.firstParagraph}}</p>
-                    </section>
+                    </nuxt-link>
                     <div class="bottom">
                       <div class="good">
                         <img class="green" src="/icon/good-green-full.png">
@@ -216,7 +202,7 @@
 </template>
 
 <script>
-  import {eventBus, SHOW_LOGIN__CARD, SHOW_REGISTER_CARD, SUCCESS_LOGIN} from "../assets/js/event-bus";
+  import {eventBus, SUCCESS_LOGIN} from "../assets/js/event-bus";
   import {
     GET_ARTICLE_BY,
     GET_CHECK_ARTICLE_HOTTEST,
@@ -260,7 +246,6 @@
     },
     data() {
       return {
-        showBanner: true,
         showTechTagsSelector: false,
         showOption: false,
         selectedTag: '为你推荐',
@@ -452,12 +437,6 @@
           this.selectedTag = val
         }
       },
-      login() {
-        eventBus.$emit(SHOW_LOGIN__CARD)
-      },
-      register() {
-        eventBus.$emit(SHOW_REGISTER_CARD)
-      },
       pushToArticles() {
         this.socketArticles.forEach(val => this.articles.unshift(val))
         this.socketArticles = []
@@ -513,75 +492,6 @@
   @import "../assets/css/var";
 
   #Index {
-    .banner {
-      position: relative;
-      background-color: $green;
-      @media(max-width: 500px) {
-        display: none;
-      }
-
-      .container {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        color: white;
-        background: url('/banner-bg.svg') right center no-repeat;
-        background-size: 50%;
-        padding-top: 30px;
-        padding-bottom: 30px;
-
-        .left {
-          width: 50%;
-
-          h1 {
-            font-size: 3rem;
-            margin-bottom: 15px;
-          }
-
-          p {
-            font-size: 1.8rem;
-            line-height: 1.5;
-          }
-        }
-
-        .right {
-          .register-button, .login-button {
-            font-size: 1.8rem;
-            padding: 10px 20px;
-            border-radius: 10px;
-            border: 1px solid white;
-          }
-
-          .login-button {
-            background-color: $green;
-
-            &:hover {
-              background-color: $darker-green;
-            }
-          }
-
-          .register-button {
-            background-color: white;
-            margin-right: 20px;
-            color: $green;
-          }
-        }
-
-        @media(max-width: 992px) {
-          display: none;
-        }
-      }
-
-      .close {
-        position: absolute;
-        top: 20px;
-        right: 20px;
-        width: 17px;
-        height: 15px;
-        cursor: pointer;
-      }
-    }
-
     .content {
       display: flex;
       margin-top: 30px;
@@ -920,6 +830,7 @@
 
               .goto {
                 cursor: pointer;
+                display: block;
 
                 &:focus {
                   text-decoration: underline;
@@ -936,6 +847,7 @@
 
                 img {
                   width: 80px;
+                  max-height: 80px;
                   display: none;
                   margin-left: 10px;
                   @media (max-width: 500px) {

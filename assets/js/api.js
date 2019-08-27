@@ -8,7 +8,8 @@ export const POST_LOGIN = "/login";
 export const POST_REGISTER = "/register";
 
 //登陆后
-
+export const POST_FOCUS_AUTHOR = '/check/focus/user'
+export const POST_UNFOCUS_AUTHOR = '/check/unfocus/user'
 export const POST_CHECK_ARTICLE_OPTION = '/check/article/option'
 
 export const POST_CHECK_READ_ARTICLE_NOTIFICATION = '/check/new/notification/articles/read'
@@ -22,10 +23,14 @@ export const POST_CHECK_READ_ALL_FANS_NOTIFICATION = '/check/new/notification/fa
 
 //登陆前
 
+export const GET_USER_DATA = '/user/data'
+export const GET_IS_FOCUS = '/user/isFocus'
+
 export const GET_ARTICLE_BY = '/article/by'
 export const GET_RECOMMEND_ARTICLE = "/article/recommend";
 export const GET_HOTTEST_ARTICLE = '/article/hottest'
 export const GET_NEWEST_ARTICLE = '/article/newest'
+export const GET_ARTICLE = '/article'
 
 export const GET_EVENTS_DESCRIPTION_LESS = '/events/description/less';
 export const GET_EVENTS_DESCRIPTION = '/events/description';

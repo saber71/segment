@@ -1,4 +1,28 @@
 import Vue from 'vue';
+import {iconTags} from "../assets/js/tags";
+import {eventBus, ON_DEFAULT_LAYOUT_SCROLL} from "../assets/js/event-bus";
+
+Vue.directive('lazy', {
+  bind: function (el, binding) {
+    eventBus.$on(ON_DEFAULT_LAYOUT_SCROLL, function (top) {
+      if (binding.value) {
+        const bias = Math.abs(top - el.offsetTop)
+        if (bias < window.innerHeight) {
+          el.setAttribute('src', binding.value)
+          binding.value = null
+          eventBus.$off(ON_DEFAULT_LAYOUT_SCROLL)
+        }
+      } else {
+        eventBus.$off(ON_DEFAULT_LAYOUT_SCROLL)
+      }
+    })
+  },
+  unbind: function (el, binding) {
+    if (binding.value) {
+      eventBus.$off(ON_DEFAULT_LAYOUT_SCROLL)
+    }
+  }
+})
 
 Vue.prototype.$getWeekDay = (date) => {
   const obj = new Date(date)
@@ -116,6 +140,10 @@ Vue.prototype.$readyForCarousel = function (array) {
   res.push(array[0])
   res.push(array[1])
   return res
+}
+
+Vue.prototype.$getTagIcon = function (tagName) {
+  return iconTags[tagName]
 }
 
 function sameDayTime(date1, date2) {
