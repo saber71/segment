@@ -36,7 +36,6 @@
     components: {UserAuthentication, Breadcrumb, MdRender},
     props: {},
     head() {
-
       return {
         title: this.article.name + ' - 个人文章 - SegmentFault 思否'
       }
