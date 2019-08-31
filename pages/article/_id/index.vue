@@ -20,7 +20,16 @@
         <p class="time">{{$formatDate(article.datetime)}}发布</p>
       </div>
     </section>
-    <md-render :base64-md="article.content"></md-render>
+    <section class="article-content">
+      <div ref="content" class="left-side">
+        <md-render :article="article"></md-render>
+      </div>
+      <div ref="rightSide" class="right-side">
+        <div ref="index" :style="indexStyle">
+          <md-index></md-index>
+        </div>
+      </div>
+    </section>
   </div>
 </template>
 
@@ -29,11 +38,12 @@
   import MdRender from "../../../components/MdRender";
   import Breadcrumb from "../../../components/Breadcrumb";
   import UserAuthentication from "../../../components/UserAuthentication";
-  import {SHOW_LOGIN__CARD} from "../../../assets/js/event-bus";
+  import {eventBus, ON_DEFAULT_LAYOUT_SCROLL, SHOW_LOGIN__CARD} from "../../../assets/js/event-bus";
+  import MdIndex from "../../../components/MdIndex";
 
   export default {
     name: "index",
-    components: {UserAuthentication, Breadcrumb, MdRender},
+    components: {MdIndex, UserAuthentication, Breadcrumb, MdRender},
     props: {},
     head() {
       return {
@@ -66,7 +76,13 @@
     },
     data() {
       return {
-        isFocus: false
+        isFocus: false,
+        indexStyle: {
+          position: 'absolute',
+          width: '100%',
+          top: 0
+        },
+        offsetTop: 0
       }
     },
     watch: {},
@@ -91,9 +107,27 @@
       }
     },
     async mounted() {
+      const indexRef = this.$refs.index
+      const content = this.$refs.content
+      const contentHeight = content.getBoundingClientRect().height
+      const indexHeight = indexRef.getBoundingClientRect().height
+      const rightSideOffsetTop = this.$refs.rightSide
+      const onScrollCallback = (toTop) => {
+        if (this.offsetTop + indexHeight >= contentHeight) {
+          return
+        }
+        toTop -= 20
+        if (toTop < this.offsetTop) {
+          return
+        }
+        this.offsetTop = toTop - rightSideOffsetTop
+        this.indexStyle.top = this.offsetTop + 'px'
+      }
+      eventBus.$on(ON_DEFAULT_LAYOUT_SCROLL, onScrollCallback)
+      onScrollCallback()
       this.focus = await this.$axios.$get(GET_IS_FOCUS, {
         params: {
-          id: this.user.id,
+          id: this.user ? this.user.id : -1,
           targetId: this.article.authorId
         }
       })
@@ -175,6 +209,23 @@
         .time {
           color: $light-gray;
         }
+      }
+    }
+
+    .article-content {
+      display: flex;
+      align-items: center;
+      position: relative;
+
+      .left-side {
+        width: 70%;
+        padding-right: 20px;
+        box-sizing: border-box;
+      }
+
+      .right-side {
+        width: 30%;
+        position: relative;
       }
     }
   }

@@ -1,9 +1,10 @@
 <template>
   <div id="ArticleTitle">
-    <h1>{{article .name}}</h1>
+    <p class="title">{{article .name}}</p>
     <section class="info">
-      <div class="tag" v-for="val in articl.tags">
-        <tag :tag="val"></tag>
+      <span class="original-article">原创</span>
+      <div class="tag" v-for="val in article.tags">
+        <Tag :tag="val"></Tag>
       </div>
       <span class="readNum">{{$formatNumber(article.readNum)}}次阅读</span>
     </section>
@@ -42,7 +43,7 @@
 
   #ArticleTitle {
 
-    h1 {
+    .title {
       font-size: 30px;
       line-height: 42px;
       margin-top: 15px;
@@ -54,6 +55,10 @@
       display: flex;
       align-items: center;
 
+      .original-article {
+        margin-right: 10px;
+      }
+
       .tag {
         margin-right: 5px;
       }
@@ -61,6 +66,7 @@
       .readNum {
         margin-left: 10px;
         color: #999;
+        font-size: 1.4rem;
       }
     }
   }

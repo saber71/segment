@@ -39,6 +39,15 @@ $light-gray: #999;
   }
 }
 
+.original-article {
+  color: #F2AE43;
+  background-color: rgba(242, 174, 67, 0.25);
+  font-size: 1.3rem;
+  padding: 0 5px;
+  border-radius: 1px;
+  cursor: pointer;
+}
+
 .common-input {
   width: 100%;
   height: 34px;

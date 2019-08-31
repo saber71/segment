@@ -3,7 +3,7 @@ import {iconTags} from "../assets/js/tags";
 import {eventBus, ON_DEFAULT_LAYOUT_SCROLL} from "../assets/js/event-bus";
 
 Vue.directive('lazy', {
-  bind: function (el, binding) {
+  inserted: function (el, binding) {
     eventBus.$on(ON_DEFAULT_LAYOUT_SCROLL, function (top) {
       if (binding.value) {
         const bias = Math.abs(top - el.offsetTop)
@@ -17,11 +17,6 @@ Vue.directive('lazy', {
       }
     })
   },
-  unbind: function (el, binding) {
-    if (binding.value) {
-      eventBus.$off(ON_DEFAULT_LAYOUT_SCROLL)
-    }
-  }
 })
 
 Vue.prototype.$getWeekDay = (date) => {

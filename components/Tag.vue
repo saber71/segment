@@ -1,7 +1,7 @@
 <template>
-  <div id="Tag">
+  <nuxt-link id="Tag" :to="'/tag/'+tag" tag="div">
     <img :src="iconPath" v-if="iconPath">{{tag}}
-  </div>
+  </nuxt-link>
 </template>
 
 <script>
@@ -9,7 +9,7 @@
     name: "Tag",
     props: {
       tag: {
-        type: string,
+        type: String,
         required: true
       }
     },
@@ -19,7 +19,7 @@
     watch: {},
     computed: {
       iconPath() {
-        return this.$getTagIcon(tag)
+        return this.$getTagIcon(this.tag)
       }
     },
     methods: {},
@@ -37,13 +37,16 @@
     font-size: 13px;
     color: #017E66;
     background-color: rgba(1, 126, 102, 0.08);
-    padding: 5px;
+    padding: 0 5px;
     cursor: pointer;
+    display: flex;
+    align-items: center;
+    border-radius: 1px;
 
     img {
-      width: 32px;
-      height: 32px;
-      margin-right: 10px;
+      width: 22px;
+      height: 22px;
+      margin-right: 5px;
     }
 
     &:hover {
