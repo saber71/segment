@@ -8,7 +8,7 @@
 
 <script>
   import ArticleTitle from "./ArticleTitle";
-  import {eventBus, ON_DEFAULT_LAYOUT_SCROLL, ON_MD_RENDER_SCROLL} from "../assets/js/event-bus";
+  import {eventBus, FORCE_EMIT_DEFAULT_LAYOUT_SCROLL, ON_DEFAULT_LAYOUT_SCROLL, ON_MD_RENDER_SCROLL} from "../assets/js/event-bus";
 
   export default {
     name: "MdRender",
@@ -29,7 +29,7 @@
     computed: {},
     methods: {},
     mounted() {
-      eventBus.$emit(ON_DEFAULT_LAYOUT_SCROLL)
+      eventBus.$emit(FORCE_EMIT_DEFAULT_LAYOUT_SCROLL)
     },
     created() {
       const md = require('markdown-it')({
@@ -75,12 +75,13 @@
         if (refArray.length === 0) {
           // const MdRender = document.getElementById('MdRender')
           this.titleArray.forEach(val => refArray.push(document.getElementById(val)))
-          console.log(refArray)
+          // console.log(refArray)
         }
         eventBus.$emit(ON_MD_RENDER_SCROLL, refArray, toTop)
       })
     },
     destroyed() {
+      eventBus.$off(ON_DEFAULT_LAYOUT_SCROLL)
     }
   }
 
@@ -216,14 +217,12 @@
       padding: 2px 4px;
     }
 
-    ul {
-      list-style-type: disc;
+    ul, ol {
       margin-top: 1.5em;
-    }
 
-    ol {
-      list-style-type: decimal;
-      margin-top: 1.5em;
+      li {
+        list-style-type: disc;
+      }
     }
 
     code {

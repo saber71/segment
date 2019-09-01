@@ -236,7 +236,7 @@
         </div>
       </section>
     </header>
-    <section class="banner" v-if="!user&&showBanner">
+    <section ref="banner" class="banner" v-if="!user&&showBanner">
       <section class="default-container container">
         <section class="left">
           <h1>在 SegmentFault，学习技能、解决问题</h1>
@@ -330,7 +330,15 @@
     POST_CHECK_READ_ALL_GOOD_NOTIFICATION,
     POST_REGISTER
   } from '../assets/js/api'
-  import {eventBus, ON_DEFAULT_LAYOUT_SCROLL, SHOW_LOGIN__CARD, SHOW_REGISTER_CARD, SUCCESS_LOGIN} from "../assets/js/event-bus";
+  import {
+    DEFAULT_LAYOUT_SCROLL_TO,
+    eventBus,
+    FORCE_EMIT_DEFAULT_LAYOUT_SCROLL,
+    ON_DEFAULT_LAYOUT_SCROLL,
+    SHOW_LOGIN__CARD,
+    SHOW_REGISTER_CARD,
+    SUCCESS_LOGIN
+  } from "../assets/js/event-bus";
   import {LS_ACCOUNT} from "../assets/js/const";
 
   const r = mock.Random
@@ -559,7 +567,7 @@
           default:
             return
         }
-      }
+      },
     },
     computed: {
       eventsDescription() {
@@ -604,6 +612,13 @@
       },
     },
     methods: {
+      computeTopHeight() {
+        let height = this.$refs['default-layout-header'].getBoundingClientRect().height
+        if (this.showBanner) {
+          height += this.$refs.banner.getBoundingClientRect().height
+        }
+        this.$store.commit('setDefaultLayoutTopHeight', height)
+      },
       toTop() {
         const container = this.containerRef
         container.scrollTop = 0
@@ -820,9 +835,16 @@
       }
     },
     mounted() {
+      this.computeTopHeight()
+      eventBus.$on(DEFAULT_LAYOUT_SCROLL_TO, (position) => {
+        this.containerRef.scrollTop = position
+      })
       eventBus.$on(SUCCESS_LOGIN, () => this.onSuccessLogin())
       eventBus.$on(SHOW_LOGIN__CARD, () => this.showLoginCard = true)
       eventBus.$on(SHOW_REGISTER_CARD, () => this.showRegisterCard = true)
+      eventBus.$on(FORCE_EMIT_DEFAULT_LAYOUT_SCROLL, () => {
+        this.onContainerScroll()
+      })
       this.containerRef = this.$refs['container']
       window.onresize = () => this.onContainerScroll()
       this.onContainerScroll()

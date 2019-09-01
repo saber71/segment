@@ -1,6 +1,7 @@
 export const state = () => ({
   homeActiveMenu: '首页',
   user: undefined,
+  defaultLayoutTopHeight: 0,
   // eventsDescriptionLess
 })
 
@@ -16,5 +17,8 @@ export const mutations = {
   },
   setRecommendArticleOption(state, val) {
     state.user.recommendArticleOption = val
-  }
+  },
+  setDefaultLayoutTopHeight(state, val) {
+    state.defaultLayoutTopHeight = val
+  },
 }

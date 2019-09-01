@@ -44,18 +44,15 @@
     border-radius: 1px;
 
     img {
-      width: 22px;
-      height: 22px;
+      width: 16px;
+      height: 16px;
       margin-right: 5px;
+      margin-top: 0;
     }
 
     &:hover {
       background-color: #017E66;
       color: white;
-
-      img {
-        filter: brightness(0) invert(1);
-      }
     }
   }
 </style>

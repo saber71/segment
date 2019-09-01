@@ -88,7 +88,7 @@ Vue.prototype.$formatNumber = function (number, limit) {
       const res = parseInt(number / 100) / 10
       return res + 'K'
     } else {
-      return res
+      return number
     }
   }
 }
