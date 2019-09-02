@@ -43,7 +43,16 @@ $light-gray: #999;
   color: #F2AE43;
   background-color: rgba(242, 174, 67, 0.25);
   font-size: 1.3rem;
-  padding: 0 5px;
+  padding: 5px;
+  border-radius: 1px;
+}
+
+.translate-article {
+  color: #56C0E0;
+  background-color: rgba(86, 192, 224, 0.25);
+  font-size: 1.3rem;
+  padding: 5px;
+  line-height: 1;
   border-radius: 1px;
 }
 

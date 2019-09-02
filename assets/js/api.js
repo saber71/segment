@@ -14,6 +14,8 @@ export const POST_CHECK_ARTICLE_OPTION = '/check/article/option'
 export const POST_CHECK_COLLECT_ARTICLE = '/check/article/collect'
 export const POST_CHECK_GOOD_ARTICLE = '/check/article/good'
 export const POST_CHECK_GOOD_COMMENT_IN_ARTICLE = '/check/good/articleComment'
+export const POST_CHECK_SUB_COMMENT_COMMIT = '/check/article/subComment/commit'
+export const POST_CHECK_COMMENT_COMMIT = '/check/article/comment/commit'
 export const POST_CHECK_READ_ARTICLE_NOTIFICATION = '/check/new/notification/articles/read'
 export const POST_CHECK_READ_CHAT_NOTIFICATION = '/check/new/notification/chat/read'
 export const POST_CHECK_READ_GOOD_NOTIFICATION = '/check/new/notification/good/read'
@@ -27,6 +29,11 @@ export const POST_CHECK_READ_ALL_FANS_NOTIFICATION = '/check/new/notification/fa
 
 export const GET_USER_DATA = '/user/data'
 export const GET_IS_FOCUS = '/user/isFocus'
+
+export const GET_ARTICLE_PAGE_STATUS = '/article/page/status'
+
+export const GET_HOTTEST_ARTICLE_CHANNELS = '/hottest/article-channels'
+export const GET_HOTTEST_TAGS = '/hottest/tags'
 
 export const GET_ARTICLE_BY = '/article/by'
 export const GET_RECOMMEND_ARTICLE = "/article/recommend";

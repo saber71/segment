@@ -310,7 +310,8 @@
         hottestByIndex: 0,
         articles: [],
         socketArticles: [],
-        articleOption: {autoUpdate: false}
+        articleOption: {autoUpdate: false},
+        page: 0,
       }
     },
     async asyncData({app}) {
@@ -353,6 +354,7 @@
       selectedTag() {
         this.articles = []
         this.socketArticles = []
+        this.page = 0
         this.fetchArticle()
         if (this.user) {
           this.$emit(CHANGE_TAG)
@@ -382,7 +384,7 @@
       },
       fetchArticle(finish) {
         const isLogin = this.user
-        let url = undefined, query = undefined
+        let url, params = {}
         if (isLogin) {
           switch (this.selectedTag) {
             case "我的订阅":
@@ -393,11 +395,11 @@
               break
             case '最热内容':
               url = GET_CHECK_ARTICLE_HOTTEST
-              query = {index: this.hottestByIndex}
+              params = {index: this.hottestByIndex}
               break;
             default:
               url = GET_ARTICLE_BY
-              query = {by: this.selectedTag}
+              params = {by: this.selectedTag}
               break
           }
         } else {
@@ -410,18 +412,16 @@
               break
             case '最热内容':
               url = GET_HOTTEST_ARTICLE
-              query = {index: this.hottestByIndex}
+              params = {index: this.hottestByIndex}
               break;
             default:
               url = GET_ARTICLE_BY
-              query = {by: this.selectedTag}
+              params = {by: this.selectedTag}
               break
           }
         }
-        let config = undefined
-        if (query) {
-          config = {params: query}
-        }
+        params.page = this.page++
+        let config = {params}
         this.$axios.get(url, config).then(response => {
           response.data.forEach(val => this.articles.push(val))
           if (finish) {

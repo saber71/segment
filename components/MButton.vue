@@ -14,7 +14,9 @@
       },
       callback: {
         type: Function,
-        required: true
+      },
+      click: {
+        type: Function,
       },
       param: {
         default: null
@@ -34,10 +36,14 @@
         }
         this.awaiting = true
         const finish = () => this.awaiting = false
-        if (this.param) {
-          this.callback(this.param, finish)
+        if (this.callback) {
+          if (this.param) {
+            this.callback(this.param, finish)
+          } else {
+            this.callback(finish)
+          }
         } else {
-          this.callback(finish)
+          this.click(finish, this.param)
         }
       }
     },

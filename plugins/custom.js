@@ -93,6 +93,16 @@ Vue.prototype.$formatNumber = function (number, limit) {
   }
 }
 
+Vue.prototype.$formatText = function (text, limit) {
+  if (!limit) {
+    return text
+  }
+  if (text.length <= limit) {
+    return text
+  }
+  return text.substr(0, limit) + '...'
+}
+
 Vue.prototype.$getMonthEn = function (date) {
   date = new Date(date)
   const month = date.getMonth() + 1

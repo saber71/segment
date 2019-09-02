@@ -2,7 +2,8 @@
   <div id="ArticleTitle">
     <p class="title">{{article .name}}</p>
     <section class="info">
-      <span class="original-article">原创</span>
+      <span class="original-article" v-if="article.original">原创</span>
+      <span class="translate-article" v-if="article.translate">翻译</span>
       <div class="tag" v-for="val in article.tags">
         <Tag :tag="val"></Tag>
       </div>
@@ -54,8 +55,9 @@
     .info {
       display: flex;
       align-items: center;
+      flex-wrap: wrap;
 
-      .original-article {
+      .original-article, .translate-article {
         margin-right: 10px;
       }
 

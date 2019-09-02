@@ -12,9 +12,13 @@
             <img class="img2" src="/logo-tooltip.png" v-show="showImg2">
           </div>
           <ul>
-            <li :class="{'active-li':activeLi==='首页'}">首页</li>
+            <li :class="{'active-li':activeLi==='首页'}">
+              <nuxt-link to="/" tag="span">首页</nuxt-link>
+            </li>
             <li :class="{'active-li':activeLi==='问答'}">问答</li>
-            <li :class="{'active-li':activeLi==='专栏'}">专栏</li>
+            <li :class="{'active-li':activeLi==='专栏'}">
+              <nuxt-link to="/article-channels" tag="span">专栏</nuxt-link>
+            </li>
             <li :class="{'active-li':activeLi==='课程'}">课程</li>
             <li :class="{'active-li':activeLi==='圈子'}">圈子</li>
             <li :class="{'active-li':activeLi==='发现'}">发现
@@ -218,12 +222,18 @@
         </div>
       </section>
       <section class="bottom-menu" v-show="showHeaderBottom">
-        <img src="/icon/home-black.png" v-if="activeLi!=='首页'">
-        <img src="/icon/home-green.png" v-else>
-        <img src="/icon/ask-black.png" v-if="activeLi!=='问答'">
-        <img src="/icon/ask-green.png" v-else>
-        <img src="/icon/article-black.png" v-if="activeLi!=='专栏'">
-        <img src="/icon/article-green.png" v-else>
+        <nuxt-link to="/">
+          <img src="/icon/home-black.png" v-if="activeLi!=='首页'">
+          <img src="/icon/home-green.png" v-else>
+        </nuxt-link>
+        <nuxt-link to="/">
+          <img src="/icon/ask-black.png" v-if="activeLi!=='问答'">
+          <img src="/icon/ask-green.png" v-else>
+        </nuxt-link>
+        <nuxt-link to="/article-channels">
+          <img src="/icon/article-black.png" v-if="activeLi!=='专栏'">
+          <img src="/icon/article-green.png" v-else>
+        </nuxt-link>
         <img src="/icon/classroom-black.png">
         <div class="more" tabindex="3">
           <img src="/icon/more-black.png">
@@ -625,7 +635,7 @@
       },
       onContainerScroll() {
         const top = this.containerRef.scrollTop
-        const width = window.outerWidth
+        const width = window.innerWidth
         this.showHeaderBottom = width <= 992 && top <= 50
         this.showToTop = width > 992 && top > 50
         eventBus.$emit(ON_DEFAULT_LAYOUT_SCROLL, top)

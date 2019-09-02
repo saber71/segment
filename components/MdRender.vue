@@ -32,11 +32,7 @@
       eventBus.$emit(FORCE_EMIT_DEFAULT_LAYOUT_SCROLL)
     },
     created() {
-      const md = require('markdown-it')({
-        html: true,
-        linkify: true,
-        typography: true
-      })
+      const md = require('markdown-it')('commonmark')
         .use(require('markdown-it-mark'))
         .use(require('markdown-it-sub'))
         .use(require('markdown-it-sup'))
@@ -232,6 +228,7 @@
       box-sizing: border-box;
       background-color: #f6f6f6;
       margin-top: 1.5em;
+      overflow-x: auto;
     }
 
     p {
