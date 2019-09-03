@@ -25,8 +25,11 @@ export const POST_CHECK_READ_ALL_ARTICLE_NOTIFICATION = '/check/new/notification
 export const POST_CHECK_READ_ALL_CHAT_NOTIFICATION = '/check/new/notification/chat/read/all'
 export const POST_CHECK_READ_ALL_GOOD_NOTIFICATION = '/check/new/notification/good/read/all'
 export const POST_CHECK_READ_ALL_FANS_NOTIFICATION = '/check/new/notification/fans/read/all'
+export const POST_CHECK_FOCUS_TAG = '/check/focus/tag'
 
 //登陆前
+export const GET_TAG_DATA = '/tag/data'
+export const GET_SIMILAR_TAGS = '/tag/similar'
 
 export const GET_USER_DATA = '/user/data'
 export const GET_IS_FOCUS = '/user/isFocus'
@@ -63,6 +66,7 @@ export const GET_CHECK_ARTICLE_RECOMMEND = "/check/article/recommend";
 export const GET_CHECK_ARTICLE_NEWEST = '/check/article/newest'
 export const GET_CHECK_ARTICLE_HOTTEST = '/check/article/hottest'
 export const GET_CHECK_ATTITUDE_TO_ARTICLE = '/check/attitudeTo'
+export const GET_CHECK_FOCUS_TAGS = '/check/focus/tags'
 
 export const GET_CHECK_NEW_NOTIFICATION_NUMBER = '/check/new/notification/number'
 export const GET_CHECK_NEW_ARTICLE_NOTIFICATION = '/check/new/notification/articles'

@@ -434,7 +434,7 @@
       clickTechTag(val) {
         this.showTechTagsSelector = false
         if (val === '更多标签') {
-          // todo 跳转标签页
+          this.$router.push({path: '/tags'})
         } else {
           this.selectedTag = val
         }

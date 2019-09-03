@@ -12,6 +12,7 @@
           <img :src="article.avatar">
         </div>
         <nuxt-link class="author" :to="'/user/'+article.authorId">{{article.author}}</nuxt-link>
+        <span class="date">{{$formatDate(article.datetime)}}</span>
         发布于
         <a class="channels" v-if="article.channels" :href="'/article-channel/'+article.channelsId">{{article.channels}}</a>
         <nuxt-link class="channels" v-else :to="'/user/'+article.authorId+'/articles'">self文章</nuxt-link>
@@ -120,7 +121,7 @@
           transform: translateY(-2px);
         }
 
-        .author, .channels {
+        .author, .channels, .date {
           color: $green;
           margin-right: 5px;
           margin-left: 5px;
