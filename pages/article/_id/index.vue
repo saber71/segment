@@ -184,7 +184,7 @@
       if (article.aricleChannelName) {
         breadcrumbData.push({
           text: article.aricleChannelName,
-          href: '/article-channel?name=' + article.aricleChannelName
+          href: '/article-channel/' + article.aricleChannelId
         })
       }
       breadcrumbData.push({

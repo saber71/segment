@@ -129,6 +129,7 @@
                       </div>
                       <span class="good-number" v-show="val.goodNum>0">x {{val.goodNum}} ·</span>赞
                       <a class="author">{{val.author}}</a>
+                      <user-authentication :text="val.authorAuthentication"></user-authentication>
                       <span class="datetime">{{$formatDatetime(val.datetime)}}</span>
                     </div>
                   </section>
@@ -223,12 +224,13 @@
   import Carousel from "../components/Carousel";
   import CarouselItem from "../components/CarouselItem";
   import {CAROUSEL_NEXT, CAROUSEL_PREV} from "../assets/js/const";
+  import UserAuthentication from "../components/UserAuthentication";
 
   const CHANGE_TAG = 'changeTag', LEAVE = 'leave'
   let isOpenSocket = false
 
   export default {
-    components: {CarouselItem, Carousel, DownFetchContent, StarRating},
+    components: {UserAuthentication, CarouselItem, Carousel, DownFetchContent, StarRating},
     head() {
       let prefix = this.selectedTag
       if (prefix !== '为你推荐' && prefix !== '我的订阅') {
@@ -913,6 +915,7 @@
                 .author {
                   color: gray;
                   margin-left: 10px;
+                  margin-right: 5px;
 
                   &:hover {
                     text-decoration: underline;

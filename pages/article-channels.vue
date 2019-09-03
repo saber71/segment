@@ -11,26 +11,7 @@
           </div>
           <ul class="article-list">
             <li v-for="val in articles[page]">
-              <good :click="goodArticle" :param="val" :good="val.isGood" :number="val.goodNum"></good>
-              <section class="text">
-                <div>
-                  <nuxt-link :to="'/article/'+val.id" tag="h3">{{val.name}}</nuxt-link>
-                  <label class="original-article" v-if="val.original">原创</label>
-                  <label class="translate-article" v-else-if="val.translate">翻译</label>
-                </div>
-                <div class="info">
-                  <div class="avatar">
-                    <img :src="val.avatar">
-                  </div>
-                  <nuxt-link class="author" :to="'/user/'+val.authorId">{{val.author}}</nuxt-link>
-                  发布于
-                  <nuxt-link class="channels" v-if="val.channels" :to="'/user-channel/'+val.channels">{{val.channels}}</nuxt-link>
-                  <nuxt-link class="channels" v-else :to="'/user/'+val.authorId+'/articles'">self文章</nuxt-link>
-                  <img class="collect-icon" src="/icon/bookmark.svg">
-                  <m-button class="collect-txt" :click="collectArticle" :param="val">{{val.isCollect?'已收藏':'收藏'}}</m-button>
-                </div>
-                <p class="content">{{$formatText(val.firstParagraph)}}</p>
-              </section>
+              <article-description :article="val"></article-description>
             </li>
           </ul>
         </tabs>
@@ -66,24 +47,16 @@
 
 <script>
   import Tabs from "../components/Tabs";
-  import {
-    GET_ARTICLE_PAGE_STATUS,
-    GET_HOTTEST_ARTICLE,
-    GET_HOTTEST_ARTICLE_CHANNELS,
-    GET_HOTTEST_TAGS,
-    GET_NEWEST_ARTICLE,
-    GET_RECOMMEND_ARTICLE,
-    POST_CHECK_GOOD_ARTICLE
-  } from "../assets/js/api";
+  import {GET_ARTICLE_PAGE_STATUS, GET_HOTTEST_ARTICLE, GET_HOTTEST_ARTICLE_CHANNELS, GET_HOTTEST_TAGS, GET_NEWEST_ARTICLE, GET_RECOMMEND_ARTICLE} from "../assets/js/api";
   import Good from "../components/Good";
-  import {COLLECT_ARTICLE} from "../assets/js/event-bus";
   import MButton from "../components/MButton";
   import Pagination from "../components/Pagination";
   import Tag from "../components/Tag";
+  import ArticleDescription from "../components/ArticleDescription";
 
   export default {
     name: "article-channels",
-    components: {Tag, Pagination, MButton, Good, Tabs},
+    components: {ArticleDescription, Tag, Pagination, MButton, Good, Tabs},
     props: {},
     head() {
       let prefix
@@ -103,7 +76,9 @@
           prefix = '最新的'
           break
       }
-      return prefix + ' - SegmentFault 思否'
+      return {
+        title: prefix + ' - SegmentFault 思否'
+      }
     },
     async asyncData({app}) {
       const [pageNum, hotChannels, hotTags] = await Promise.all([
@@ -211,20 +186,6 @@
           })
         }
       },
-      goodArticle(finish, article) {
-        this.$axios.$post(POST_CHECK_GOOD_ARTICLE + '?articleId=' + article.id).then(() => {
-          article.isGood = !article.isGood
-          if (article.isGood) {
-            article.goodNum++
-          } else {
-            article.goodNum--
-          }
-          finish()
-        })
-      },
-      collectArticle(article) {
-        eventBus.$emit(COLLECT_ARTICLE, article)
-      }
     },
     mounted() {
       this.$store.commit('setHomeActiveMenu', '专栏')
@@ -276,80 +237,7 @@
           margin-top: 20px;
 
           li {
-            display: flex;
             border-bottom: 1px solid #dddddd;
-            padding: 20px 10px;
-            box-sizing: border-box;
-
-            .text {
-              flex-grow: 1;
-              padding-left: 20px;
-              box-sizing: border-box;
-
-              h3 {
-                display: inline-block;
-                font-size: 1.6rem;
-                color: #333;
-                cursor: pointer;
-                @media(max-width: 550px) {
-                  font-size: 1.3rem;
-                }
-
-                &:hover {
-                  text-decoration: underline;
-                }
-              }
-
-              .original-article, .translate-article {
-                margin-left: 10px;
-                @media(max-width: 550px) {
-                  float: right;
-                }
-              }
-
-              .info {
-                padding-top: 10px;
-                padding-bottom: 10px;
-                display: flex;
-                align-items: center;
-                flex-wrap: wrap;
-                font-size: 1.3rem;
-
-                .avatar {
-                  width: 24px;
-                  height: 24px;
-                  border-radius: 50%;
-                  overflow: hidden;
-                  transform: translateY(-2px);
-                }
-
-                .author, .channels {
-                  color: $green;
-                  margin-right: 5px;
-                  margin-left: 5px;
-                }
-
-                .collect-icon {
-                  width: 12px;
-                  height: 12px;
-                }
-
-                .collect-txt {
-                  color: #777;
-                  font-size: 1.2rem;
-                  margin-left: 5px;
-                }
-              }
-
-              .content {
-                font-size: 1.3rem;
-                line-height: 1.6;
-                color: #777;
-                @media(max-width: 550px) {
-                  display: none;
-                }
-              }
-            }
           }
         }
       }

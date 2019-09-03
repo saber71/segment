@@ -61,7 +61,7 @@
     border: 1px solid #eee;
     font-size: 1.6rem;
     margin-bottom: 10px;
-    min-width: 58px;
+    min-width: 50px;
     cursor: pointer;
     height: fit-content;
 
