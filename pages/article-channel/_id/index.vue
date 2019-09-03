@@ -29,7 +29,7 @@
         <button @click="search">搜索</button>
       </div>
       <div class="tags">
-        <tag class="tag" v-for="(val,index) in channel.tags" :tag="val" :key="index"></tag>
+        <tag class="tag" v-for="(val,index) in channel.tags" :tag="val" :param="index" :selected="filterTagIndex===index" :key="index" :click="clickTag"></tag>
       </div>
       <div class="authors">
         <p class="number">{{channel.authors.length}}位作者</p>
@@ -51,7 +51,7 @@
 </template>
 
 <script>
-  import {GET_ARTICLE_CHANNEL, GET_ARTICLE_IN_CHANNEL, POST_CHECK_FOCUS_ARTICLE_CHANNEL} from "../../../assets/js/api";
+  import {GET_ARTICLE_CHANNEL, GET_ARTICLE_IN_CHANNEL, GET_ARTICLE_NUM_IN_CHANNEL_FILTER, POST_CHECK_FOCUS_ARTICLE_CHANNEL} from "../../../assets/js/api";
   import MButton from "../../../components/MButton";
   import ArticleDescription from "../../../components/ArticleDescription";
   import Pagination from "../../../components/Pagination";
@@ -76,13 +76,16 @@
         authorPage: 0,
         authorPageSize: 5,
         articles: [],
-        searchTxt: ''
+        searchTxt: '',
+        filterTag: undefined,
+        filterTagIndex: -1,
+        articleSum: -1,
       }
     },
     watch: {},
     computed: {
       totalArticlePage() {
-        const res = parseInt(this.channel.articlesNum / this.articlePageSize)
+        const res = parseInt(this.articleSum / this.articlePageSize)
         if (res * this.articlePageSize < this.channel.articlesNum) {
           return res + 1
         }
@@ -101,6 +104,21 @@
       },
     },
     methods: {
+      async clickTag(tag, finish, tagIndex) {
+        if (this.filterTagIndex === tagIndex) {
+          this.filterTag = undefined
+          this.filterTagIndex = -1
+          this.articleSum = this.channel.articlesNum
+        } else {
+          this.filterTag = tag
+          this.filterTagIndex = tagIndex
+          this.articleSum = await this.$axios.$get(GET_ARTICLE_NUM_IN_CHANNEL_FILTER + '?tag=' + tag)
+        }
+        this.articles = []
+        this.articlePage = 0
+        this.fetchArticles()
+        finish()
+      },
       search() {
         tihs.$router.push({path: `/search?by='文章'&&channel=${this.channel.id}&&txt=${this.searchTxt}`})
       },
@@ -131,7 +149,8 @@
           params: {
             page,
             channelId: this.channel.id,
-            size: this.articlePageSize
+            size: this.articlePageSize,
+            tag: this.filterTag
           }
         }).then((res) => {
           this.articles[page] = res
@@ -141,6 +160,7 @@
     },
     mounted() {
       this.$store.commit('setHomeActiveMenu', '专栏')
+      this.articleSum = this.channel.articlesNum
       this.fetchArticles()
     },
     created() {

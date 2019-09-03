@@ -1,6 +1,6 @@
 <template>
   <div id="ArrowPagination">
-    <img class="prev" :class="{disabled:currentPage===0}" src="/icon/arrow-down-green.svg" @click="prev">
+    <img class="prev" :class="{disabled:currentPage===1}" src="/icon/arrow-down-green.svg" @click="prev">
     <input v-model="currentPage" v-show="input" @keypress.enter="enterPress" @focusout="enterPress" autofocus>
     <span class="page" v-show="!input" @click="input=true">{{currentPage}}&nbsp;&nbsp;</span>
     <span>/&nbsp;&nbsp;{{total}}</span>
@@ -102,6 +102,10 @@
     .next {
       margin-left: 10px;
       transform: rotate(-90deg);
+    }
+
+    span {
+      cursor: default;
     }
 
     .page, input {

@@ -32,6 +32,7 @@ export const GET_USER_DATA = '/user/data'
 export const GET_IS_FOCUS = '/user/isFocus'
 export const GET_ARTICLE_CHANNEL = '/article/channel'
 export const GET_ARTICLE_IN_CHANNEL = '/article-channel/article'
+export const GET_ARTICLE_NUM_IN_CHANNEL_FILTER = '/article-channel/article-num'
 
 export const GET_ARTICLE_PAGE_STATUS = '/article/page/status'
 
