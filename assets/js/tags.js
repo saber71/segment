@@ -26,7 +26,7 @@ export const iconTags = {
   '云计算': require('static/icon/tag/cloud-compute.png'),
 }
 
-export const tags = [
+export const tagGroups = [
   {
     name: '开发语言',
     has: [

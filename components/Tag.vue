@@ -1,10 +1,10 @@
 <template>
   <div id="Tag" @mouseenter="hover" @mouseleave="leave">
-    <div ref="tag" class="tag" :class="{'active':selected}"
+    <div ref="tag" class="tag" :class="{'active':selected,'closable':close}"
          @click="onClick" tabindex="1">
       <img :src="iconPath" v-if="iconPath">{{tag}}
-      <slot></slot>
     </div>
+    <img class="close" v-show="close" src="/icon/close-black.svg" @click="onClose">
     <section class="popup border-shadow" v-show="showPopup" :style="{left,width:width+'px'}">
       <div class="loading" v-if="!tagData">Loading......</div>
       <section class="content-side" v-else>
@@ -54,6 +54,10 @@
       selected: {
         type: Boolean,
         default: false
+      },
+      close: {
+        type: Boolean,
+        default: false
       }
     },
     data() {
@@ -82,6 +86,9 @@
       }
     },
     methods: {
+      onClose() {
+        this.$emit('close', this.param)
+      },
       focus(finish) {
         this.$axios.$post(POST_CHECK_FOCUS_TAG, {
           tags: [this.tag],
@@ -157,7 +164,7 @@
 
     .tag {
       color: #017E66;
-      background-color: rgba(1, 126, 102, 0.08);
+      background-color: #ebf5f3;
       font-size: 13px;
       padding: 0 5px;
       cursor: pointer;
@@ -178,6 +185,24 @@
       }
     }
 
+    .closable {
+      padding-right: 20px;
+    }
+
+    .close {
+      position: absolute;
+      right: 10px;
+      top: 5px;
+      width: 7px;
+      height: 7px;
+      cursor: pointer;
+      opacity: 0.7;
+
+      &:hover {
+        opacity: 1;
+      }
+    }
+
     .active {
       background-color: #017E66;
       color: white;
@@ -194,6 +219,9 @@
       z-index: 100;
       border-radius: 4px;
       overflow: initial;
+      @media(max-width: 992px) {
+        display: none;
+      }
 
       .loading {
         width: 100%;
