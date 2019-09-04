@@ -191,6 +191,7 @@
       }
       this.setTagSize()
       this.tagGroups = tagGroups
+      this.$store.commit('setHomeActiveMenu', '')
     },
     created() {
     },

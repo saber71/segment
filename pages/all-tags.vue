@@ -85,6 +85,7 @@
     },
     mounted() {
       this.onPageChange(1)
+      this.$store.commit('setHomeActiveMenu', '')
     },
     created() {
     },

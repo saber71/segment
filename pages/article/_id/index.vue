@@ -38,10 +38,6 @@
       </div>
     </section>
     <section ref="float-part" class="float-part" :style="{left:floatPartLeft+'px',opacity:showFloatPart?1:0}">
-      <!--<section class="good-num" :class="{active:isGood}" @click="good">-->
-      <!--<section class="top"></section>-->
-      <!--<section class="bottom">{{$formatNumber(article.goodNum)}}</section>-->
-      <!--</section>-->
       <good :number="article.goodNum" :click="good" :good="isGood"></good>
       <img class="bookmark" :class="{'img-active':isCollect}" src="/icon/bookmark.svg" @click="collect">
       <img class="arrow" src="/icon/arrow-down-white.svg" @click="toTop">
@@ -76,35 +72,7 @@
               <span class="good-num">{{val.isGood?'已赞':'赞'}}{{val.goodNum>0?'x '+val.goodNum:''}}</span>
               <button class="reply" @click="reply(val)">{{val.reply?'取消回复':'回复'}}</button>
             </p>
-            <section class="sub-comments" v-show="val.subComments.length>0||val.reply">
-              <section class="sub-comment" v-for="v in val.subComments">
-                <section class="good-part">
-                  <div class="inner">
-                    {{v.goodNum}}
-                    <img class="good-icon" @click="goodComment(v)" :class="{'active':v.isGood}" src="/icon/good-green-full.png">
-                  </div>
-                </section>
-                <div class="info">
-                  <p class="content-part">
-                    <nuxt-link v-if="v.replyTo" :to="'/user/'+v.replyToId">@{{v.replyTo}}</nuxt-link>
-                    {{v.content}}
-                  </p>
-                  <div class="author-reply">
-                    <nuxt-link :to="'/user/'+v.authorId"><span class="author">{{v.author}}</span></nuxt-link>
-                    <span class="date">{{$formatDate(v.datetime)}}</span>
-                    <button class="reply" @click="reply(val,v.author,v.authorId)">回复</button>
-                  </div>
-                </div>
-              </section>
-              <p class="button-group">
-                <m-button class="more" :callback="fetchMoreSubComment" :param="val" v-show="val.subComments.length<val.totalSubComments">查看更多</m-button>
-                <button class="reply" @click="reply(val)">{{val.reply?'取消回复':'回复'}}</button>
-              </p>
-              <p class="reply-input-p" v-show="val.reply">
-                <textarea class="common-input comment-reply" v-model="val.replyTxt"></textarea>
-                <m-button class="reply-button" :callback="postSubComment" :param="val">添加回复</m-button>
-              </p>
-            </section>
+            <sub-comment :comment="val" v-show="val.subComments.length>0||val.reply"></sub-comment>
           </section>
         </section>
         <m-button class="fetch-comment" :callback="fetchMoreComment" v-show="comments.length<article.comments">点击加载更多</m-button>
@@ -128,15 +96,13 @@
   import {
     GET_ARTICLE,
     GET_ARTICLE_COMMENT,
-    GET_ARTICLE_SUB_COMMENT_MORE,
     GET_CHECK_ATTITUDE_TO_ARTICLE,
     GET_GUESS_LIKE_ARTICLE,
     GET_IS_FOCUS,
     GET_USER_DATA,
     POST_CHECK_COMMENT_COMMIT,
     POST_CHECK_GOOD_ARTICLE,
-    POST_CHECK_GOOD_COMMENT_IN_ARTICLE,
-    POST_CHECK_SUB_COMMENT_COMMIT,
+    POST_CHECK_GOOD_COMMENT,
     POST_FOCUS_AUTHOR,
     POST_UNFOCUS_AUTHOR
   } from "../../../assets/js/api";
@@ -156,13 +122,14 @@
   import MButton from "../../../components/MButton";
   import Tag from "../../../components/Tag";
   import Good from "../../../components/Good";
+  import SubComment from "../../../components/SubComment";
 
   let commentsPage = 1
-  const subCommentsPage = {}, commentPageSize = 10, subCommentPageSize = 4
+  const commentPageSize = 10
 
   export default {
     name: "index",
-    components: {Good, Tag, MButton, MdIndex, UserAuthentication, Breadcrumb, MdRender},
+    components: {SubComment, Good, Tag, MButton, MdIndex, UserAuthentication, Breadcrumb, MdRender},
     props: {},
     head() {
       return {
@@ -236,44 +203,6 @@
           }
         }).then(res => {
           res.forEach(val => this.comments.push(val))
-        })
-      },
-      fetchMoreSubComment(comment, finish) {
-        const page = subCommentsPage[comment.id]
-        if (page === undefined || page === null) {
-          subCommentsPage[comment.id] = 1
-        }
-        this.$axios.$get(GET_ARTICLE_SUB_COMMENT_MORE, {
-          params: {
-            page: subCommentsPage[comment.id]++,
-            commentId: comment.id,
-            size: subCommentPageSize
-          }
-        }).then(res => {
-          res.forEach(val => comment.subComments.push(val))
-          finish()
-        })
-      },
-      postSubComment(comment, finish) {
-        this.$axios.$post(POST_CHECK_SUB_COMMENT_COMMIT, {
-          replyTxt: comment.replyTxt,
-          replyTo: comment.replyTo,
-          replyId: comment.replyId
-        }).then(() => {
-          const subComment = {
-            author: this.user.name,
-            authorId: this.user.id,
-            content: comment.replyTxt.replace(/^@.*\s/, ''),
-            datetime: new Date().toString(),
-            replyTo: comment.replyTo,
-            replyToId: comment.replyToId,
-            goodNum: 0,
-          }
-          comment.replyTxt = ''
-          comment.replyTo = undefined
-          comment.reply = false
-          comment.replyToId = undefined
-          comment.subComments.push(subComment)
           finish()
         })
       },
@@ -293,7 +222,7 @@
         })
       },
       goodComment(comment) {
-        this.$axios.$post(POST_CHECK_GOOD_COMMENT_IN_ARTICLE + '?commentId=' + comment.id, undefined).then(() => {
+        this.$axios.$post(POST_CHECK_GOOD_COMMENT + '?commentId=' + comment.id, undefined).then(() => {
           comment.isGood = !comment.isGood
           if (comment.isGood) {
             comment.goodNum++
@@ -364,36 +293,6 @@
           }
         })
 
-      },
-      async fetchComments(finish) {
-        if (this.article.comments <= this.comments.length) {
-          finish()
-          return
-        }
-        const res = await this.$axios.$get(GET_ARTICLE_COMMENT, {
-          params: {
-            articleId: this.article.id,
-            page: commentsPage++,
-            size: commentPageSize
-          }
-        })
-        res.forEach(val => this.comments.push(val))
-        finish()
-      },
-      async fetchSubComments(comment, finish) {
-        if (comment.totalSubComments <= comment.subComments.length) {
-          finish()
-          return
-        }
-        const res = await this.$axios.$get(GET_ARTICLE_SUB_COMMENT_MORE, {
-          params: {
-            commentId: comment.id,
-            page: subCommentsPage[comment.id]++,
-            size: subCommentPageSize
-          }
-        })
-        res.forEach(val => comment.subComments.push(val))
-        finish()
       },
     },
     async mounted() {
@@ -859,120 +758,6 @@
                 color: blue;
                 margin-right: 10px;
                 padding: 5px 0;
-              }
-            }
-
-            .sub-comments {
-              background-color: #fafafa;
-              padding: 10px;
-              box-sizing: border-box;
-              margin-top: 20px;
-              margin-bottom: 20px;
-
-              .sub-comment {
-                display: flex;
-                font-size: 1.3rem;
-
-                .good-part {
-                  width: 50px;
-
-                  .inner {
-                    display: none;
-                    align-items: center;
-                    color: #777777;
-
-                    .good-icon {
-                      width: 12px;
-                      height: 12px;
-                      margin-left: 5px;
-                      cursor: pointer;
-                      filter: grayscale(100%);
-
-                      &:hover {
-                        filter: grayscale(0);
-                      }
-                    }
-
-                    .active {
-                      filter: grayscale(0);
-                    }
-                  }
-                }
-
-                .info {
-                  flex-grow: 1;
-
-                  .content-part {
-                    line-height: 1.5;
-
-                    a {
-                      color: $green;
-                      margin-right: 5px;
-
-                      &:hover {
-                        text-decoration: underline;
-                      }
-                    }
-                  }
-
-                  .author-reply {
-                    display: flex;
-                    align-items: center;
-                    padding-top: 10px;
-                    padding-bottom: 10px;
-                    border-bottom: 1px dashed #dddddd;
-
-                    &:before {
-                      content: '';
-                      width: 20px;
-                      height: 1px;
-                      background-color: black;
-                    }
-
-                    a {
-                      width: fit-content;
-                      height: fit-content;
-                      display: inline-block;
-                      border-radius: 0;
-                      margin-left: 2px;
-                    }
-
-                    .reply {
-                      display: none;
-                    }
-                  }
-                }
-
-                &:hover {
-                  .good-part {
-                    .inner {
-                      display: flex;
-                    }
-                  }
-
-                  .author-reply {
-                    .reply {
-                      display: inline-block;
-                      margin-left: 10px;
-                    }
-                  }
-                }
-              }
-
-              .reply-input-p {
-                display: flex;
-
-                .comment-reply {
-                  flex-grow: 1;
-                }
-
-                .reply-button {
-                  padding: 5px 10px;
-                  border: 1px solid #dddddd;
-                  font-size: 1.4rem;
-                  margin-left: 10px;
-                  white-space: nowrap;
-                }
               }
             }
           }
