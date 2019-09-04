@@ -77,3 +77,8 @@ $light-gray: #999;
   border-radius: 4px;
   overflow: hidden;
 }
+
+.active-button {
+  background-color: #dddddd;
+  box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+}

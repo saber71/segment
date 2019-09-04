@@ -28,7 +28,9 @@ export const POST_CHECK_READ_ALL_FANS_NOTIFICATION = '/check/new/notification/fa
 export const POST_CHECK_FOCUS_TAG = '/check/focus/tag'
 
 //登陆前
+export const GET_TAG_DATA_TOTAL_NUM = '/tag-data/total'
 export const GET_TAG_DATA = '/tag/data'
+export const GET_TAG_DATAS = '/tag/datas'
 export const GET_SIMILAR_TAGS = '/tag/similar'
 
 export const GET_USER_DATA = '/user/data'
