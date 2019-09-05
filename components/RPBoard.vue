@@ -1,6 +1,6 @@
 <template>
   <ul id="RPBoard">
-    <li v-for="(val,index) in array" class="item">
+    <li v-for="(val,index) in array.slice(startIndex,startIndex+size)" class="item">
       <div class="left-rp">
         <span class="count">{{startIndex+index+1}}.</span>
         <div class="avatar">
@@ -10,7 +10,7 @@
       </div>
       <div class="right-rp">
         <img class="icon" src="/icon/rp.PNG" v-show="showIcon">
-        <span>+{{val.rp}}</span>
+        <span>{{sign?'+':''}}{{val.rp}}</span>
       </div>
     </li>
   </ul>
@@ -24,6 +24,10 @@
         type: Number,
         default: 0
       },
+      size: {
+        type: Number,
+        default: 10
+      },
       showIcon: {
         type: Boolean,
         default: false
@@ -31,6 +35,10 @@
       array: {
         type: Array,
         required: true
+      },
+      sign: {
+        type: Number,
+        default: true
       }
     },
     data() {
@@ -63,6 +71,7 @@
       .left-rp {
         display: flex;
         align-items: center;
+        width: 70%;
       }
 
       .count {
@@ -74,16 +83,22 @@
       }
 
       .avatar {
-        width: 24px;
-        height: 24px;
+        min-width: 24px;
+        max-width: 24px;
+        min-height: 24px;
+        max-height: 24px;
         overflow: hidden;
         border-radius: 50%;
         margin-right: 10px;
       }
 
       a {
+        display: inline-block;
         font-weight: bold;
         color: $green;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
 
         &:hover {
           color: $darker-green;
@@ -93,7 +108,9 @@
 
     .right-rp {
       display: flex;
+      justify-content: flex-end;
       align-items: center;
+      flex-grow: 1;
 
       .icon {
         width: 16px;

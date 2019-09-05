@@ -136,6 +136,85 @@ Vue.prototype.$getMonthEn = function (date) {
   }
 }
 
+Vue.prototype.$getMonthDay = function (month, year) {
+  switch (month) {
+    case 1:
+      return 31
+    case 2:
+      return year % 4 === 0 ? 29 : 28
+    case 3:
+      return 31
+    case 4:
+      return 30
+    case 5:
+      return 31
+    case 6:
+      return 30
+    case 7:
+    case 8:
+      return 31
+    case 9:
+      return 30
+    case 10:
+      return 31
+    case 11:
+      return 30
+    case 12:
+      return 31
+  }
+}
+
+Vue.prototype.$nullOrUndefined = function (obj) {
+  return obj === null || obj === undefined
+}
+
+Vue.prototype.$getDate = function (hour, minute, second, date, month, year) {
+  const now = new Date()
+  if (this.$nullOrUndefined(year)) {
+    year = now.getFullYear()
+  }
+  if (this.$nullOrUndefined(month)) {
+    month = now.getMonth() + 1
+  }
+  if (this.$nullOrUndefined(date)) {
+    date = now.getDate()
+  }
+  if (this.$nullOrUndefined(hour)) {
+    hour = now.getHours()
+  }
+  if (this.$nullOrUndefined(minute)) {
+    minute = now.getMinutes()
+  }
+  if (this.$nullOrUndefined(second)) {
+    second = now.getSeconds()
+  }
+  now.setFullYear(year, month - 1, date)
+  now.setHours(hour, minute, second)
+  return now
+}
+
+Vue.prototype.$getSeasonEnd = function (date) {
+  const month = date.getMonth() + 1
+  switch (month) {
+    case 1:
+    case 2:
+    case 3:
+      return this.$getDate(23, 59, 59, 31, 3)
+    case 4:
+    case 5:
+    case 6:
+      return this.$getDate(23, 59, 59, 30, 6)
+    case 7:
+    case 8:
+    case 9:
+      return this.$getDate(23, 59, 59, 30, 9)
+    case 10:
+    case 11:
+    case 12:
+      return this.$getDate(23, 59, 59, 31, 12)
+  }
+}
+
 Vue.prototype.$readyForCarousel = function (array) {
   if (array === undefined || array === null || array.length <= 1) {
     return array

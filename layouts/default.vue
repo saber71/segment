@@ -1771,6 +1771,15 @@
         a:hover {
           color: #333333;
         }
+
+        @media(max-width: 992px) {
+          justify-content: flex-start;
+          padding-left: 20px;
+          box-sizing: border-box;
+          a {
+            margin-right: 20px;
+          }
+        }
       }
 
       .bottom-menu {
