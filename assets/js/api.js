@@ -31,6 +31,9 @@ export const POST_CHECK_READ_ALL_FANS_NOTIFICATION =
   "/check/new/notification/fans/read/all";
 
 // 登陆前
+export const GET_TOTAL_QUESTION = '/question/total'
+export const GET_RP_INCREASE_BOARD = '/rp/increase-board'
+export const GET_QUESTIONS = '/questions'
 export const GET_TAG_DATA_TOTAL_NUM = '/tag-data/total'
 export const GET_TAG_DATA = '/tag/data'
 export const GET_TAG_DATAS = '/tag/datas'

@@ -82,3 +82,25 @@ $light-gray: #999;
   background-color: #dddddd;
   box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
 }
+
+.default-content-layout {
+  display: flex;
+
+  .left-part {
+    flex-grow: 1;
+  }
+
+  .right-part {
+    width: 30%;
+    padding-left: 20px;
+    box-sizing: border-box;
+  }
+
+  @media(max-width: 768px) {
+    flex-direction: column;
+    .left-part, .right-content {
+      width: 100%;
+      padding-left: 0;
+    }
+  }
+}

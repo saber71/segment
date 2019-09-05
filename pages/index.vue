@@ -146,36 +146,7 @@
         <div class="community-event" v-if="communityEvent">
           <a :href="communityEvent.link">{{communityEvent.banner}}</a>
         </div>
-        <section class="recommend-lesson">
-          <div class="top">
-            <span>课程推荐</span>
-            <div class="button-group">
-              <div class="swiper-prev" @click="recommendLessonChange(-1)">
-                <img src="/icon/arrow-down-white.png">
-              </div>
-              <div class="swiper-next" @click="recommendLessonChange(1)">
-                <img src="/icon/arrow-down-white.png">
-              </div>
-            </div>
-          </div>
-          <carousel ref="recommendLessonCarousel" :len="recommendLesson.length" :interval="3000"
-                    v-if="recommendLesson">
-            <carousel-item v-for="(val,index) in $readyForCarousel(recommendLesson)" :key="index">
-              <div class="slide">
-                <img :src="val.img">
-                <p class="name">{{val.name}}</p>
-                <div class="rating">
-                  <star-rating :rating="val.rank"></star-rating>
-                  <label class="number">({{val.join}}人参与)</label>
-                </div>
-                <div class="price">
-                  <label class="new">￥{{val.price}}</label>
-                  <label class="old" v-show="val.oldPrice">￥{{val.oldPrice}}</label>
-                </div>
-              </div>
-            </carousel-item>
-          </carousel>
-        </section>
+        <recommend-lesson></recommend-lesson>
         <div class="recommend-event">
           <section class="head">
             <label>活动推荐</label>
@@ -215,7 +186,6 @@
     GET_NEWEST_ARTICLE,
     GET_RECOMMEND_ARTICLE,
     GET_RECOMMEND_CAROUSEL_INFO,
-    GET_RECOMMEND_LESSON,
     POST_CHECK_ARTICLE_OPTION,
     SOCKET_ARTICLE
   } from "../assets/js/api";
@@ -223,14 +193,14 @@
   import DownFetchContent from "../components/DownFetchContent";
   import Carousel from "../components/Carousel";
   import CarouselItem from "../components/CarouselItem";
-  import {CAROUSEL_NEXT, CAROUSEL_PREV} from "../assets/js/const";
   import UserAuthentication from "../components/UserAuthentication";
+  import RecommendLesson from "../components/RecommendLesson";
 
   const CHANGE_TAG = 'changeTag', LEAVE = 'leave'
   let isOpenSocket = false
 
   export default {
-    components: {UserAuthentication, CarouselItem, Carousel, DownFetchContent, StarRating},
+    components: {RecommendLesson, UserAuthentication, CarouselItem, Carousel, DownFetchContent, StarRating},
     head() {
       let prefix = this.selectedTag
       if (prefix !== '为你推荐' && prefix !== '我的订阅') {
@@ -317,13 +287,12 @@
       }
     },
     async asyncData({app}) {
-      const [communityEvent, recommendCarouselInfo, recommendLesson] = await Promise.all([
+      const [communityEvent, recommendCarouselInfo] = await Promise.all([
         app.$axios.$get(GET_COMMUNITY_EVENT),
         app.$axios.$get(GET_RECOMMEND_CAROUSEL_INFO),
-        app.$axios.$get(GET_RECOMMEND_LESSON),
       ])
       return {
-        communityEvent, recommendCarouselInfo, recommendLesson
+        communityEvent, recommendCarouselInfo
       }
     },
     async fetch({app, store}) {
@@ -372,13 +341,6 @@
       }
     },
     methods: {
-      recommendLessonChange(bias) {
-        if (bias > 0) {
-          this.$refs.recommendLessonCarousel.$emit(CAROUSEL_NEXT)
-        } else {
-          this.$refs.recommendLessonCarousel.$emit(CAROUSEL_PREV)
-        }
-      },
       saveArticleOption() {
         this.$store.commit('setRecommendArticleOption', this.articleOption)
         this.$axios.post(POST_CHECK_ARTICLE_OPTION, this.articleOption)
@@ -974,99 +936,9 @@
           }
         }
 
-        .recommend-lesson {
-          padding: 15px 15px;
-          box-sizing: border-box;
-          background-color: #fafafa;
-          margin-bottom: 20px;
-          border-radius: 1px;
-
-          .top {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            box-sizing: border-box;
-            padding-bottom: 10px;
-            color: $green;
-            font-size: 1.6rem;
-            font-weight: 500;
-
-            .button-group {
-              display: flex;
-              align-items: center;
-
-              .swiper-prev, .swiper-next {
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                border-radius: 50%;
-                background-color: $green;
-                padding: 2px;
-                cursor: pointer;
-
-                img {
-                  width: 10px;
-                  height: 10px;
-                  transform: rotate(90deg);
-                }
-
-                &:hover {
-                  background-color: $darker-green;
-                }
-              }
-
-              .swiper-next {
-                transform: rotate(180deg);
-                margin-left: 5px;
-              }
-            }
-
-          }
-
-          .slide {
-            width: 100%;
-
-            img {
-              width: 192px;
-              height: 108px;
-            }
-
-            .name {
-              color: black;
-              font-weight: bold;
-              margin-top: 10px;
-              margin-bottom: 5px;
-              font-size: 1.4rem;
-            }
-
-            .rating {
-              display: flex;
-              align-items: center;
-              margin-bottom: 5px;
-
-              .number {
-                font-size: 1.2rem;
-                color: #999999;
-              }
-            }
-
-            .price {
-              .new {
-                font-size: 1.4rem;
-                font-weight: bold;
-                color: red;
-              }
-
-              .old {
-                font-size: 1.2rem;
-                color: gray;
-                text-decoration: line-through;
-              }
-            }
-          }
-        }
-
         .recommend-event {
+          margin-top: 20px;
+
           .head {
             display: flex;
             align-items: center;

@@ -15,7 +15,9 @@
             <li :class="{'active-li':activeLi==='首页'}">
               <nuxt-link to="/" tag="span">首页</nuxt-link>
             </li>
-            <li :class="{'active-li':activeLi==='问答'}">问答</li>
+            <li :class="{'active-li':activeLi==='问答'}">
+              <nuxt-link to="/questions" tag="span">问答</nuxt-link>
+            </li>
             <li :class="{'active-li':activeLi==='专栏'}">
               <nuxt-link to="/article-channels" tag="span">专栏</nuxt-link>
             </li>
@@ -221,6 +223,9 @@
           </div>
         </div>
       </section>
+      <section class="hot-tag-group default-container" v-show="showTagGroup">
+        <nuxt-link v-for="(val,index) in hotTagsGroup" :to="val.to" :key="index">{{val.name}}</nuxt-link>
+      </section>
       <section class="bottom-menu" v-show="showHeaderBottom">
         <nuxt-link to="/">
           <img src="/icon/home-black.png" v-if="activeLi!=='首页'">
@@ -345,6 +350,7 @@
     eventBus,
     FORCE_EMIT_DEFAULT_LAYOUT_SCROLL,
     ON_DEFAULT_LAYOUT_SCROLL,
+    SET_TAG_GROUP_STATUS,
     SHOW_LOGIN__CARD,
     SHOW_REGISTER_CARD,
     SUCCESS_LOGIN
@@ -367,6 +373,7 @@
         showRegisterCard: false,
         showHeaderBottom: false,
         showToTop: false,
+        showTagGroup: false,
         containerRef: undefined,
         notificationPopupBannerIndex: 0,
         searchTxt: '',
@@ -510,6 +517,64 @@
                 url: ''
               }
             ]
+          },
+        ],
+        hotTagsGroup: [
+          {
+            name: '全部',
+            to: '/questions'
+          }, {
+            name: 'iOS开发',
+            to: '/tag?name=iOS开发'
+          },
+          {
+            name: 'webpack',
+            to: '/tag?name=webpack'
+          }, {
+            name: 'docker',
+            to: '/tag?name=docker'
+          }, {
+            name: 'html',
+            to: '/tag?name=html'
+          }, {
+            name: 'css',
+            to: '/tag?name=css'
+          }, {
+            name: 'nodejs',
+            to: '/tag?name=nodejs'
+          }, {
+            name: 'html5',
+            to: '/tag?name=html5'
+          }, {
+            name: 'javascript',
+            to: '/tag?name=javascript'
+          }, {
+            name: 'mysql',
+            to: '/tag?name=mysql'
+          }, {
+            name: 'visual-studio-code',
+            to: '/tag?name=visual-studio-code'
+          }, {
+            name: '前端',
+            to: '/tag?name=前端'
+          }, {
+            name: 'android',
+            to: '/tag?name=android'
+          }, {
+            name: 'php',
+            to: '/tag?name=php'
+          }, {
+            name: 'vue.js',
+            to: '/tag?name=vue.js'
+          }, {
+            name: 'java',
+            to: '/tag?name=java'
+          }, {
+            name: 'css3',
+            to: '/tag?name=css3'
+          }, {
+            name: '热门标签',
+            to: '/tags'
           },
         ]
       }
@@ -845,6 +910,7 @@
       }
     },
     mounted() {
+      this.showTagGroup = false
       this.computeTopHeight()
       eventBus.$on(DEFAULT_LAYOUT_SCROLL_TO, (position) => {
         this.containerRef.scrollTop = position
@@ -854,6 +920,9 @@
       eventBus.$on(SHOW_REGISTER_CARD, () => this.showRegisterCard = true)
       eventBus.$on(FORCE_EMIT_DEFAULT_LAYOUT_SCROLL, () => {
         this.onContainerScroll()
+      })
+      eventBus.$on(SET_TAG_GROUP_STATUS, (status) => {
+        this.showTagGroup = status
       })
       this.containerRef = this.$refs['container']
       window.onresize = () => this.onContainerScroll()
@@ -1689,6 +1758,20 @@
         }
       }
 
+      .hot-tag-group {
+        border-top: 1px solid #dddddd;
+        padding: 15px 0;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        font-size: 1.4rem;
+        color: #777777;
+        flex-wrap: wrap;
+
+        a:hover {
+          color: #333333;
+        }
+      }
 
       .bottom-menu {
         display: flex;

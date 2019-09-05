@@ -17,7 +17,7 @@
     props: {
       fontSize: {
         type: String,
-        default: '1.4rem'
+        default: '14px'
       },
       labels: {
         type: Array,
