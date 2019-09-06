@@ -1,10 +1,12 @@
 <template>
-  <div id="GoodOrBad" :class="{'active-button':isGood||isBad}">
-    <div class="triangle-top" :class="{active:isGood}" @click="good"></div>
+  <div id="GoodOrBad" class="good-or-bad" :class="{'active-button':isGood||isBad}">
+    <div class="triangle-top" :class="{active:isGood}" @click="good"
+         @mouseenter="showGoodPopup=true" @mouseleave="showGoodPopup=false"></div>
     {{$formatNumber(goodNum)}}
-    <div class="triangle-bottom" :class="{active:isGood}" @click="bad"></div>
-    <div class="good-popup" v-show="showGoodPopup">问题对人有帮助，内容完整，我也想知道答案</div>
-    <div class="bad-popup" v-show="showBadPopup">问题没有实际价值，缺少关键内容，没有改进余地</div>
+    <div class="triangle-bottom" :class="{active:isBad}" @click="bad"
+         @mouseenter="showBadPopup=true" @mouseleave="showBadPopup=false"></div>
+    <div class="good-popup" v-show="showGoodPopup">{{question?'问题对人有帮助，内容完整，我也想知道答案':'答案对人有帮助，有参考价值'}}</div>
+    <div class="bad-popup" v-show="showBadPopup">{{question?'问题没有实际价值，缺少关键内容，没有改进余地':'答案对人没帮助，是错误的答案，答非所问'}}</div>
   </div>
 </template>
 
@@ -51,6 +53,12 @@
         }).then(() => {
           this.param.isGood = !this.isGood
           this.param.isBad = false
+          if (this.param.isGood) {
+            this.param.goodNum++
+          } else {
+            this.param.goodNum--
+          }
+          this.$forceUpdate()
         })
       },
       bad() {
@@ -61,6 +69,12 @@
         }).then(() => {
           this.param.isBad = !this.isBad
           this.param.isGood = false
+          if (this.param.isBad) {
+            this.param.goodNum--
+          } else {
+            this.param.goodNum++
+          }
+          this.$forceUpdate()
         })
       },
       getGoodUrl() {
@@ -85,24 +99,29 @@
 
   #GoodOrBad {
     position: relative;
-    min-width: 38px;
-    max-width: 38px;
-    background-color: white;
+    min-width: 40px;
+    max-width: 40px;
+    min-height: 56px;
+    max-height: 56px;
     border: 1px solid #ADADAD;
     font-size: 1.6rem;
     color: #333333;
     line-height: 2.4rem;
+    border-radius: 4px;
+    text-align: center;
 
     .triangle-bottom, .triangle-top {
       cursor: pointer;
-      padding: 2px 0;
+      padding: 1px 0;
 
       &:after {
         content: '';
+        display: block;
         width: 0;
         height: 0;
         border: 7px solid transparent;
         border-bottom-color: #333333;
+        margin: auto;
       }
 
       &:hover {
@@ -117,7 +136,9 @@
     }
 
     .active {
-      border-bottom-color: $green;
+      &:after {
+        border-bottom-color: $green;
+      }
 
       &:hover {
         &:after {
@@ -128,23 +149,43 @@
 
     .good-popup, .bad-popup {
       position: absolute;
-      left: -31px;
-      top: 110%;
-      width: 100px;
+      left: -80px;
+      bottom: 120%;
+      width: 200px;
       color: #ffffff;
       font-size: 1.3rem;
       line-height: 1.5;
       text-align: center;
       background-color: black;
+      border-radius: 5px;
       z-index: 100;
+      padding: 5px 10px;
+      box-sizing: border-box;
 
       &:after {
         content: '';
+        position: absolute;
+        left: 90px;
+        bottom: 0;
         width: 0;
         height: 0;
-        border: 4px solid transparent;
+        border: 10px solid transparent;
         border-top-color: black;
+        transform: translateY(15px);
       }
     }
+
+    .bad-popup {
+      bottom: -110%;
+
+      &:after {
+        transform: rotate(180deg) translateY(-5px);
+        bottom: 100%;
+      }
+    }
+  }
+
+  .good-or-bad {
+    background-color: white;
   }
 </style>

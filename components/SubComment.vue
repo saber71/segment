@@ -20,7 +20,7 @@
       </div>
     </section>
     <p class="button-group">
-      <m-button class="more" :callback="fetchMoreSubComment" :param="comment" v-show="comment.subComments.length<comment.totalSubComments">查看更多</m-button>
+      <m-button class="more" :callback="fetchMoreSubComment" :param="comment" v-show="comment.subComments.length<totalSubComments">查看更多</m-button>
       <button class="reply" @click="reply(comment)">{{comment.reply?'取消回复':'回复'}}</button>
     </p>
     <p class="reply-input-p" v-show="comment.reply">
@@ -55,6 +55,13 @@
     computed: {
       user() {
         return this.$store.state.user
+      },
+      totalSubComments() {
+        const subCommentsNumber = this.comment.subCommentsNumber
+        if (subCommentsNumber === undefined || subCommentsNumber === null) {
+          return this.comment.totalSubComments
+        }
+        return subCommentsNumber
       }
     },
     methods: {

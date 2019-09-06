@@ -1,5 +1,5 @@
 <template>
-  <div id="MdRender">
+  <div id="MdRender" class="md-style">
     <div class="content" v-html="html"></div>
   </div>
 </template>
@@ -123,101 +123,5 @@
   @import "../assets/css/var";
 
   #MdRender {
-    font-size: 1.5rem;
-    line-height: 1.8;
-
-    a {
-      color: $green;
-      border-bottom: 1px solid rgba(0, 154, 97, 0.25);
-      text-decoration: none;
-
-      &:hover {
-        color: #004e31;;
-        border-bottom-color: $green;
-      }
-    }
-
-    h1, h2, h3, h4, h5, h6 {
-      font-weight: 500;
-      font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", "PingFang SC", "Microsoft YaHei", "Source Han Sans SC", "Noto Sans CJK SC", "WenQuanYi Micro Hei", sans-serif;
-      margin-top: 1.5em;
-    }
-
-    h1 {
-      font-size: 2em;
-      line-height: 1.75em;
-      margin-top: 15px;
-      margin-bottom: 20px;
-      border-bottom: 1px solid #eee;
-    }
-
-    h2 {
-      font-size: 1.75em;
-      line-height: 1.5em;
-      border-bottom: 1px solid #eee;
-    }
-
-    h3 {
-      font-size: 1.5em;
-      line-height: 1.25em;
-    }
-
-    h4 {
-      font-size: 1.25em;
-      line-height: 1em;
-    }
-
-    mark {
-      font-size: 0.93em;
-      color: #c7254e;
-      background-color: #f9f2f4;
-      border-radius: 4px;
-      padding: 2px 4px;
-    }
-
-    ul, ol {
-      margin-top: 1.5em;
-
-      li {
-        list-style-type: disc;
-      }
-    }
-
-    code {
-      display: block;
-      width: 100%;
-      padding: 20px;
-      box-sizing: border-box;
-      background-color: #f6f6f6;
-      margin-top: 1.5em;
-      overflow-x: auto;
-    }
-
-    p {
-      margin-top: 1.5em;
-    }
-
-    blockquote {
-      border-left: 2px solid $green;
-      background-color: #F6F6F6;
-      color: #555555;
-      padding: 10px 20px 10px 10px;
-      box-sizing: border-box;
-      margin-top: 1.5em;
-
-      * {
-        margin-top: 0;
-      }
-    }
-
-    img {
-      margin: 1.5em auto auto;
-      max-width: 100%;
-      width: fit-content;
-    }
-
-    table {
-      margin-top: 1.5em;
-    }
   }
 </style>

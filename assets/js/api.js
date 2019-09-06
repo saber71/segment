@@ -3,6 +3,7 @@ export const POST_LOGIN = "/login";
 export const POST_REGISTER = "/register";
 
 //登陆后
+export const POST_CHECK_UPLOAD_IMAGE = '/check/upload/img'
 export const POST_CHECK_FOCUS_QUESTION = '/check/focus/question'
 export const POST_CHECK_COLLECT_QUESTION = '/check/collect/question'
 export const POST_CHECK_GOOD_ANSWER = '/check/good/answer'

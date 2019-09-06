@@ -63,6 +63,11 @@
           status: !this.param.isFocus
         }).then(() => {
           this.param.isFocus = !this.param.isFocus
+          if (this.param.isFocus) {
+            this.param.focusNum++
+          } else {
+            this.param.focusNum--
+          }
           finish()
         })
       },
@@ -74,6 +79,7 @@
             status: false
           }).then(() => {
             this.param.isCollect = false
+            this.param.collectNum--
             finish()
           })
         } else {
