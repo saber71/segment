@@ -5,7 +5,7 @@
 </template>
 
 <script>
-  import {eventBus, FORCE_EMIT_DEFAULT_LAYOUT_SCROLL, ON_DEFAULT_LAYOUT_SCROLL, ON_MD_RENDER_SCROLL} from "../assets/js/event-bus";
+  import {eventBus, ON_DEFAULT_LAYOUT_SCROLL, ON_MD_RENDER_SCROLL} from "../assets/js/event-bus";
 
   export default {
     name: "MdRender",
@@ -25,7 +25,18 @@
     computed: {},
     methods: {},
     mounted() {
-      eventBus.$emit(FORCE_EMIT_DEFAULT_LAYOUT_SCROLL)
+      const refArray = []
+      eventBus.$on(ON_DEFAULT_LAYOUT_SCROLL, (toTop) => {
+        if (this.titleArray.length === 0) {
+          return
+        }
+        if (refArray.length === 0) {
+          // const MdRender = document.getElementById('MdRender')
+          this.titleArray.forEach(val => refArray.push(document.getElementById(val)))
+        }
+        eventBus.$emit(ON_MD_RENDER_SCROLL, refArray, toTop)
+      })
+      // eventBus.$emit(FORCE_EMIT_DEFAULT_LAYOUT_SCROLL)
     },
     created() {
       const md = require('markdown-it')('commonmark')
@@ -37,12 +48,13 @@
         .use(require('markdown-it-katex'))
         // .use(require('markdown-it-toc'))
         .use(require('markdown-it-task-lists'))
-        .use(require('markdown-it-lazy-image'))
+        // .use(require('markdown-it-lazy-image'))
         .use(require('markdown-it-plugin-underline'))
         .use(require('markdown-it-abbr'))
       const base64 = require('js-base64').Base64
       const tokens = md.parse(base64.decode(this.content), {})
       forEachTokens(tokens, this.titleArray)
+      // console.log(JSON.stringify(this.titleArray))
       const hljs = require('highlight.js')
       this.html = md.renderer.render(tokens, {
         langPrefix: '',
@@ -59,15 +71,6 @@
           return '<pre v-highlightjs><code>' + md.utils.escapeHtml(str) + '</code></pre>';
         }
       })
-      const refArray = []
-      eventBus.$on(ON_DEFAULT_LAYOUT_SCROLL, (toTop) => {
-        if (refArray.length === 0) {
-          // const MdRender = document.getElementById('MdRender')
-          this.titleArray.forEach(val => refArray.push(document.getElementById(val)))
-          // console.log(refArray)
-        }
-        eventBus.$emit(ON_MD_RENDER_SCROLL, refArray, toTop)
-      })
     },
     destroyed() {
       eventBus.$off(ON_DEFAULT_LAYOUT_SCROLL)
@@ -83,7 +86,7 @@
       lazyImg(token)
       collectIndex(token, titleArray, tokens[i + 1])
       if (token.children) {
-        forEachTokens(token.children)
+        forEachTokens(token.children, titleArray)
       }
     }
   }

@@ -51,7 +51,7 @@
         for (let j = 0; j < refArray.length; j++) {
           const ref = refArray[j]
           const bias = toTop - ref.offsetTop - layoutTopHeight
-          // console.log(ref.getAttribute('data-content') + '  ' + bias + '  ' + toTop + '  ' + ref.offsetTop + '  ' + layoutTopHeight)
+          console.log(ref.getAttribute('data-content') + '  ' + bias + '  ' + toTop + '  ' + ref.offsetTop + '  ' + layoutTopHeight)
           if (bias >= 0 && bias <= minPlusBias) {
             minPlusBias = bias
             reachIndex = j

@@ -412,8 +412,10 @@
       margin-bottom: 20px;
 
       .avatar {
-        width: 40px;
-        height: 40px;
+        max-width: 40px;
+        min-width: 40px;
+        max-height: 40px;
+        min-height: 40px;
         border-radius: 50%;
         overflow: hidden;
       }
@@ -812,8 +814,10 @@
             }
 
             .avatar {
-              width: 40px;
-              height: 40px;
+              max-width: 40px;
+              min-width: 40px;
+              max-height: 40px;
+              min-height: 40px;
               border-radius: 50%;
               overflow: hidden;
             }

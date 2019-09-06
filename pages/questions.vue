@@ -155,6 +155,7 @@
     created() {
     },
     destroyed() {
+      eventBus.$emit(SET_TAG_GROUP_STATUS, false)
     }
   }
 </script>

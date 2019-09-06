@@ -315,7 +315,9 @@
 
             .avatar {
               min-width: 40px;
-              height: 40px;
+              max-width: 40px;
+              max-height: 40px;
+              min-height: 40px;
               border-radius: 50%;
               overflow: hidden;
             }

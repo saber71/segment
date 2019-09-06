@@ -251,7 +251,7 @@
         </div>
       </section>
     </header>
-    <section ref="banner" class="banner" v-if="!user&&showBanner">
+    <section ref="banner" class="banner" v-if="showBanner">
       <section class="default-container container">
         <section class="left">
           <h1>在 SegmentFault，学习技能、解决问题</h1>
@@ -643,6 +643,9 @@
             return
         }
       },
+      showBanner() {
+        this.computeTopHeight()
+      }
     },
     computed: {
       eventsDescription() {
@@ -689,7 +692,7 @@
     methods: {
       computeTopHeight() {
         let height = this.$refs['default-layout-header'].getBoundingClientRect().height
-        if (this.showBanner) {
+        if (this.showBanner && this.$refs.banner) {
           height += this.$refs.banner.getBoundingClientRect().height
         }
         this.$store.commit('setDefaultLayoutTopHeight', height)
@@ -851,6 +854,7 @@
       onSuccessLogin() {
         this.showLoginCard = false
         sendingLogin = false
+        this.showBanner = false
         this.$axios.get(GET_CHECK_NEW_NOTIFICATION_NUMBER).then(response => {
           this.newNotificationNumber = response.data
           if (this.newNotificationNumber.totalArticle > 0) {
@@ -1191,8 +1195,10 @@
               .avatar {
                 border-radius: 50%;
                 overflow: hidden;
-                width: 32px;
-                height: 32px;
+                max-width: 32px;
+                min-width: 32px;
+                max-height: 32px;
+                min-height: 32px;
                 cursor: pointer;
                 position: relative;
 

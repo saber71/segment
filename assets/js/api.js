@@ -1,8 +1,16 @@
+export const IS_DEV = process.env.NODE_ENV === 'development'
+export const SOCKET_URL = IS_DEV ? 'http://localhost:8081' : 'http://47.103.82.183:8081'
+export const SOCKET_ARTICLE = SOCKET_URL + '/article'
+
 // 登陆前
 export const POST_LOGIN = "/login";
 export const POST_REGISTER = "/register";
 
 //登陆后
+export const POST_CHECK_REMOVE_DRAFT = '/check/removeDraft'
+export const POST_CHECK_SAVE_TO_DRAFT = '/check/saveToDraft'
+export const POST_CHECK_ANSWER_QUESTION = '/check/answer-question'
+export const POST_CHECK_DELETE_IMAGE = '/check/delete/img'
 export const POST_CHECK_UPLOAD_IMAGE = '/check/upload/img'
 export const POST_CHECK_FOCUS_QUESTION = '/check/focus/question'
 export const POST_CHECK_COLLECT_QUESTION = '/check/collect/question'
@@ -38,6 +46,7 @@ export const POST_CHECK_READ_ALL_FANS_NOTIFICATION =
   "/check/new/notification/fans/read/all";
 
 // 登陆前
+export const GET_SIMILAR_QUESTIONS = '/similar/questions'
 export const GET_ANSWER = '/answer'
 export const GET_QUESTION = '/question'
 export const GET_RP_BOARD_ALL = '/rp-board/all'

@@ -114,8 +114,10 @@
         font-size: 1.3rem;
 
         .avatar {
-          width: 24px;
-          height: 24px;
+          max-width: 24px;
+          min-width: 24px;
+          max-height: 24px;
+          min-height: 24px;
           border-radius: 50%;
           overflow: hidden;
           transform: translateY(-2px);

@@ -9,7 +9,7 @@
         <nuxt-link :to="'/user?id='+val.userId">{{val.username}}</nuxt-link>
       </div>
       <div class="right-rp">
-        <img class="icon" src="/icon/rp.PNG" v-show="showIcon">
+        <img class="icon" src="/icon/rp.png" v-show="showIcon">
         <span>{{sign?'+':''}}{{val.rp}}</span>
       </div>
     </li>
