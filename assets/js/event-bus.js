@@ -14,3 +14,4 @@ export const FORCE_EMIT_DEFAULT_LAYOUT_SCROLL = 'force-emit-default-layout-scrol
 export const ON_MD_RENDER_SCROLL = 'md-render-scroll'
 export const ON_MD_INDEX_CHANGE_TITLE = 'on-md-index-change-title'
 export const COLLECT_ARTICLE = 'collect-article'
+export const COLLECT_QUESTION = 'collect-question'

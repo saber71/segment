@@ -18,7 +18,7 @@
       </section>
       <section class="board-20">
         <div class="border-20-inner">
-          <h2>综合</h2>
+          <h2>综合<span>活跃度 + 声望</span></h2>
           <section class="inner">
             <div class="board">
               <RPBoard :array="boardAll.total" :sign="false"></RPBoard>

@@ -1,7 +1,7 @@
 <template>
   <div id="DownFetchContent">
     <slot></slot>
-    <button class="loading-button" ref="loading-button" @click="clickButton">
+    <button class="loading-button" ref="loading-button" v-show="!end" @click="clickButton">
       <img src="/icon/loading-green.png">
       {{count>0?'加载中':'点击加载更多'}}
     </button>
@@ -20,6 +20,10 @@
         type: Function,//args(finish:Function)，当数据获取后调用
         required: true
       },
+      end: {
+        type: Boolean,
+        default: false
+      }
     },
     data() {
       return {
@@ -37,6 +41,9 @@
         }
       },
       fetchs() {
+        if (this.end) {
+          return
+        }
         if (fetching || this.count === 0) {
           return
         }
@@ -53,6 +60,9 @@
         // console.log(toTop + '  ' + bias + '  ' + scrollTop + '  ' + this.loadingButton.offsetHeight)
         if (bias <= window.innerHeight) {
           this.fetchs()
+        }
+        if (this.end) {
+          eventBus.$off(ON_DEFAULT_LAYOUT_SCROLL)
         }
       },
     },

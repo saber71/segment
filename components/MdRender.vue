@@ -1,23 +1,19 @@
 <template>
   <div id="MdRender">
-    <article-title :article="article"></article-title>
     <div class="content" v-html="html"></div>
-    <!--{{html}}-->
   </div>
 </template>
 
 <script>
-  import ArticleTitle from "./ArticleTitle";
   import {eventBus, FORCE_EMIT_DEFAULT_LAYOUT_SCROLL, ON_DEFAULT_LAYOUT_SCROLL, ON_MD_RENDER_SCROLL} from "../assets/js/event-bus";
 
   export default {
     name: "MdRender",
-    components: {ArticleTitle},
     props: {
-      article: {
-        type: Object,
+      content: {
+        type: String,
         required: true
-      }
+      },
     },
     data() {
       return {
@@ -45,11 +41,8 @@
         .use(require('markdown-it-plugin-underline'))
         .use(require('markdown-it-abbr'))
       const base64 = require('js-base64').Base64
-      const tokens = md.parse(base64.decode(this.article.content), {})
-      // clearInvalid(tokens)
-      // replaceTitle(tokens)
+      const tokens = md.parse(base64.decode(this.content), {})
       forEachTokens(tokens, this.titleArray)
-      // console.log(JSON.stringify(tokens))
       const hljs = require('highlight.js')
       this.html = md.renderer.render(tokens, {
         langPrefix: '',
@@ -80,32 +73,6 @@
       eventBus.$off(ON_DEFAULT_LAYOUT_SCROLL)
     }
   }
-
-  // function clearInvalid(tokens) {
-  //   let h1Index = 0
-  //   for (let i = 0; i < tokens.length; i++) {
-  //     const obj = tokens[i]
-  //     if (obj.tag === 'h1') {
-  //       h1Index = i
-  //       break
-  //     }
-  //   }
-  //   for (let i = 0; i < h1Index; i++) {
-  //     tokens.shift()
-  //   }
-  // }
-
-  // function replaceTitle(tokens) {
-  //   let h1Index = 0, endIndex = 0
-  //   for (let i = 0; i < tokens.length; i++) {
-  //     const obj = tokens[i]
-  //     if (obj.tag === 'h1') {
-  //       h1Index = i
-  //       break
-  //     }
-  //   }
-  //   tokens.splice(h1Index, 2)
-  // }
 
   function forEachTokens(tokens, titleArray) {
     for (let i = 0; i < tokens.length; i++) {
@@ -158,11 +125,6 @@
   #MdRender {
     font-size: 1.5rem;
     line-height: 1.8;
-    padding-bottom: 30px;
-
-    .content {
-      margin-top: 50px;
-    }
 
     a {
       color: $green;

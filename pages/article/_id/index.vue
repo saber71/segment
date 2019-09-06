@@ -22,7 +22,10 @@
     </section>
     <section class="article-content" ref="rightSide">
       <div ref="content" class="left-side">
-        <md-render :article="article"></md-render>
+        <article-title :article="article"></article-title>
+        <br/>
+        <br/>
+        <md-render :content="article.content"></md-render>
         <section class="like-article">
           <m-button class="good" :style="{'good-active':isGood}" :callback="good">{{isGood?'已赞':'赞'}}{{$formatNumber(article.goodNum)}}</m-button>
           <m-button class="collect" :style="{'collect-active':isCollect}" :callback="collect">{{isCollect?'已收藏':'收藏'}}{{$formatNumber(article.collectNum)}}</m-button>
@@ -100,6 +103,7 @@
     GET_GUESS_LIKE_ARTICLE,
     GET_IS_FOCUS,
     GET_USER_DATA,
+    POST_CHECK_COLLECT_ARTICLE,
     POST_CHECK_COMMENT_COMMIT,
     POST_CHECK_GOOD_ARTICLE,
     POST_CHECK_GOOD_COMMENT,
@@ -123,13 +127,14 @@
   import Tag from "../../../components/Tag";
   import Good from "../../../components/Good";
   import SubComment from "../../../components/SubComment";
+  import ArticleTitle from "../../../components/ArticleTitle";
 
   let commentsPage = 1
   const commentPageSize = 10
 
   export default {
     name: "index",
-    components: {SubComment, Good, Tag, MButton, MdIndex, UserAuthentication, Breadcrumb, MdRender},
+    components: {ArticleTitle, SubComment, Good, Tag, MButton, MdIndex, UserAuthentication, Breadcrumb, MdRender},
     props: {},
     head() {
       return {
@@ -276,15 +281,25 @@
           finish()
         })
       },
-      collect() {
-        eventBus.$emit(COLLECT_ARTICLE, this.article)
-        /* this.$axios.$post(POST_CHECK_COLLECT_ARTICLE, undefined, {
-           params: {
-             articleId: this.article.id
-           }
-         }).then(() => {
-           this.isCollect = !this.isCollect
-         })*/
+      collect(finish) {
+        if (this.article.isCollect) {
+          this.$axios.$post(POST_CHECK_COLLECT_ARTICLE, undefined, {
+            articleId: this.article.id,
+            packageName: this.article.inPackageName,
+            status: false
+          }).then(() => {
+            this.isCollect = false
+            this.article.isCollect = false
+            if (finish) {
+              finish()
+            }
+          })
+        } else {
+          eventBus.$emit(COLLECT_ARTICLE, this.article)
+          if (finish) {
+            finish()
+          }
+        }
       },
       async fetchAttitudeToArticle() {
         [this.isGood, this.isCollect] = await this.$axios.$get(GET_CHECK_ATTITUDE_TO_ARTICLE, {
@@ -296,6 +311,7 @@
       },
     },
     async mounted() {
+      this.$store.commit('setHomeActiveMenu', '专栏')
       let isFixed = false
       const IndexRef = this.$refs.Index
       const IndexHeight = IndexRef.getBoundingClientRect().height
@@ -456,6 +472,7 @@
     .article-content {
       display: flex;
       position: relative;
+      padding-bottom: 30px;
 
       .left-side {
         width: 70%;
@@ -469,6 +486,7 @@
           display: flex;
           align-items: center;
           justify-content: center;
+          padding-top: 30px;
 
           .good, .collect {
             padding: 5px 10px;

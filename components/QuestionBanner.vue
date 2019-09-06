@@ -24,7 +24,7 @@
         </div>
       </div>
       <div class="bottom">
-        {{question.name}}
+        <nuxt-link :to="'/question?id='+question.id">{{question.name}}</nuxt-link>
         <tag class="tag" v-for="(val,index) in question.tags" :tag="val" :key="index"></tag>
       </div>
     </section>

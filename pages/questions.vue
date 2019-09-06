@@ -30,7 +30,7 @@
             <nuxt-link to="/rp-board">全部</nuxt-link>&nbsp;
           </label>
         </div>
-        <r-p-board :show-icon="true" :array="rpBoard[rpType]"></r-p-board>
+        <r-p-board :show-icon="true" :array="rpBoard[rpType]" v-if="rpBoard[rpType]"></r-p-board>
       </section>
     </section>
   </div>
@@ -86,7 +86,7 @@
         page: 0,
         size: 20,
         hottestBy: 0,
-        rpBoard: [],
+        rpBoard: [[]],
         rpType: 0
       }
     },
@@ -132,7 +132,7 @@
         })
       },
       fetchRpBoard() {
-        if (this.rpBoard[this.rpType]) {
+        if (this.rpBoard[this.rpType] && this.rpBoard[this.rpType].length > 0) {
           return
         }
         this.$axios.$get(GET_RP_INCREASE_BOARD, {

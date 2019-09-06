@@ -10,7 +10,7 @@
       <div class="info">
         <p class="content-part">
           <nuxt-link v-if="v.replyTo" :to="'/user/'+v.replyToId">@{{v.replyTo}}</nuxt-link>
-          {{v.content}}
+          <md-render :content="v.content"></md-render>
         </p>
         <div class="author-reply">
           <nuxt-link :to="'/user?id='+v.authorId"><span class="author">{{v.author}}</span></nuxt-link>
@@ -33,10 +33,12 @@
 <script>
   import MButton from "./MButton";
   import {GET_ARTICLE_SUB_COMMENT_MORE, POST_CHECK_GOOD_COMMENT, POST_CHECK_SUB_COMMENT_COMMIT} from "../assets/js/api";
+  import MdRender from "./MdRender";
 
+  const base64 = require('js-base64').Base64
   export default {
     name: "SubComment",
-    components: {MButton},
+    components: {MdRender, MButton},
     props: {
       comment: {
         type: Object,
@@ -61,7 +63,7 @@
           params: {
             page: this.page++,
             commentId: comment.id,
-            size: subCommentPageSize
+            size: this.subCommentPageSize
           }
         }).then(res => {
           res.forEach(val => comment.subComments.push(val))
@@ -70,14 +72,14 @@
       },
       postSubComment(comment, finish) {
         this.$axios.$post(POST_CHECK_SUB_COMMENT_COMMIT, {
-          replyTxt: comment.replyTxt,
+          replyTxt: base64.encode(comment.replyTxt),
           replyTo: comment.replyTo,
           replyId: comment.replyId
         }).then(() => {
           const subComment = {
             author: this.user.name,
             authorId: this.user.id,
-            content: comment.replyTxt.replace(/^@.*\s/, ''),
+            content: base64.encode(comment.replyTxt.replace(/^@.*\s/, '')),
             datetime: new Date().toString(),
             replyTo: comment.replyTo,
             replyToId: comment.replyToId,
@@ -137,6 +139,7 @@
     .sub-comment {
       display: flex;
       font-size: 1.3rem;
+      padding-top: 10px;
 
       .good-part {
         width: 50px;
@@ -200,10 +203,18 @@
             display: inline-block;
             border-radius: 0;
             margin-left: 2px;
+            color: $green;
+          }
+
+          .date {
+            margin-left: 10px;
+            color: #777777;
+            font-size: 1.2rem;
           }
 
           .reply {
             display: none;
+            margin-left: 10px;
           }
         }
       }

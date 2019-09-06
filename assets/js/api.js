@@ -3,6 +3,12 @@ export const POST_LOGIN = "/login";
 export const POST_REGISTER = "/register";
 
 //登陆后
+export const POST_CHECK_FOCUS_QUESTION = '/check/focus/question'
+export const POST_CHECK_COLLECT_QUESTION = '/check/collect/question'
+export const POST_CHECK_GOOD_ANSWER = '/check/good/answer'
+export const POST_CHECK_BAD_ANSWER = '/check/bad/answer'
+export const POST_CHECK_GOOD_QUESTION = '/check/good/question'
+export const POST_CHECK_BAD_QUESTION = '/check/bad/question'
 export const POST_CHECK_FOCUS_ARTICLE_CHANNEL = '/check/channel/focus'
 export const POST_CHECK_FOCUS_TAG = '/check/focus/tag'
 export const POST_FOCUS_AUTHOR = '/check/focus/user'
@@ -31,6 +37,8 @@ export const POST_CHECK_READ_ALL_FANS_NOTIFICATION =
   "/check/new/notification/fans/read/all";
 
 // 登陆前
+export const GET_ANSWER = '/answer'
+export const GET_QUESTION = '/question'
 export const GET_RP_BOARD_ALL = '/rp-board/all'
 export const GET_TOTAL_QUESTION = '/question/total'
 export const GET_RP_INCREASE_BOARD = '/rp/increase-board'

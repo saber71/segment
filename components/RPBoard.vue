@@ -37,7 +37,7 @@
         required: true
       },
       sign: {
-        type: Number,
+        type: Boolean,
         default: true
       }
     },
