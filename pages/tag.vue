@@ -502,7 +502,7 @@
     .create-question {
       position: absolute;
       right: 0;
-      top: -15px;
+      top: -5px;
       width: fit-content;
       padding: 5px 10px;
       background-color: $green;
@@ -512,6 +512,10 @@
 
       &:hover {
         background-color: $darker-green;
+      }
+
+      @media(max-width: 768px) {
+        right: 20px;
       }
     }
 

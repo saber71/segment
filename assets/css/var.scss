@@ -45,6 +45,9 @@ $light-gray: #999;
   font-size: 1.3rem;
   padding: 5px;
   border-radius: 1px;
+  @media(max-width: 768px) {
+    font-size: 1.1rem;
+  }
 }
 
 .translate-article {
@@ -54,6 +57,9 @@ $light-gray: #999;
   padding: 5px;
   line-height: 1;
   border-radius: 1px;
+  @media(max-width: 768px) {
+    font-size: 1.1rem;
+  }
 }
 
 .reprint-article {
@@ -63,6 +69,10 @@ $light-gray: #999;
   padding: 5px;
   line-height: 1;
   border-radius: 1px;
+
+  @media(max-width: 768px) {
+    font-size: 1.1rem;
+  }
 }
 
 .common-input {

@@ -54,7 +54,6 @@
       border-bottom: 1px solid #dddddd;
       display: flex;
       align-items: center;
-      flex-wrap: wrap;
 
       label {
         cursor: pointer;
@@ -62,6 +61,9 @@
         color: $green;
         padding: 7px 15px;
         transform: translateY(1px);
+        @media(max-width: 768px) {
+          padding: 3px 5px;
+        }
       }
 
       .active {

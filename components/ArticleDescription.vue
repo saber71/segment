@@ -79,13 +79,15 @@
 
   #ArticleDescription {
     display: flex;
-    padding: 0 10px;
     box-sizing: border-box;
 
     .text {
       flex-grow: 1;
       padding-left: 20px;
       box-sizing: border-box;
+      @media(max-width: 768px) {
+        padding-left: 10px;
+      }
 
       h3 {
         display: inline-block;

@@ -1,6 +1,9 @@
 <template>
   <div id="questions" class="default-container default-content-layout">
     <section class="left-part">
+      <div class="create-question">
+        <button class="button" @click="createQuestion">+ 提问题</button>
+      </div>
       <tabs :labels="labels" @active-change="onTabChange">
         <p class="sort" v-show="tabActiveIndex===3">
           排序：
@@ -14,7 +17,6 @@
           </li>
         </ul>
       </tabs>
-      <button class="create-question" @click="createQuestion">+ 提问题</button>
       <br/>
       <pagination :page="page+1" :total="totalQuestionNum" @page-change="fetchData"></pagination>
     </section>
@@ -165,6 +167,9 @@
 
   #questions {
     padding: 30px 0;
+    @media(max-width: 768px) {
+      padding-top: 15px;
+    }
 
     .left-part {
       position: relative;
@@ -195,16 +200,31 @@
       .create-question {
         position: absolute;
         right: 0;
-        top: -15px;
+        top: -5px;
         width: fit-content;
-        padding: 5px 10px;
-        background-color: $green;
-        color: #fff;
-        font-size: 1.4rem;
-        border-radius: 5px;
+        @media(max-width: 768px) {
+          padding-right: 20px;
+          box-sizing: border-box;
+        }
+        @media(max-width: 550px) {
+          position: static;
+          margin-bottom: 5px;
+          width: 100%;
+          display: flex;
+          align-items: center;
+          justify-content: flex-end;
+        }
 
-        &:hover {
-          background-color: $darker-green;
+        .button {
+          padding: 5px 10px;
+          background-color: $green;
+          color: #fff;
+          font-size: 1.4rem;
+          border-radius: 5px;
+
+          &:hover {
+            background-color: $darker-green;
+          }
         }
       }
     }

@@ -109,6 +109,9 @@
     line-height: 2.4rem;
     border-radius: 4px;
     text-align: center;
+    @media(max-width: 550px) {
+      font-size: 1.4rem;
+    }
 
     .triangle-bottom, .triangle-top {
       cursor: pointer;

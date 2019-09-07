@@ -12,7 +12,7 @@
       {{$formatNumber(question.viewNum)}}<br/>
       <span>浏览</span>
     </div>
-    <section>
+    <section class="main">
       <div class="top">
         <div v-if="question.answerNum===0">
           <nuxt-link :to="'/user?id='+question.authorId">{{question.author}}</nuxt-link>
@@ -65,10 +65,15 @@
   #QuestionBanner {
     display: flex;
     align-items: center;
+    @media(max-width: 550px) {
+      flex-wrap: wrap;
+    }
 
     .block {
       width: 45px;
+      min-width: 45px;
       height: 42px;
+      min-height: 42px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -76,10 +81,15 @@
       font-size: 1.6rem;
       color: #757575;
       margin-right: 10px;
+      margin-bottom: 10px;
       border-radius: 4px;
 
       span {
         font-size: 1.2rem;
+      }
+
+      @media(max-width: 768px) {
+        font-size: 1.3rem;
       }
     }
 
@@ -103,29 +113,46 @@
       background-color: $green;
     }
 
-    .top {
-      font-size: 1.3rem;
-      color: #999999;
-      padding-bottom: 5px;
+    .main {
+      padding-left: 10px;
+      box-sizing: border-box;
 
-      a {
-        margin-right: 10px;
+      .top {
+        font-size: 1.3rem;
+        color: #999999;
+        padding-bottom: 5px;
 
-        &:hover {
-          color: #555555;
+        a {
+          margin-right: 10px;
+
+          &:hover {
+            color: #555555;
+          }
+        }
+
+        @media(max-width: 768px) {
+          font-size: 1.1rem;
         }
       }
-    }
 
-    .bottom {
-      display: flex;
-      align-items: center;
-      flex-wrap: wrap;
-      font-size: 1.6rem;
-      color: #333333;
+      .bottom {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        font-size: 1.6rem;
+        color: #333333;
 
-      .tag {
-        margin-left: 5px;
+        a {
+          line-height: 1.6;
+        }
+
+        .tag {
+          margin-left: 5px;
+        }
+
+        @media(max-width: 768px) {
+          font-size: 1.4rem;
+        }
       }
     }
   }

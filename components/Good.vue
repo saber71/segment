@@ -96,6 +96,10 @@
         }
       }
     }
+
+    @media(max-width: 550px) {
+      font-size: 1.4rem;
+    }
   }
 
   .active {
