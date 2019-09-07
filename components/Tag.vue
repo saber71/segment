@@ -9,7 +9,10 @@
       <div class="loading" v-if="!tagData">Loading......</div>
       <section class="content-side" v-else>
         <span class="name">{{tagData.name}}</span>
-        <p class="description" v-if="tagData.description">{{tagData.description}}</p>
+        <p class="description" v-if="tagData.description">
+          <multi-line-text :line-num="3" :line-height="20" :txt="tagData.description"
+                           font-size="1.3rem"></multi-line-text>
+        </p>
         <p class="font-size: 1.3rem" v-else>暂无简介</p>
         <section class="bottom">
           <div class="left-side">
@@ -31,10 +34,11 @@
 <script>
   import {GET_TAG_DATA, POST_CHECK_FOCUS_TAG} from "../assets/js/api";
   import MButton from "./MButton";
+  import MultiLineText from "./MultiLineText";
 
   export default {
     name: "Tag",
-    components: {MButton},
+    components: {MultiLineText, MButton},
     props: {
       tag: {
         type: String,
@@ -83,7 +87,7 @@
     computed: {
       iconPath() {
         return this.$getTagIcon(this.tag)
-      }
+      },
     },
     methods: {
       onClose() {
@@ -108,7 +112,7 @@
             this.awaiting = false
           }, this.param)
         } else {
-          this.$router.push({path: '/tag/' + this.tag})
+          this.$router.push({path: '/tag', query: {name: this.tag}})
         }
       },
       hover() {
@@ -186,7 +190,7 @@
     }
 
     .closable {
-      padding-right: 20px;
+      padding-right: 25px;
     }
 
     .close {
@@ -244,22 +248,6 @@
         }
 
         .description {
-          font-size: 1.3rem;
-          line-height: 20px;
-          max-height: 60px;
-          position: relative;
-          overflow: hidden;
-
-          &:after {
-            content: '...';
-            font-size: 1.4rem;
-            position: absolute;
-            right: 5px;
-            bottom: 0;
-            width: fit-content;
-            padding-left: 20px;
-            background: linear-gradient(to right, transparent, #fff 50%);
-          }
         }
 
         .no-description {

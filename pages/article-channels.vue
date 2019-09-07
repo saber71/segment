@@ -16,7 +16,7 @@
           </ul>
         </tabs>
         <br/>
-        <pagination :page="page+1" :total="pageNum" @page-change="pageChange"></pagination>
+        <pagination :page="page+1" :total="articleNum" @page-change="pageChange"></pagination>
       </section>
       <section class="right-side">
         <section class="hot-channels">
@@ -47,7 +47,7 @@
 
 <script>
   import Tabs from "../components/Tabs";
-  import {GET_ARTICLE_PAGE_STATUS, GET_HOTTEST_ARTICLE, GET_HOTTEST_ARTICLE_CHANNELS, GET_HOTTEST_TAGS, GET_NEWEST_ARTICLE, GET_RECOMMEND_ARTICLE} from "../assets/js/api";
+  import {GET_ARTICLE_TOTAL_NUM, GET_HOTTEST_ARTICLE, GET_HOTTEST_ARTICLE_CHANNELS, GET_HOTTEST_TAGS, GET_NEWEST_ARTICLE, GET_RECOMMEND_ARTICLE} from "../assets/js/api";
   import Good from "../components/Good";
   import MButton from "../components/MButton";
   import Pagination from "../components/Pagination";
@@ -81,13 +81,13 @@
       }
     },
     async asyncData({app}) {
-      const [pageNum, hotChannels, hotTags] = await Promise.all([
-        app.$axios.$get(GET_ARTICLE_PAGE_STATUS),
+      const [articleNum, hotChannels, hotTags] = await Promise.all([
+        app.$axios.$get(GET_ARTICLE_TOTAL_NUM),
         app.$axios.$get(GET_HOTTEST_ARTICLE_CHANNELS),
         app.$axios.$get(GET_HOTTEST_TAGS),
       ])
       return {
-        pageNum, hotChannels, hotTags
+        articleNum, hotChannels, hotTags
       }
     },
     data() {
@@ -238,6 +238,7 @@
 
           li {
             border-bottom: 1px solid #dddddd;
+            padding: 10px 0;
           }
         }
       }

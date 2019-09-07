@@ -6,6 +6,7 @@
         <nuxt-link :to="'/article/'+article.id" tag="h3">{{article.name}}</nuxt-link>
         <label class="original-article" v-if="article.original">原创</label>
         <label class="translate-article" v-else-if="article.translate">翻译</label>
+        <label class="reprint-article" v-else-if="article.reprint">转载</label>
       </div>
       <div class="info">
         <div class="avatar">
@@ -47,7 +48,9 @@
     methods: {
       goodArticle(finish) {
         const article = this.article
-        this.$axios.$post(POST_CHECK_GOOD_ARTICLE + '?articleId=' + article.id).then(() => {
+        this.$axios.$post(POST_CHECK_GOOD_ARTICLE, {
+          articleId: article.id, status: !article.isGood
+        }).then(() => {
           article.isGood = !article.isGood
           if (article.isGood) {
             article.goodNum++
@@ -76,7 +79,7 @@
 
   #ArticleDescription {
     display: flex;
-    padding: 20px 10px;
+    padding: 0 10px;
     box-sizing: border-box;
 
     .text {
@@ -98,7 +101,7 @@
         }
       }
 
-      .original-article, .translate-article {
+      .original-article, .translate-article, .reprint-article {
         margin-left: 10px;
         @media(max-width: 550px) {
           float: right;

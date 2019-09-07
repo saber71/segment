@@ -5,7 +5,7 @@
 </template>
 
 <script>
-  import {eventBus, ON_DEFAULT_LAYOUT_SCROLL, ON_MD_RENDER_SCROLL} from "../assets/js/event-bus";
+  import {eventBus, FORCE_EMIT_DEFAULT_LAYOUT_SCROLL, ON_DEFAULT_LAYOUT_SCROLL, ON_MD_RENDER_SCROLL} from "../assets/js/event-bus";
 
   export default {
     name: "MdRender",
@@ -26,7 +26,7 @@
     methods: {},
     mounted() {
       const refArray = []
-      eventBus.$on(ON_DEFAULT_LAYOUT_SCROLL, (toTop) => {
+      this.onScroll = (toTop) => {
         if (this.titleArray.length === 0) {
           return
         }
@@ -35,8 +35,9 @@
           this.titleArray.forEach(val => refArray.push(document.getElementById(val)))
         }
         eventBus.$emit(ON_MD_RENDER_SCROLL, refArray, toTop)
-      })
-      // eventBus.$emit(FORCE_EMIT_DEFAULT_LAYOUT_SCROLL)
+      }
+      eventBus.$on(ON_DEFAULT_LAYOUT_SCROLL, this.onScroll)
+      eventBus.$emit(FORCE_EMIT_DEFAULT_LAYOUT_SCROLL)
     },
     created() {
       const md = require('markdown-it')('commonmark')
@@ -73,7 +74,7 @@
       })
     },
     destroyed() {
-      eventBus.$off(ON_DEFAULT_LAYOUT_SCROLL)
+      eventBus.$off(ON_DEFAULT_LAYOUT_SCROLL, this.onScroll)
     }
   }
 

@@ -243,6 +243,7 @@
 
         li {
           border-bottom: 1px solid #dddddd;
+          padding: 10px 0;
         }
       }
     }

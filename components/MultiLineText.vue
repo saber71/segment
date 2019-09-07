@@ -39,7 +39,9 @@
     },
     watch: {
       txt() {
-        this.flush()
+        this.$nextTick(() => {
+          this.flush()
+        })
       }
     },
     computed: {},

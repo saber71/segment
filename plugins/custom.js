@@ -215,6 +215,16 @@ Vue.prototype.$getSeasonEnd = function (date) {
   }
 }
 
+Vue.prototype.$limitString = function (str, limitLength) {
+  if (!limitLength) {
+    return str
+  }
+  if (str.length <= limitLength) {
+    return str
+  }
+  return str.substring(0, limitLength) + '...'
+}
+
 Vue.prototype.$readyForCarousel = function (array) {
   if (array === undefined || array === null || array.length <= 1) {
     return array
@@ -228,6 +238,10 @@ Vue.prototype.$readyForCarousel = function (array) {
 
 Vue.prototype.$getTagIcon = function (tagName) {
   return iconTags[tagName]
+}
+
+Vue.prototype.$pushToArray = function (targetArray, sourceArray) {
+  sourceArray.forEach(val => targetArray.push(val))
 }
 
 function sameDayTime(date1, date2) {

@@ -34,7 +34,7 @@ input {
 a {
   cursor: pointer;
 
-  &:hover {
+  &:hover, &:focus {
     text-decoration: underline;
   }
 }

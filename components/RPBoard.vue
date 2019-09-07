@@ -1,6 +1,6 @@
 <template>
   <ul id="RPBoard">
-    <li v-for="(val,index) in array.slice(startIndex,startIndex+size)" class="item">
+    <li v-for="(val,index) in board" class="item">
       <div class="left-rp">
         <span class="count">{{startIndex+index+1}}.</span>
         <div class="avatar">
@@ -33,7 +33,7 @@
         default: false
       },
       array: {
-        type: Array,
+        type: Array | undefined,
         required: true
       },
       sign: {
@@ -45,7 +45,11 @@
       return {}
     },
     watch: {},
-    computed: {},
+    computed: {
+      board() {
+        return this.array ? this.array.slice(this.startIndex, this.startIndex + this.size) : []
+      }
+    },
     methods: {},
     mounted() {
     },

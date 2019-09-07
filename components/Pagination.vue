@@ -7,12 +7,12 @@
       <div></div>
     </div>
     <button v-for="val in numbers" @click="emit(val)" :class="{'active':val===page}">{{val}}</button>
-    <div class="dot" v-show="numbers[numbers.length-1]<total">
+    <div class="dot" v-show="numbers[numbers.length-1]<totalPage">
       <div></div>
       <div></div>
       <div></div>
     </div>
-    <button class="next" @click="next" v-show="page<total">下一页</button>
+    <button class="next" @click="next" v-show="page<totalPage">下一页</button>
   </div>
 </template>
 
@@ -30,6 +30,10 @@
       total: {
         type: Number,
         required: true
+      },
+      size: {
+        type: Number,
+        default: 10
       }
     },
     data() {
@@ -37,23 +41,30 @@
     },
     watch: {},
     computed: {
+      totalPage() {
+        const res = parseInt(this.total / this.size)
+        if (res * this.size < this.total) {
+          return res + 1
+        }
+        return res
+      },
       numbers() {
         const res = []
         for (let i = -2; i < 3; i++) {
           const n = this.page + i
-          if (n <= 0 || n > this.total) {
+          if (n <= 0 || n > this.totalPage) {
             continue
           }
           res.push(n)
         }
         if (res.length < 5) {
-          if (res[0] === 1 && res[res.length - 1] === this.total) {
+          if (res[0] === 1 && res[res.length - 1] === this.totalPage) {
             return res
           } else if (res[0] === 1) {
-            for (let i = res[res.length - 1] + 1; i <= this.total && res.length < 5; i++) {
+            for (let i = res[res.length - 1] + 1; i <= this.totalPage && res.length < 5; i++) {
               res.push(i)
             }
-          } else if (res[res.length - 1] === this.total) {
+          } else if (res[res.length - 1] === this.totalPage) {
             for (let i = res[0] - 1; i >= 1 && res.length < 5; i--) {
               res.unshift(i)
             }

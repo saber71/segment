@@ -31,7 +31,11 @@
         count: 1,
       }
     },
-    watch: {},
+    watch: {
+      end() {
+        eventBus.$off(ON_DEFAULT_LAYOUT_SCROLL, this.onScroll)
+      }
+    },
     computed: {},
     methods: {
       clickButton() {
@@ -57,12 +61,8 @@
       onScroll(scrollTop) {
         const toTop = this.loadingButton.offsetTop
         const bias = Math.abs(toTop - scrollTop)
-        // console.log(toTop + '  ' + bias + '  ' + scrollTop + '  ' + this.loadingButton.offsetHeight)
         if (bias <= window.innerHeight) {
           this.fetchs()
-        }
-        if (this.end) {
-          eventBus.$off(ON_DEFAULT_LAYOUT_SCROLL)
         }
       },
     },
@@ -73,7 +73,7 @@
     created() {
     },
     destroyed() {
-      eventBus.$off(ON_DEFAULT_LAYOUT_SCROLL)
+      eventBus.$off(ON_DEFAULT_LAYOUT_SCROLL, this.onScroll)
     }
   }
 </script>

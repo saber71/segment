@@ -1,12 +1,14 @@
 export const IS_DEV = process.env.NODE_ENV === 'development'
 export const SOCKET_URL = IS_DEV ? 'http://localhost:8081' : 'http://47.103.82.183:8081'
-export const SOCKET_ARTICLE = SOCKET_URL + '/article'
+export const SOCKET_ARTICLE = SOCKET_URL + '/article?user='
+export const HOST = IS_DEV ? 'http://localhost:1999' : 'http://47.103.82.183:1999'
 
 // 登陆前
 export const POST_LOGIN = "/login";
 export const POST_REGISTER = "/register";
 
 //登陆后
+export const POST_CHECK_CREATE_QUESTION = '/check/create-question'
 export const POST_CHECK_REMOVE_DRAFT = '/check/removeDraft'
 export const POST_CHECK_SAVE_TO_DRAFT = '/check/saveToDraft'
 export const POST_CHECK_ANSWER_QUESTION = '/check/answer-question'
@@ -46,6 +48,11 @@ export const POST_CHECK_READ_ALL_FANS_NOTIFICATION =
   "/check/new/notification/fans/read/all";
 
 // 登陆前
+export const GET_TAG_STATUS = '/tag/status'
+export const GET_RELAVANT_TAGS = '/tag/relevant'
+export const GET_RP_BOAR_TAG = '/tag-board/tag'
+export const GET_TAG_BAIKE = '/tag/baike'
+export const GET_TAG_ACTIVE_INFO = '/tag/active-info'
 export const GET_SIMILAR_QUESTIONS = '/similar/questions'
 export const GET_ANSWER = '/answer'
 export const GET_QUESTION = '/question'
@@ -63,7 +70,7 @@ export const GET_IS_FOCUS = '/user/isFocus'
 export const GET_ARTICLE_CHANNEL = '/article/channel'
 export const GET_ARTICLE_IN_CHANNEL = '/article-channel/article'
 export const GET_ARTICLE_NUM_IN_CHANNEL_FILTER = '/article-channel/article-num'
-export const GET_ARTICLE_PAGE_STATUS = '/article/page/status'
+export const GET_ARTICLE_TOTAL_NUM = '/article/total-num'
 
 export const GET_HOTTEST_ARTICLE_CHANNELS = '/hottest/article-channels'
 export const GET_HOTTEST_TAGS = '/hottest/tags'

@@ -12,22 +12,21 @@
           <question-author :param="question" :question="true"></question-author>
         </div>
       </section>
-      <h3 class="answer-num">{{question.answerNum}}个回答</h3>
-      <down-fetch-content :end="answer.length>=question.answerNum" :fetch="fetchMoreAnswer">
-        <ul class="answer-list">
-          <li v-for="val in answer">
-            <section class="block">
-              <div class="left">
-                <good-or-bad :param="val" :question="false" :is-bad="val.isBad" :is-good="val.isGood" :good-num="val.goodNum"></good-or-bad>
-              </div>
-              <div class="right">
-                <md-render :content="val.content"></md-render>
-                <question-author :param="val"></question-author>
-              </div>
-            </section>
-          </li>
-        </ul>
-      </down-fetch-content>
+      <h3 id="answers" class="answer-num">{{question.answerNum}}个回答</h3>
+      <ul class="answer-list">
+        <li v-for="val in answer[page]">
+          <section class="block">
+            <div class="left">
+              <good-or-bad :param="val" :question="false" :is-bad="val.isBad" :is-good="val.isGood" :good-num="val.goodNum"></good-or-bad>
+            </div>
+            <div class="right">
+              <md-render :content="val.content"></md-render>
+              <question-author :param="val"></question-author>
+            </div>
+          </section>
+        </li>
+      </ul>
+      <pagination :page="page+1" :total="question.answerNum" @page-change="onPageChange"></pagination>
       <h3 class="write-answer">撰写答案<span>图片必须为jpg格式，小于2Mb</span></h3>
       <mavon-editor ref="mavonRef" v-model="answerTxt" :autofocus="false"
                     :imageFilter="imageFilter" @imgAdd="imgAdd" @imgDel="imgDel" @save="save"></mavon-editor>
@@ -44,7 +43,7 @@
       <ul ref="similarQuestionsRef">
         <li>相似问题</li>
         <li v-for="val in similarQuestions">
-          <a :href="'/question?id='+val.id">{{val.name}}</a>
+          <nuxt-link :to="'/question?id='+val.id">{{val.name}}</nuxt-link>
         </li>
         <li>找不到问题？可以
           <nuxt-link to="/create-question">创建问题</nuxt-link>
@@ -73,11 +72,12 @@
   import DownFetchContent from "../components/DownFetchContent";
   import MButton from "../components/MButton";
   import {eventBus, SET_TAG_GROUP_STATUS} from "../assets/js/event-bus";
+  import Pagination from "../components/Pagination";
 
   const size = 10
   export default {
     name: "question",
-    components: {MButton, DownFetchContent, QuestionAuthor, MdRender, GoodOrBad, ArticleTitle, Breadcrumb},
+    components: {Pagination, MButton, DownFetchContent, QuestionAuthor, MdRender, GoodOrBad, ArticleTitle, Breadcrumb},
     props: {},
     head() {
       const title = this.question.tags[0] + ' - ' + this.question.name + ' - SegmentFault 思否'
@@ -85,16 +85,18 @@
     },
     async asyncData({app, query}) {
       const id = query.id
-      const [question, answer] = await Promise.all([
+      const [question, answerPage0] = await Promise.all([
         app.$axios.$get(GET_QUESTION + '?name=' + id),
         app.$axios.$get(GET_ANSWER + '?questionId=' + id + '&&page=0&&size=' + size),
       ])
+      const answer = []
+      answer[0] = answerPage0
       const similarQuestions = await app.$axios.$get(GET_SIMILAR_QUESTIONS + '?id=' + question.id)
       return {question, answer, similarQuestions}
     },
     data() {
       return {
-        page: 1,
+        page: 0,
         router: [
           {
             text: '问答',
@@ -108,17 +110,40 @@
         draftId: -1,
       }
     },
-    watch: {},
+    watch: {
+      '$route': async function (val) {
+        const id = val.query.id
+        this.imageArray = []
+        this.draftId = -1
+        this.page = 0
+        const [question, answer] = await Promise.all([
+          this.$axios.$get(GET_QUESTION + '?name=' + id),
+          this.$axios.$get(GET_ANSWER + '?questionId=' + id + '&&page=0&&size=' + size),
+        ])
+        const similarQuestions = await this.$axios.$get(GET_SIMILAR_QUESTIONS + '?id=' + question.id)
+        this.question = question
+        this.answer = []
+        this.answer[this.page] = answer
+        this.similarQuestions = similarQuestions
+      }
+    },
     computed: {
       user() {
         return this.$store.state.user
       }
     },
     methods: {
-      fetchMoreAnswer(finish) {
-        this.$axios.$get(GET_ANSWER + '?questionId=' + this.question.id + '&&page=' + (this.page++) + '&&size=' + size).then(res => {
-          res.forEach(val => this.answer.push(val))
-          finish()
+      onPageChange(page) {
+        this.page = page - 1
+        this.fetchMoreAnswer()
+      },
+      fetchMoreAnswer() {
+        if (this.answer[this.page]) {
+          return
+        }
+        this.$axios.$get(GET_ANSWER + '?questionId=' + this.question.id + '&&page=' + (this.page) + '&&size=' + size).then(res => {
+          this.answer[this.page] = res
+          this.$forceUpdate()
         })
       },
       imageFilter(file) {

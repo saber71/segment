@@ -56,7 +56,7 @@
       </ul>
     </section>
     <section class="comments" v-show="article.comments">
-      <h3 class="number">{{article.comments}}条评论</h3>
+      <h3 id="comments" class="number">{{article.comments}}条评论</h3>
       <section class="content-part">
         <section class="comment" v-for="val in comments">
           <nuxt-link :to="'/user/'+val.authorId">
@@ -189,7 +189,8 @@
         offsetTop: 0,
         floatPartLeft: 0,
         commentTxt: '',
-        defaultAvatar: require('static/icon/user.png')
+        defaultAvatar: require('static/icon/user.png'),
+        onScroll: undefined
       }
     },
     watch: {},
@@ -267,10 +268,8 @@
         eventBus.$emit(DEFAULT_LAYOUT_SCROLL_TO, indexRef.offsetTop)
       },
       good(finish) {
-        this.$axios.$post(POST_CHECK_GOOD_ARTICLE, undefined, {
-          params: {
-            articleId: this.article.id
-          }
+        this.$axios.$post(POST_CHECK_GOOD_ARTICLE, {
+          articleId: this.article.id, status: !this.isGood
         }).then(() => {
           this.isGood = !this.isGood
           if (this.isGood) {
@@ -359,6 +358,11 @@
           isFixed = true
         }
       }
+      const onLoginSuccess = () => {
+        this.fetchAttitudeToArticle()
+      }
+      this.onScroll = onScrollCallback
+      this.onLoginSuccess = onLoginSuccess
       eventBus.$on(ON_DEFAULT_LAYOUT_SCROLL, onScrollCallback)
       eventBus.$on(ON_MD_INDEX_CHANGE_TITLE, (newElOffsetTop, newElHeight) => {
         const containerScrollTop = indexComponent.scrollTop
@@ -372,9 +376,7 @@
           indexComponent.scrollTo(0, newPosition >= 0 ? newPosition : 0)
         }
       })
-      eventBus.$on(SUCCESS_LOGIN, () => {
-        this.fetchAttitudeToArticle()
-      })
+      eventBus.$on(SUCCESS_LOGIN, onLoginSuccess)
       this.floatPartLeft = contentLeft - 10 - floatPart.getBoundingClientRect().width
       this.isFocus = await this.$axios.$get(GET_IS_FOCUS, {
         params: {
@@ -389,9 +391,9 @@
     created() {
     },
     destroyed() {
-      eventBus.$off(ON_DEFAULT_LAYOUT_SCROLL)
+      eventBus.$off(ON_DEFAULT_LAYOUT_SCROLL, this.onScroll)
       eventBus.$off(ON_MD_INDEX_CHANGE_TITLE)
-      eventBus.$off(SUCCESS_LOGIN)
+      eventBus.$off(SUCCESS_LOGIN, this.onLoginSuccess)
     }
   }
 </script>

@@ -576,7 +576,8 @@
             name: '热门标签',
             to: '/tags'
           },
-        ]
+        ],
+        previous: 0,
       }
     },
     watch: {
@@ -701,12 +702,16 @@
         const container = this.containerRef
         container.scrollTop = 0
       },
-      onContainerScroll() {
-        const top = this.containerRef.scrollTop
-        const width = window.innerWidth
-        this.showHeaderBottom = width <= 992 && top <= 50
-        this.showToTop = width > 992 && top > 50
-        eventBus.$emit(ON_DEFAULT_LAYOUT_SCROLL, top)
+      onContainerScroll(force) {
+        const now = Date.now()
+        if (force || now - this.previous >= 100) {
+          const top = this.containerRef.scrollTop
+          const width = window.innerWidth
+          this.showHeaderBottom = width <= 992 && top <= 50
+          this.showToTop = width > 992 && top > 50
+          eventBus.$emit(ON_DEFAULT_LAYOUT_SCROLL, top)
+          this.previous = now
+        }
       },
       readAll() {
         let arr, route, attrName
@@ -923,7 +928,7 @@
       eventBus.$on(SHOW_LOGIN__CARD, () => this.showLoginCard = true)
       eventBus.$on(SHOW_REGISTER_CARD, () => this.showRegisterCard = true)
       eventBus.$on(FORCE_EMIT_DEFAULT_LAYOUT_SCROLL, () => {
-        this.onContainerScroll()
+        this.onContainerScroll(true)
       })
       eventBus.$on(SET_TAG_GROUP_STATUS, (status) => {
         this.showTagGroup = status
@@ -945,9 +950,11 @@
     },
     destroyed() {
       window.onresize = null
-      eventBus.$emit(SUCCESS_LOGIN)
-      eventBus.$emit(SHOW_LOGIN__CARD)
-      eventBus.$emit(SHOW_REGISTER_CARD)
+      eventBus.$off(SUCCESS_LOGIN)
+      eventBus.$off(SHOW_LOGIN__CARD)
+      eventBus.$off(SHOW_REGISTER_CARD)
+      eventBus.$off(FORCE_EMIT_DEFAULT_LAYOUT_SCROLL)
+      eventBus.$off(SET_TAG_GROUP_STATUS)
     }
   }
 </script>

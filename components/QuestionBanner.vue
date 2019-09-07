@@ -16,11 +16,11 @@
       <div class="top">
         <div v-if="question.answerNum===0">
           <nuxt-link :to="'/user?id='+question.authorId">{{question.author}}</nuxt-link>
-          <nuxt-link :to="'/question/'+question.id">{{$formatDatetime(question.activeDatatime)}}提出问题</nuxt-link>
+          <nuxt-link :to="'/question/'+question.id">{{$formatDatetime(question.activeDatetime)}}提出问题</nuxt-link>
         </div>
         <div v-else>
           <nuxt-link :to="'/user?name='+question.newestAnswerAuthorId">{{question.newestAnswerAuthor}}</nuxt-link>
-          <nuxt-link :to="'/question/'+question.id">{{$formatDatetime(question.activeDatatime)}}回答问题</nuxt-link>
+          <nuxt-link :to="'/question/'+question.id">{{$formatDatetime(question.activeDatetime)}}回答问题</nuxt-link>
         </div>
       </div>
       <div class="bottom">

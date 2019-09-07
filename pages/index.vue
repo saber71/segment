@@ -197,7 +197,6 @@
   import RecommendLesson from "../components/RecommendLesson";
 
   const CHANGE_TAG = 'changeTag', LEAVE = 'leave'
-  let isOpenSocket = false
 
   export default {
     components: {RecommendLesson, UserAuthentication, CarouselItem, Carousel, DownFetchContent, StarRating},
@@ -220,6 +219,7 @@
       return {
         showTechTagsSelector: false,
         showOption: false,
+        isOpenSocket: false,
         selectedTag: '为你推荐',
         techChannels: [
           {
@@ -406,13 +406,13 @@
         this.socketArticles = []
       },
       openSocketIO() {
-        if (isOpenSocket) {
+        if (this.isOpenSocket) {
           return
         }
         const io = require('socket.io-client')
         const socket = io(SOCKET_ARTICLE + this.user.name)
         socket.on('connect', () => {
-          isOpenSocket = true
+          this.isOpenSocket = true
           socket.on('article', (article) => {
             this.socketArticles.push(article)
           })
@@ -421,7 +421,7 @@
           })
           this.$on(LEAVE, () => {
             socket.close()
-            isOpenSocket = false
+            this.isOpenSocket = false
           })
         })
       }

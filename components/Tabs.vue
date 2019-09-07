@@ -37,6 +37,7 @@
     computed: {},
     methods: {},
     mounted() {
+      this.$on('set-active', index => this.active = index)
     },
     created() {
     },
@@ -51,18 +52,22 @@
   #Tabs {
     .labels {
       border-bottom: 1px solid #dddddd;
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
 
       label {
         cursor: pointer;
         margin-right: 10px;
         color: $green;
-        padding: 7px 15px 3px;
+        padding: 7px 15px;
+        transform: translateY(1px);
       }
 
       .active {
         background-color: white;
         border: 1px solid #dddddd;
-        border-bottom: none;
+        border-bottom-color: white;
         border-radius: 4px 4px 0 0;
         color: #212121;
       }
