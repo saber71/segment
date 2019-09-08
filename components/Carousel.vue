@@ -23,7 +23,7 @@
       },
       interval: {
         type: Number,
-        default: 1000
+        default: 3000
       },
       len: {
         type: Number,
@@ -119,6 +119,7 @@
   #Carousel {
     width: 100%;
     overflow: hidden;
+    position: relative;
 
     .wrapper {
       display: flex;

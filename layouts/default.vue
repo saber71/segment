@@ -27,7 +27,9 @@
               <div class="triangle"></div>
               <div class="popup border-shadow">
                 <ul class="left-side">
-                  <li class="left-item">活动</li>
+                  <li class="left-item">
+                    <nuxt-link to="/events">活动</nuxt-link>
+                  </li>
                   <li class="left-item">标签</li>
                   <li class="left-item">酷工作</li>
                   <li class="left-item">排行榜</li>
@@ -47,7 +49,9 @@
                       {{val.city}} · {{$formatDate(val.datetime)}} {{$getWeekDay(val.datetime)}} <span class="joining" v-if="val.joining">报名中</span>
                     </div>
                   </li>
-                  <li class="more">查看更多活动</li>
+                  <li class="more">
+                    <nuxt-link to="/events">查看更多活动</nuxt-link>
+                  </li>
                 </ul>
               </div>
             </li>

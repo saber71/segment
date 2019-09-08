@@ -48,6 +48,8 @@ export const POST_CHECK_READ_ALL_FANS_NOTIFICATION =
   "/check/new/notification/fans/read/all";
 
 // 登陆前
+export const GET_EVENT_SUM = '/event/sum'
+export const GET_EVENT_IN_DAY_RANGE = '/event/in-day-range'
 export const GET_TAG_STATUS = '/tag/status'
 export const GET_RELAVANT_TAGS = '/tag/relevant'
 export const GET_RP_BOAR_TAG = '/tag-board/tag'
