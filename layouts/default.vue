@@ -1057,6 +1057,15 @@
                   .left-item {
                     padding: 2px 20px 2px 10px;
 
+                    a {
+                      display: block;
+
+                      &:hover {
+                        text-decoration: none;
+                        color: $green;
+                      }
+                    }
+
                     img {
                       display: inline-block;
                       width: 10px;

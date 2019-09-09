@@ -59,6 +59,10 @@
       .deactive {
         color: #777;
         cursor: default;
+
+        &:hover {
+          text-decoration: none;
+        }
       }
     }
   }

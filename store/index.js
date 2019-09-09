@@ -2,10 +2,14 @@ export const state = () => ({
   homeActiveMenu: '首页',
   user: undefined,
   defaultLayoutTopHeight: 0,
+  formInputValidate: true
   // eventsDescriptionLess
 })
 
 export const mutations = {
+  setFormInputValidate(state, val) {
+    state.formInputValidate = val
+  },
   setHomeActiveMenu(state, val) {
     state.homeActiveMenu = val
   },

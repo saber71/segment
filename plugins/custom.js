@@ -1,24 +1,47 @@
 import Vue from 'vue';
 import {iconTags} from "../assets/js/tags";
-import {eventBus, ON_DEFAULT_LAYOUT_SCROLL} from "../assets/js/event-bus";
 
-Vue.directive('lazy', {
-  inserted: function (el, binding) {
-    eventBus.$on(ON_DEFAULT_LAYOUT_SCROLL, function (top) {
-      if (binding.value) {
-        const bias = Math.abs(top - el.offsetTop)
-        if (bias < window.innerHeight) {
-          el.setAttribute('src', binding.value)
-          binding.value = null
-          eventBus.$off(ON_DEFAULT_LAYOUT_SCROLL)
-        }
-      } else {
-        eventBus.$off(ON_DEFAULT_LAYOUT_SCROLL)
-      }
-    })
-  },
-})
-
+Vue.prototype.$fillZero = function (number, threshold) {
+  if (number >= threshold) {
+    return number
+  }
+  let res = number + ''
+  const thresholdLength = (threshold + '').length
+  while (res.length < thresholdLength) {
+    res = '0' + res
+  }
+  return res
+}
+Vue.prototype.$getChineseNumber = function (number) {
+  switch (number) {
+    case 0:
+      return '零'
+    case 1:
+      return '一'
+    case 2:
+      return '二'
+    case 3:
+      return '三'
+    case 4:
+      return '四'
+    case 5:
+      return '五'
+    case 6:
+      return '六'
+    case 7:
+      return '七'
+    case 8:
+      return '八'
+    case 9:
+      return '九'
+    case 10:
+      return '十'
+    case 11:
+      return '十一'
+    case 12:
+      return '十二'
+  }
+}
 Vue.prototype.$getWeekDay = (date) => {
   const obj = new Date(date)
   const day = obj.getDay()

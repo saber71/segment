@@ -28,15 +28,16 @@
       </ul>
       <pagination :page="page+1" :total="question.answerNum" @page-change="onPageChange"></pagination>
       <h3 class="write-answer">撰写答案<span>图片必须为jpg格式，小于2Mb</span></h3>
-      <mavon-editor ref="mavonRef" v-model="answerTxt" :autofocus="false"
-                    :imageFilter="imageFilter" @imgAdd="imgAdd" @imgDel="imgDel" @save="save"></mavon-editor>
+      <editor ref="editorRef" :save="save" :subfield="true" v-model="answerTxt"></editor>
+      <!--      <mavon-editor ref="mavonRef" v-model="answerTxt" :autofocus="false"-->
+      <!--                    :imageFilter="imageFilter" @imgAdd="imgAdd" @imgDel="imgDel" @save="save"></mavon-editor>-->
       <div class="button-group">
         <m-button class="save-to-draft" :click="saveToDraft" v-show="draftId<0">保存到草稿箱</m-button>
         <div class="already-save" v-show="draftId>=0">
           已保存到草稿箱
           <m-button class="remove-draft" :click="removeDraft">[舍弃]</m-button>
         </div>
-        <m-button class="save" :click="save">提交答案</m-button>
+        <button class="save" :click="postAnswer">提交答案</button>
       </div>
     </section>
     <section class="right-part" ref="right">
@@ -54,16 +55,7 @@
 </template>
 
 <script>
-  import {
-    GET_ANSWER,
-    GET_QUESTION,
-    GET_SIMILAR_QUESTIONS,
-    POST_CHECK_ANSWER_QUESTION,
-    POST_CHECK_DELETE_IMAGE,
-    POST_CHECK_REMOVE_DRAFT,
-    POST_CHECK_SAVE_TO_DRAFT,
-    POST_CHECK_UPLOAD_IMAGE
-  } from "../assets/js/api";
+  import {GET_ANSWER, GET_QUESTION, GET_SIMILAR_QUESTIONS, POST_CHECK_ANSWER_QUESTION, POST_CHECK_REMOVE_DRAFT, POST_CHECK_SAVE_TO_DRAFT} from "../assets/js/api";
   import Breadcrumb from "../components/Breadcrumb";
   import ArticleTitle from "../components/ArticleTitle";
   import GoodOrBad from "../components/GoodOrBad";
@@ -73,11 +65,12 @@
   import MButton from "../components/MButton";
   import {eventBus, SET_TAG_GROUP_STATUS} from "../assets/js/event-bus";
   import Pagination from "../components/Pagination";
+  import Editor from "../components/Editor";
 
   const size = 10
   export default {
     name: "question",
-    components: {Pagination, MButton, DownFetchContent, QuestionAuthor, MdRender, GoodOrBad, ArticleTitle, Breadcrumb},
+    components: {Editor, Pagination, MButton, DownFetchContent, QuestionAuthor, MdRender, GoodOrBad, ArticleTitle, Breadcrumb},
     props: {},
     head() {
       const title = this.question.tags[0] + ' - ' + this.question.name + ' - SegmentFault 思否'
@@ -146,34 +139,6 @@
           this.$forceUpdate()
         })
       },
-      imageFilter(file) {
-        const name = file.name.toLowerCase()
-        if (!/.(jpg|jpeg)$/.test(name)) {
-          alert('图片必须为jpg格式，小于2Mb')
-          return false
-        }
-        const size = file.size
-        if (size / 1024 / 1024 <= 2) {
-          return true
-        }
-        alert('图片必须为jpg格式，小于2Mb')
-        return false
-      },
-      imgAdd(pos, img) {
-        const form = new FormData()
-        form.append('image', img)
-        this.$axios.$post(POST_CHECK_UPLOAD_IMAGE, form, {
-          headers: {'Content-Type': 'multipart/form-data'}
-        }).then(res => {
-          this.$refs.mavonRef.$img2Url(pos, res.url)
-          this.imageArray[pos] = res.name
-        })
-      },
-      imgDel(pos) {
-        this.$axios.$post(POST_CHECK_DELETE_IMAGE, this.imageArray[pos]).then(() => {
-          this.imageArray[pos] = null
-        })
-      },
       save(finish) {
         const base64 = require('js-base64').Base64
         const txt = base64.encode(this.answerTxt)
@@ -199,9 +164,10 @@
         })
       },
       saveToDraft(finish) {
+        const base64 = require('js-base64').Base64
         this.$axios.$post(POST_CHECK_SAVE_TO_DRAFT, {
-          txt: this.answerTxt,
-          draftId: this.draftId >= 0 ? this.draftId : -1
+          txt: base64.encode(this.answerTxt),
+          draftId: this.draftId
         }).then(res => {
           this.draftId = res
           finish()
@@ -212,6 +178,9 @@
           this.draftId = -1
           finish()
         })
+      },
+      postAnswer() {
+        this.$refs.editorRef.$emit('save')
       }
     },
     mounted() {

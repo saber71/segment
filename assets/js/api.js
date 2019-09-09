@@ -46,6 +46,7 @@ export const POST_CHECK_READ_ALL_GOOD_NOTIFICATION =
   "/check/new/notification/good/read/all";
 export const POST_CHECK_READ_ALL_FANS_NOTIFICATION =
   "/check/new/notification/fans/read/all";
+export const POST_CHECK_EVENT = '/check/event/commit'
 
 // 登陆前
 export const GET_EVENT_SUM = '/event/sum'

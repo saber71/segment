@@ -92,6 +92,9 @@
     name: "events",
     components: {Pagination, CarouselItem, Carousel},
     props: {},
+    head() {
+      return {title: '活动 - SegmentFault 思否'}
+    },
     async asyncData({app}) {
       const oneDay = 86400000
       const dayRange = []

@@ -226,3 +226,20 @@ $light-gray: #999;
     margin-top: 1.5em;
   }
 }
+
+.must-input {
+  display: inline-block;
+  padding-right: 7px;
+  position: relative;
+
+  &:after {
+    content: '';
+    background: url('/icon/red-star.svg') no-repeat;
+    background-size: cover;
+    width: 6px;
+    height: 6px;
+    position: absolute;
+    right: 0;
+    top: 0;
+  }
+}
