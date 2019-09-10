@@ -15,6 +15,11 @@
           <img class="rp-icon" src="/icon/rp.png">
           <span class="rp">{{note.rp}}</span>
           <span class="datetime">{{$formatDatetime(note.datetime)}}发布</span>
+          <nuxt-link class="edit" :to="'/edit-note?id='+note.id" v-show="user.id===note.authorId">编辑</nuxt-link>
+          <span class="fork-source" v-show="note.forkFrom">
+            分支源自
+            <nuxt-link :to="'/note?id'+note.forkFromId">{{note.forkFrom}}</nuxt-link>
+          </span>
         </section>
       </section>
       <md-render :content="note.content" :thin="false"></md-render>
@@ -55,6 +60,7 @@
     head() {
       return {title: this.note.name + ' - SegmentFault 思否'}
     },
+    watchQuery: ['id'],
     async asyncData({app, query}) {
       const note = await app.$axios.$get(GET_CHECK_NOTE + "?id=" + query.id)
       return {note}
@@ -66,7 +72,11 @@
       }
     },
     watch: {},
-    computed: {},
+    computed: {
+      user() {
+        return this.$store.state.user
+      }
+    },
     methods: {
       fork(finish) {
         this.$axios.$post(POST_CHECK_FORK_NOTE, {
@@ -175,6 +185,27 @@
             font-weight: bold;
             color: #333333;
             margin-right: 5px;
+          }
+
+          .edit {
+            margin-left: 10px;
+            color: $green;
+
+            &:hover {
+              color: $darker-green;
+            }
+          }
+
+          .fork-source {
+            margin-left: 10px;
+
+            a {
+              color: $green;
+
+              &:hover {
+                color: $darker-green;
+              }
+            }
           }
         }
       }
