@@ -20,7 +20,7 @@
           </ul>
         </section>
       </section>
-      <nuxt-link class="create-event" to="/create-event">提交活动</nuxt-link>
+      <button class="create-event" @click="toCreateEvent">提交活动</button>
     </section>
     <section class="event-banner">
       <section class="carousel">
@@ -83,7 +83,7 @@
 
 <script>
   import {GET_EVENT_IN_DAY_RANGE, GET_EVENT_SUM, GET_EVENTS_DESCRIPTION, GET_EVENTS_DESCRIPTION_LESS} from "../assets/js/api";
-  import {eventBus} from "../assets/js/event-bus";
+  import {eventBus, SHOW_LOGIN__CARD} from "../assets/js/event-bus";
   import Carousel from "../components/Carousel";
   import CarouselItem from "../components/CarouselItem";
   import Pagination from "../components/Pagination";
@@ -170,6 +170,13 @@
           this.$forceUpdate()
         })
       },
+      toCreateEvent() {
+        if (this.$store.state.user) {
+          this.$router.push({path: '/create-event'})
+        } else {
+          eventBus.$emit(SHOW_LOGIN__CARD)
+        }
+      }
     },
     mounted() {
       this.$store.commit('setHomeActiveMenu', '')

@@ -1,7 +1,7 @@
 <template>
   <div id="SelectTags" tabindex="1" @focusin="focus=true" @focusout="focus=false">
     <error-tip-input placeholder="请输入标签名字" ref="inputRef" v-model="searchTxt" :max-length="40"
-                     @change="onInput"
+                     @change="onInput" warn-msg="标签至少一个"
                      :validate="validate" :disabled="selectedArray.length>=maxNum"></error-tip-input>
     <ul class="tags">
       <li v-for="(val,index) in  selectedArray">

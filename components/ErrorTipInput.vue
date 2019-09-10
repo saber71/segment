@@ -1,8 +1,8 @@
 <template>
   <div id="ErrorTipInput">
-    <input class="common-input" v-model="value" :class="{error}" @input="onChange($event.target.value)"
+    <input class="common-input" v-model="inputTxt" :class="{error}" @input="onChange($event.target.value)"
            :maxlength="maxLength" :placeholder="placeholder" :disabled="disabled">
-    <p class="warn">{{warnMsg}}</p>
+    <p class="warn" v-show="error">{{warnMsg}}</p>
   </div>
 </template>
 
@@ -24,7 +24,7 @@
       },
       placeholder: {
         type: String,
-        default: true
+        default: '请输入信息'
       },
       value: {
         type: String,
@@ -33,12 +33,16 @@
       disabled: {
         type: Boolean,
         default: false
+      },
+      warnMsg: {
+        type: String,
+        default: '不可为空'
       }
     },
     data() {
       return {
         error: false,
-        warnMsg: ''
+        inputTxt: ''
       }
     },
     watch: {},
@@ -50,11 +54,12 @@
       }
     },
     mounted() {
+      this.inputTxt = this.value
     },
     created() {
       this.$on('validate', () => {
-        this.error = this.validate()
-        if (!this.error) {
+        this.error = !this.validate(this.value)
+        if (this.error) {
           this.$store.commit('setFormInputValidate', false)
         }
       })
