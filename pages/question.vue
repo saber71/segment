@@ -208,7 +208,7 @@
 
         .left {
           padding-right: 10px;
-          padding-top: 30px;
+          padding-top: 10px;
         }
 
         .right {

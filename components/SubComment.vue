@@ -1,12 +1,6 @@
 <template>
   <section id="sub-comments" v-show="comment.subComments.length>0">
     <section class="sub-comment" v-for="v in comment.subComments">
-      <section class="good-part">
-        <div class="inner">
-          {{v.goodNum}}
-          <img class="good-icon" @click="goodComment(v)" :class="{'active':v.isGood}" src="/icon/good-green-full.png">
-        </div>
-      </section>
       <div class="info">
         <p class="content-part">
           <nuxt-link v-if="v.replyTo" :to="'/user/'+v.replyToId">@{{v.replyTo}}</nuxt-link>
@@ -16,6 +10,10 @@
           <nuxt-link :to="'/user?id='+v.authorId"><span class="author">{{v.author}}</span></nuxt-link>
           <span class="date">{{$formatDate(v.datetime)}}</span>
           <button class="reply" @click="reply(comment,v.author,v.authorId)">回复</button>
+          <div class="good-part">
+            <img class="good-icon" @click="goodComment(v)" :class="{'active':v.isGood}" src="/icon/good-green-full.png">
+            x {{v.goodNum}}
+          </div>
         </div>
       </div>
     </section>
@@ -138,7 +136,7 @@
 
   #sub-comments {
     background-color: #fafafa;
-    padding: 10px;
+    padding: 10px 20px;
     box-sizing: border-box;
     margin-top: 20px;
     margin-bottom: 20px;
@@ -148,35 +146,7 @@
       font-size: 1.3rem;
       padding-top: 10px;
 
-      .good-part {
-        width: 50px;
-
-        .inner {
-          display: none;
-          align-items: center;
-          color: #777777;
-
-          .good-icon {
-            width: 12px;
-            height: 12px;
-            margin-left: 5px;
-            cursor: pointer;
-            filter: grayscale(100%);
-
-            &:hover {
-              filter: grayscale(0);
-            }
-          }
-
-          .active {
-            filter: grayscale(0);
-          }
-        }
-      }
-
       .info {
-        flex-grow: 1;
-
         .content-part {
           line-height: 1.5;
 
@@ -196,6 +166,7 @@
           padding-top: 10px;
           padding-bottom: 10px;
           border-bottom: 1px dashed #dddddd;
+          flex-wrap: wrap;
 
           &:before {
             content: '';
@@ -220,24 +191,39 @@
           }
 
           .reply {
-            display: none;
-            margin-left: 10px;
-          }
-        }
-      }
-
-      &:hover {
-        .good-part {
-          .inner {
-            display: flex;
-          }
-        }
-
-        .author-reply {
-          .reply {
             display: inline-block;
             margin-left: 10px;
+            color: #777777;
+
+            &:hover {
+              color: #333333;
+            }
           }
+
+          .good-part {
+            margin-left: 10px;
+            color: #777777;
+            display: flex;
+            align-items: center;
+
+            .good-icon {
+              max-width: 12px;
+              max-height: 12px;
+              margin-left: 5px;
+              cursor: pointer;
+              filter: grayscale(100%);
+              margin-right: 5px;
+
+              &:hover {
+                filter: grayscale(0);
+              }
+            }
+
+            .active {
+              filter: grayscale(0);
+            }
+          }
+
         }
       }
     }
@@ -259,9 +245,6 @@
     }
 
     .button-group {
-      padding-left: 50px;
-      box-sizing: border-box;
-
       .more, .reply {
         font-size: 1.3rem;
         color: blue;

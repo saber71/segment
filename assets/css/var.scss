@@ -227,6 +227,17 @@ $light-gray: #999;
   }
 }
 
+.md-style-thin {
+  @extend .md-style;
+  font-size: 1.4rem;
+  line-height: 1.5;
+
+  h1, h2, h3, h4, h5, h6, ul, ol, code, p, blockquote, img, table {
+    margin-bottom: 1em;
+    margin-top: 1em;
+  }
+}
+
 .must-input {
   display: inline-block;
   padding-right: 7px;

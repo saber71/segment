@@ -456,7 +456,7 @@
 
           .img-part {
             display: flex;
-            align-items: center;
+            flex-wrap: wrap;
 
             .left {
               width: 240px;
@@ -469,6 +469,7 @@
 
             .right {
               margin-left: 20px;
+              margin-top: 15px;
 
               input {
                 margin-bottom: 5px;
@@ -484,33 +485,49 @@
 
           .two-cols {
             display: flex;
+            flex-wrap: wrap;
 
             .right {
               width: 50%;
               padding-left: 20px;
               box-sizing: border-box;
+              @media(max-width: 550px) {
+                width: 100%;
+              }
             }
 
             .left {
+              flex-grow: 1;
               width: 50%;
               padding-right: 20px;
               box-sizing: border-box;
+              @media(max-width: 550px) {
+                width: 100%;
+              }
             }
           }
 
           .address {
             display: flex;
+            flex-wrap: wrap;
 
             .left-side {
               width: 30%;
               padding-right: 10px;
               box-sizing: initial;
+              @media(max-width: 550px) {
+                width: 100%;
+                padding-right: 20px;
+              }
             }
 
             .right-side {
               flex-grow: 1;
               padding-left: 10px;
               box-sizing: initial;
+              @media(max-width: 550px) {
+                padding-left: 20px;
+              }
             }
           }
 
@@ -545,6 +562,10 @@
               padding-right: 10px;
               box-sizing: border-box;
               padding-left: 0;
+              @media(max-width: 550px) {
+                width: 100%;
+                padding-right: 0;
+              }
             }
 
             .href {
@@ -552,6 +573,9 @@
               padding-right: 20px;
               padding-left: 10px;
               box-sizing: border-box;
+              @media(max-width: 550px) {
+                padding-left: 0;
+              }
             }
           }
 

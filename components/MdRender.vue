@@ -1,5 +1,5 @@
 <template>
-  <div id="MdRender" class="md-style">
+  <div id="MdRender" :class="[thin?'md-style-thin':'md-style']">
     <div class="content" v-html="html"></div>
   </div>
 </template>
@@ -14,6 +14,10 @@
         type: String,
         required: true
       },
+      thin: {
+        type: Boolean,
+        default: true
+      }
     },
     data() {
       return {

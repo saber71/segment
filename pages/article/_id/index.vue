@@ -25,7 +25,7 @@
         <article-title :article="article"></article-title>
         <br/>
         <br/>
-        <md-render :content="article.content"></md-render>
+        <md-render :content="article.content" :thin="false"></md-render>
         <section class="like-article">
           <m-button class="good" :style="{'good-active':isGood}" :callback="good">{{isGood?'已赞':'赞'}}{{$formatNumber(article.goodNum)}}</m-button>
           <m-button class="collect" :style="{'collect-active':isCollect}" :callback="collect">{{isCollect?'已收藏':'收藏'}}{{$formatNumber(article.collectNum)}}</m-button>
