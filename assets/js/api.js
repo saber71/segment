@@ -94,6 +94,8 @@ export const GET_RECOMMEND_LESSON = "/lesson/recommend";
 export const GET_RECOMMEND_CAROUSEL_INFO = "/carousel/recommend";
 
 // 登陆后
+export const GET_CHECK_NOTES = '/check/notes'
+export const GET_CHECK_NOTES_NUMBER = '/check/notes/number'
 export const GET_CHECK_USER_DATA_AFTER_LOGIN = "/check/user/afterLogin";
 export const GET_CHECK_ARTICLE_RECOMMEND = "/check/article/recommend";
 export const GET_CHECK_ARTICLE_NEWEST = "/check/article/newest";

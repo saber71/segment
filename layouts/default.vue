@@ -30,16 +30,27 @@
                   <li class="left-item">
                     <nuxt-link to="/events">活动</nuxt-link>
                   </li>
-                  <li class="left-item">标签</li>
+                  <li class="left-item">
+                    <nuxt-link to="/tags">标签</nuxt-link>
+                  </li>
                   <li class="left-item">酷工作</li>
-                  <li class="left-item">排行榜</li>
+                  <li class="left-item">
+                    <nuxt-link to="/rp-board">排行榜</nuxt-link>
+                  </li>
                   <li class="left-item">徽章</li>
-                  <li class="left-item">笔记</li>
-                  <li class="left-item">开发手册
-                    <img src="/icon/down-arrow-white.png">
+                  <li class="left-item">
+                    <nuxt-link to="/notes">笔记</nuxt-link>
+                  </li>
+                  <li class="left-item">
+                    <a href="https://docs.segmentfault.com/">开发手册</a>
+                    <div class="img">
+                      <img src="/icon/down-arrow-white.png">
+                    </div>
                   </li>
                   <li class="left-item">广告投放
-                    <img src="/icon/down-arrow-white.png">
+                    <div class="img">
+                      <img src="/icon/down-arrow-white.png">
+                    </div>
                   </li>
                 </ul>
                 <ul class="right-side">
@@ -1056,9 +1067,12 @@
 
                   .left-item {
                     padding: 2px 20px 2px 10px;
+                    display: flex;
+                    align-items: center;
 
                     a {
                       display: block;
+                      flex-grow: 1;
 
                       &:hover {
                         text-decoration: none;
@@ -1066,13 +1080,16 @@
                       }
                     }
 
-                    img {
-                      display: inline-block;
-                      width: 10px;
-                      height: 10px;
-                      padding: 5px;
-                      margin-left: 5px;
+                    .img {
+                      padding: 2px;
                       background-color: #F5A623;
+                      margin-left: 5px;
+
+                      img {
+                        width: 7px;
+                        height: 7px;
+                        transform: rotate(-135deg);
+                      }
                     }
                   }
                 }
