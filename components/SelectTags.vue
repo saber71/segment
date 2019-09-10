@@ -77,7 +77,7 @@
         this.$refs.inputRef.$emit('validate')
       })
     },
-    destroyed() {
+    beforeDestroy() {
     }
   }
 </script>

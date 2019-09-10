@@ -155,7 +155,7 @@
     },
     created() {
     },
-    destroyed() {
+    beforeDestroy() {
     }
   }
 </script>

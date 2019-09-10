@@ -89,7 +89,7 @@
     },
     created() {
     },
-    destroyed() {
+    beforeDestroy() {
     }
   }
 </script>

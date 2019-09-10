@@ -224,7 +224,7 @@
       this.computeResult()
       this.selectDatetime()
     },
-    destroyed() {
+    beforeDestroy() {
     }
   }
 </script>

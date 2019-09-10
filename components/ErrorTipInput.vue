@@ -64,7 +64,7 @@
         }
       })
     },
-    destroyed() {
+    beforeDestroy() {
     }
   }
 </script>

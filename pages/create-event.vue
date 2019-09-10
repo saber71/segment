@@ -389,7 +389,7 @@
     },
     created() {
     },
-    destroyed() {
+    beforeDestroy() {
       eventBus.$off(ON_DEFAULT_LAYOUT_SCROLL, this.onScroll)
     }
   }

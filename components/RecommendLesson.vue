@@ -63,7 +63,7 @@
     async created() {
       this.recommendLesson = await this.$axios.$get(GET_RECOMMEND_LESSON)
     },
-    destroyed() {
+    beforeDestroy() {
     }
   }
 </script>

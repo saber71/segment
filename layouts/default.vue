@@ -38,9 +38,7 @@
                     <nuxt-link to="/rp-board">排行榜</nuxt-link>
                   </li>
                   <li class="left-item">徽章</li>
-                  <li class="left-item">
-                    <nuxt-link to="/notes">笔记</nuxt-link>
-                  </li>
+                  <li class="left-item" @click="toNotes">笔记</li>
                   <li class="left-item">
                     <a href="https://docs.segmentfault.com/">开发手册</a>
                     <div class="img">
@@ -931,6 +929,13 @@
           this.showLoginCard = true
           sendingRegister = false
         })
+      },
+      toNotes() {
+        if (this.user) {
+          this.$router.push({path: '/notes'})
+        } else {
+          eventBus.$emit(SHOW_LOGIN__CARD)
+        }
       }
     },
     mounted() {
@@ -1070,14 +1075,13 @@
                     display: flex;
                     align-items: center;
 
-                    a {
-                      display: block;
-                      flex-grow: 1;
+                    &:hover {
+                      text-decoration: none;
+                      color: $green;
+                    }
 
-                      &:hover {
-                        text-decoration: none;
-                        color: $green;
-                      }
+                    a {
+                      flex-grow: 1;
                     }
 
                     .img {

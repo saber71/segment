@@ -11,7 +11,10 @@
             <img :src="val.avatar">
           </div>
           <div class="txt">
-            <nuxt-link class="top" :to="'/note?id='+val.id">{{val.name}}</nuxt-link>
+            <nuxt-link class="top" :to="'/note?id='+val.id">
+              <img src="/icon/lock.png" v-show="val.isPrivate">
+              {{val.name}}
+            </nuxt-link>
             <p class="bottom">
               <nuxt-link class="author" :to="'/user?id='+val.id">{{val.author}}</nuxt-link>
               发布于<span class="datetime">{{$formatDatetime(val.datetime)}}</span>
@@ -92,7 +95,7 @@
     },
     created() {
     },
-    destroyed() {
+    beforeDestroy() {
     }
   }
 </script>
@@ -154,6 +157,14 @@
               font-size: 1.6rem;
               color: $green;
               padding-bottom: 5px;
+              display: flex;
+              align-items: center;
+
+              img {
+                width: 16px;
+                height: 16px;
+                margin-right: 5px;
+              }
 
               &:hover {
                 color: $darker-green;

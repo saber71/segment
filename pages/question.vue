@@ -189,7 +189,7 @@
     },
     created() {
     },
-    destroyed() {
+    beforeDestroy() {
       eventBus.$emit(SET_TAG_GROUP_STATUS, false)
     }
   }

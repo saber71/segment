@@ -30,8 +30,9 @@
 
 <script>
   import MButton from "./MButton";
-  import {GET_ARTICLE_SUB_COMMENT_MORE, POST_CHECK_GOOD_COMMENT, POST_CHECK_SUB_COMMENT_COMMIT} from "../assets/js/api";
+  import {GET_SUB_COMMENT_MORE, POST_CHECK_GOOD_COMMENT, POST_CHECK_SUB_COMMENT_COMMIT} from "../assets/js/api";
   import MdRender from "./MdRender";
+  import {TARGET_ARTICLE} from "../assets/js/const";
 
   const base64 = require('js-base64').Base64
   export default {
@@ -41,6 +42,10 @@
       comment: {
         type: Object,
         required: true
+      },
+      target: {
+        type: Number,
+        default: TARGET_ARTICLE
       }
     },
     data() {
@@ -64,11 +69,12 @@
     },
     methods: {
       fetchMoreSubComment(comment, finish) {
-        this.$axios.$get(GET_ARTICLE_SUB_COMMENT_MORE, {
+        this.$axios.$get(GET_SUB_COMMENT_MORE, {
           params: {
             page: this.page++,
             commentId: comment.id,
-            size: this.subCommentPageSize
+            size: this.subCommentPageSize,
+            target: this.target
           }
         }).then(res => {
           res.forEach(val => comment.subComments.push(val))
@@ -79,7 +85,9 @@
         this.$axios.$post(POST_CHECK_SUB_COMMENT_COMMIT, {
           replyTxt: base64.encode(comment.replyTxt),
           replyTo: comment.replyTo,
-          replyId: comment.replyId
+          replyId: comment.replyId,
+          id: comment.id,
+          target: this.target
         }).then(() => {
           const subComment = {
             author: this.user.name,
@@ -99,7 +107,7 @@
         })
       },
       goodComment(comment) {
-        this.$axios.$post(POST_CHECK_GOOD_COMMENT + '?commentId=' + comment.id, undefined).then(() => {
+        this.$axios.$post(POST_CHECK_GOOD_COMMENT + '?commentId=' + comment.id + '&target=' + this.target, undefined).then(() => {
           comment.isGood = !comment.isGood
           if (comment.isGood) {
             comment.goodNum++
@@ -126,7 +134,7 @@
     },
     created() {
     },
-    destroyed() {
+    beforeDestroy() {
     }
   }
 </script>
@@ -230,6 +238,7 @@
 
     .reply-input-p {
       display: flex;
+      flex-wrap: wrap;
 
       .comment-reply {
         flex-grow: 1;
@@ -241,6 +250,20 @@
         font-size: 1.4rem;
         margin-left: 10px;
         white-space: nowrap;
+
+        &:hover {
+          background-color: #dddddd;
+        }
+      }
+
+      @media(max-width: 550px) {
+        .comment-reply {
+          margin-bottom: 5px;
+        }
+        .comment-reply, .reply-button {
+          width: 100%;
+          margin-left: 0;
+        }
       }
     }
 

@@ -37,7 +37,7 @@
       this.style.width = this.starSize + 'px'
       this.style.height = this.starSize + 'px'
     },
-    destroyed() {
+    beforeDestroy() {
     }
   }
 </script>

@@ -120,7 +120,7 @@
     },
     created() {
     },
-    destroyed() {
+    beforeDestroy() {
       clearInterval(this.handler)
     }
   }

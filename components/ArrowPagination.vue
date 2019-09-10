@@ -62,7 +62,7 @@
     created() {
       this.currentPage = this.page
     },
-    destroyed() {
+    beforeDestroy() {
     }
   }
 </script>

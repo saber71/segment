@@ -72,7 +72,7 @@
         this.reachIndex = reachIndex
       })
     },
-    destroyed() {
+    beforeDestroy() {
       eventBus.$off(ON_MD_RENDER_SCROLL)
     }
   }

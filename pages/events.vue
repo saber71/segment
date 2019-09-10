@@ -193,7 +193,7 @@
     },
     created() {
     },
-    destroyed() {
+    beforeDestroy() {
       window.onresize = undefined
     }
   }

@@ -26,7 +26,7 @@
         </section>
       </section>
     </section>
-    <sub-comment :comment="param" v-show="showSubComments"></sub-comment>
+    <sub-comment :target="target" :comment="param" v-show="showSubComments"></sub-comment>
   </div>
 </template>
 
@@ -35,6 +35,7 @@
   import {POST_CHECK_COLLECT_QUESTION, POST_CHECK_FOCUS_QUESTION} from "../assets/js/api";
   import {COLLECT_QUESTION, eventBus} from "../assets/js/event-bus";
   import SubComment from "./SubComment";
+  import {TARGET_QUESTION} from "../assets/js/const";
 
   export default {
     name: "QuestionAuthor",
@@ -51,7 +52,8 @@
     },
     data() {
       return {
-        showSubComments: false
+        showSubComments: false,
+        target: TARGET_QUESTION
       }
     },
     watch: {},
@@ -92,7 +94,7 @@
     },
     created() {
     },
-    destroyed() {
+    beforeDestroy() {
     }
   }
 </script>

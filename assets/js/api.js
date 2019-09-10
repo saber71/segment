@@ -47,6 +47,8 @@ export const POST_CHECK_READ_ALL_GOOD_NOTIFICATION =
 export const POST_CHECK_READ_ALL_FANS_NOTIFICATION =
   "/check/new/notification/fans/read/all";
 export const POST_CHECK_EVENT = '/check/event/commit'
+export const POST_CHECK_FORK_NOTE = '/check/fork/note'
+export const POST_CHECK_COLLECT_NOTE = '/check/collect/note'
 
 // 登陆前
 export const GET_EVENT_SUM = '/event/sum'
@@ -84,8 +86,8 @@ export const GET_HOTTEST_ARTICLE = "/article/hottest";
 export const GET_NEWEST_ARTICLE = "/article/newest";
 export const GET_ARTICLE = '/article'
 export const GET_GUESS_LIKE_ARTICLE = '/article/guessLike'
-export const GET_ARTICLE_COMMENT = '/article/comment'
-export const GET_ARTICLE_SUB_COMMENT_MORE = '/article/subComment'
+export const GET_COMMENT = '/comment'
+export const GET_SUB_COMMENT_MORE = '/subComment'
 export const GET_EVENTS_DESCRIPTION_LESS = "/events/description/less";
 export const GET_EVENTS_DESCRIPTION = "/events/description";
 export const GET_COMMUNITY_EVENT = "/event/community";
@@ -94,6 +96,7 @@ export const GET_RECOMMEND_LESSON = "/lesson/recommend";
 export const GET_RECOMMEND_CAROUSEL_INFO = "/carousel/recommend";
 
 // 登陆后
+export const GET_CHECK_NOTE = '/check/note'
 export const GET_CHECK_NOTES = '/check/notes'
 export const GET_CHECK_NOTES_NUMBER = '/check/notes/number'
 export const GET_CHECK_USER_DATA_AFTER_LOGIN = "/check/user/afterLogin";
