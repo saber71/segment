@@ -236,7 +236,6 @@
   #InputDatetime {
     position: relative;
     font-size: 1.4rem;
-    z-index: 10000;
 
     .txt-board {
       border-radius: 3px;

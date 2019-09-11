@@ -54,6 +54,7 @@
       border-bottom: 1px solid #dddddd;
       display: flex;
       align-items: center;
+      flex-wrap: wrap;
 
       label {
         cursor: pointer;

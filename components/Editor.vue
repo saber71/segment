@@ -3,7 +3,7 @@
     <mavon-editor ref="ref" v-model="content" :autofocus="autofocus" defaultOpen="defaultOpen" :toolbars="toolbars"
                   :subfield="subfield" :imageFilter="onImageFilter" @save="onSave" :editable="editable"
                   :placeholder="placeholder" :toolbarsFlag="toolbarsFlag" :shortCut="shortCut"
-                  @imgAdd="imgAdd" @imgDel="imgDel"></mavon-editor>
+                  @imgAdd="imgAdd" @imgDel="imgDel" :style="{'min-width': 0 }"></mavon-editor>
   </div>
 </template>
 
@@ -23,7 +23,7 @@
       },
       subfield: {
         type: Boolean,
-        default: false
+        default: true
       },
       save: {
         type: Function,
@@ -76,7 +76,7 @@
       },
       placeholder: {
         type: String,
-        default: '开始编辑，支持Markdown语法'
+        default: '开始编辑，支持Markdown语法，F9开启预览'
       },
       editable: {
         type: Boolean,
@@ -84,7 +84,7 @@
       },
       toolbarsFlag: {
         type: Boolean,
-        default: true
+        default: false
       },
       value: {
         type: String,
@@ -92,7 +92,7 @@
       },
       shortCut: {
         type: Boolean,
-        default: false
+        default: true
       }
     },
     data() {

@@ -18,8 +18,12 @@
             <li :class="{'active-li':activeLi==='专栏'}">
               <nuxt-link to="/article-channels" tag="span">专栏</nuxt-link>
             </li>
-            <li :class="{'active-li':activeLi==='课程'}">课程</li>
-            <li :class="{'active-li':activeLi==='圈子'}">圈子</li>
+            <li :class="{'active-li':activeLi==='课程'}">
+              <nuxt-link to="/course" tag="span">课程</nuxt-link>
+            </li>
+            <li :class="{'active-li':activeLi==='圈子'}">
+              <nuxt-link to="/groups" tag="span">圈子</nuxt-link>
+            </li>
             <li :class="{'active-li':activeLi==='发现'}">发现
               <div class="triangle"></div>
               <div class="popup border-shadow">
@@ -1026,13 +1030,17 @@
 
             li {
               position: relative;
-              padding: 0 12px;
               font-weight: 500;
               font-size: 1.6rem;
               cursor: pointer;
               color: #757575;
               line-height: 34px;
               border-radius: 4px;
+
+              span {
+                padding: 0 12px;
+                border-radius: 4px;
+              }
 
               .triangle {
                 display: inline-block;
