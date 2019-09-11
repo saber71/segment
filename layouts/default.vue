@@ -7,11 +7,8 @@
           <img src="/icon/search-dark.png" @click="">
         </div>
         <div class="left">
-          <div class="logo" @mouseenter="showImg2=true" @mouseleave="showImg2=false">
-            <img class="img1" src="/logo.svg">
-            <img class="img2" src="/logo-tooltip.png" v-show="showImg2">
-          </div>
-          <ul>
+          <logo></logo>
+          <ul class="menu">
             <li :class="{'active-li':activeLi==='首页'}">
               <nuxt-link to="/" tag="span">首页</nuxt-link>
             </li>
@@ -369,6 +366,7 @@
     SUCCESS_LOGIN
   } from "../assets/js/event-bus";
   import {LS_ACCOUNT} from "../assets/js/const";
+  import Logo from "../components/Logo";
 
   const r = mock.Random
   let sendingLogin = false, sendingRegister = false;
@@ -376,11 +374,11 @@
 
   export default {
     name: "default",
+    components: {Logo},
     props: {},
     data() {
       return {
         showBanner: true,
-        showImg2: false,
         showPopup: false,
         showLoginCard: false,
         showRegisterCard: false,
@@ -1018,19 +1016,8 @@
           display: flex;
           align-items: center;
 
-          .logo {
-            position: relative;
-            width: 150px;
-            cursor: pointer;
-            margin-right: 30px;
-
-            .img2 {
-              position: absolute;
-              right: -10px;
-              top: 100%;
-              width: 146px;
-              z-index: 100;
-            }
+          .menu {
+            margin-left: 10px;
           }
 
           ul {

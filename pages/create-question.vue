@@ -1,13 +1,6 @@
 <template>
   <div id="create-question">
-    <div class="top-line"></div>
-    <section class="top">
-      <div class="logo">
-        <img class="icon" src="logo.svg" @mouseenter="showlogoTip=true" @mouseleave="showlogoTip=false">提问
-        <img class="tooltip" src="logo-tooltip.png" v-show="showlogoTip">
-      </div>
-      <button class="button" :click="post">发布问题</button>
-    </section>
+    <head-for-creator text="提问" :save="post" save-text="提交问题"></head-for-creator>
     <section class="body">
       <div class="name">
         <input class="common-input" v-model="name" placeholder="标题：一句话说清问题，用问号结尾">
@@ -39,8 +32,6 @@
         </section>
       </div>
       <editor ref="editorRef" :save="postQuestion" v-model="content" :subfield="subfield" default-open="edit"></editor>
-      <!--      <mavon-editor v-model="content" @save="postQuestion" :toolbars="toolbars"-->
-      <!--                    :subfield="subfield" defaultOpen="edit"></mavon-editor>-->
     </section>
   </div>
 </template>
@@ -51,10 +42,12 @@
   import Tag from "../components/Tag";
   import {tagGroups} from "../assets/js/tags";
   import Editor from "../components/Editor";
+  import Logo from "../components/Logo";
+  import HeadForCreator from "../components/HeadForCreator";
 
   export default {
     name: "create-question",
-    components: {Editor, Tag, MButton},
+    components: {HeadForCreator, Logo, Editor, Tag, MButton},
     layout: 'none',
     props: {},
     head() {
@@ -62,7 +55,6 @@
     },
     data() {
       return {
-        showlogoTip: false,
         focusTag: false,
         content: '',
         name: '',
@@ -78,8 +70,9 @@
     watch: {},
     computed: {},
     methods: {
-      post() {
+      post(finish) {
         this.$refs.editorRef.$emit('save')
+        finish()
       },
       postQuestion(finish) {
         if (this.content === '' || this.name === '' || this.selectedTags.length === 0) {
@@ -153,57 +146,6 @@
   #create-question {
     height: 100vh;
     overflow: hidden auto;
-
-    .top-line {
-      height: 3px;
-      background-color: $green;
-    }
-
-    .top {
-      height: 64px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      box-shadow: 0 3px 5px rgba(0, 0, 0, 0.125);
-      padding: 0 20px;
-      box-sizing: border-box;
-      background-color: #FAFAFA;
-      border-bottom: 1px solid #dddddd;
-      position: relative;
-      z-index: 1;
-
-      .logo {
-        position: relative;
-        font-size: 1.8rem;
-        color: #666666;
-
-        .icon {
-          display: inline-block;
-          width: 150px;
-          height: 40px;
-          margin-right: 10px;
-        }
-
-        .tooltip {
-          width: 140px;
-          position: absolute;
-          left: 20px;
-          top: 40px;
-        }
-      }
-
-      .button {
-        color: #ffffff;
-        background-color: $green;
-        border-radius: 5px;
-        font-size: 1.4rem;
-        padding: 5px 10px;
-
-        &:hover {
-          background-color: $darker-green;
-        }
-      }
-    }
 
     .body {
       background-color: #F3F3F3;

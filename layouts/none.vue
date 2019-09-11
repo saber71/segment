@@ -9,3 +9,8 @@
     name: "none",
   }
 </script>
+<style scoped>
+  #none {
+    height: 100vh;
+  }
+</style>

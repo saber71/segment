@@ -49,6 +49,7 @@ export const POST_CHECK_READ_ALL_FANS_NOTIFICATION =
 export const POST_CHECK_EVENT = '/check/event/commit'
 export const POST_CHECK_FORK_NOTE = '/check/fork/note'
 export const POST_CHECK_COLLECT_NOTE = '/check/collect/note'
+export const POST_CHECK_COMMIT_NOTE = '/check/commit/note'
 
 // 登陆前
 export const GET_EVENT_SUM = '/event/sum'

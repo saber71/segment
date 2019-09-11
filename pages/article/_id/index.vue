@@ -126,7 +126,7 @@
       })
       const [authorData, comments, guessLikeArticles] = await Promise.all([
         app.$axios.$get(GET_USER_DATA + '?id=' + article.authorId),
-        app.$axios.$get(GET_COMMENT + '?articleId=' + article.id + '&&page=0&&size=' + commentPageSize),
+        app.$axios.$get(GET_COMMENT + '?articleId=' + article.id + '&&page=0&&size=' + 10),
         app.$axios.$get(GET_GUESS_LIKE_ARTICLE + '?by=' + article.id)
       ])
       comments.forEach(val => {

@@ -14,11 +14,11 @@
           <nuxt-link class="author-name" :to="'/user?id='+note.authorId">{{note.author}}</nuxt-link>
           <img class="rp-icon" src="/icon/rp.png">
           <span class="rp">{{note.rp}}</span>
-          <span class="datetime">{{$formatDatetime(note.datetime)}}发布</span>
+          <span class="datetime">{{$formatDatetime(note.datetime)}}</span>发布
           <nuxt-link class="edit" :to="'/edit-note?id='+note.id" v-show="user.id===note.authorId">编辑</nuxt-link>
           <span class="fork-source" v-show="note.forkFrom">
             分支源自
-            <nuxt-link :to="'/note?id'+note.forkFromId">{{note.forkFrom}}</nuxt-link>
+            <nuxt-link :to="'/note?id'+note.forkFromId">{{note.forkFromAuthor}}/{{note.forkFrom}}</nuxt-link>
           </span>
         </section>
       </section>
@@ -83,6 +83,11 @@
           id: this.note.id, status: !this.note.isFork
         }).then(() => {
           this.note.isFork = !this.note.isFork
+          if (this.note.isFork) {
+            this.note.forkNum++
+          } else {
+            this.note.forkNum--
+          }
           finish()
         })
       },
@@ -91,6 +96,11 @@
           id: this.note.id, status: !this.note.isCollect
         }).then(() => {
           this.note.isCollect = !this.note.isCollect
+          if (this.note.isCollect) {
+            this.note.collectNum++
+          } else {
+            this.note.collectNum--
+          }
           finish()
         })
       },
@@ -184,6 +194,10 @@
           .rp {
             font-weight: bold;
             color: #333333;
+            margin-right: 5px;
+          }
+
+          .datetime {
             margin-right: 5px;
           }
 

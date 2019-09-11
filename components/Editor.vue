@@ -2,7 +2,7 @@
   <div id="Editor">
     <mavon-editor ref="ref" v-model="content" :autofocus="autofocus" defaultOpen="defaultOpen" :toolbars="toolbars"
                   :subfield="subfield" :imageFilter="onImageFilter" @save="onSave" :editable="editable"
-                  :placeholder="placeholder" :toolbarsFlag="toolbarsFlag"
+                  :placeholder="placeholder" :toolbarsFlag="toolbarsFlag" :shortCut="shortCut"
                   @imgAdd="imgAdd" @imgDel="imgDel"></mavon-editor>
   </div>
 </template>
@@ -89,6 +89,10 @@
       value: {
         type: String,
         required: true
+      },
+      shortCut: {
+        type: Boolean,
+        default: false
       }
     },
     data() {
