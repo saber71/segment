@@ -26,7 +26,7 @@
       </section>
     </section>
     <ul class="topic-list">
-      <li v-for="(val) in topicArray[identifier]">
+      <li v-for="(val) in array()">
         <div class="avatar">
           <img :src="val.avatar">
         </div>
@@ -62,10 +62,14 @@
     components: {MButton, Editor, GroupTag},
     props: {
       fetchTopic: {
-        type: Function,//topicArray
+        type: Function,//topicArray,identifier,finish,clearPage:true，page清零
         required: true
       },
       identifier: {
+        type: Number,
+        required: true
+      },
+      page: {
         type: Number,
         required: true
       }
@@ -82,11 +86,17 @@
     },
     watch: {
       identifier() {
-        this.fetchTopic(this.topicArray, this.identifier, this.finish)
+        this.fetchTopic(this.topicArray, this.identifier, this.finish, true)
       }
     },
     computed: {},
     methods: {
+      array() {
+        if (!this.topicArray[this.identifier]) {
+          this.topicArray[this.identifier] = []
+        }
+        return this.topicArray[this.identifier][this.page]
+      },
       finish() {
         this.$forceUpdate()
       },
@@ -109,7 +119,10 @@
       this.$axios.$get(GET_ALL_GROUP).then(res => {
         this.groupMap = res
       })
-      this.fetchTopic(this.topicArray, this.identifier, this.finish)
+      this.$on('force-fetch', () => {
+        this.fetchTopic(this.topicArray, this.identifier, this.finish, false)
+      })
+      this.fetchTopic(this.topicArray, this.identifier, this.finish, true)
     },
     created() {
     },

@@ -106,7 +106,10 @@ export const GET_RECOMMEND_LESSON = "/lesson/recommend";
 export const GET_RECOMMEND_CAROUSEL_INFO = "/carousel/recommend";
 
 // 登陆后
-export const GET_CHECK_MY_GROUP = '/check/my-focus/group'
+export const GET_CHECK_FAVORITE_GROUP = '/check/topic/favorite'
+export const GET_CHECK_TOPIC_NUM = '/check/topic/num'
+export const GET_CHECK_MY_GROUP = '/check/my/group'
+export const GET_CHECK_MY_FOCUS_GROUP = '/check/my-focus/group'
 export const GET_CHECK_NOTE = '/check/note'
 export const GET_CHECK_NOTES = '/check/notes'
 export const GET_CHECK_NOTES_NUMBER = '/check/notes/number'

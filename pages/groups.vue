@@ -4,14 +4,17 @@
       <h1>圈子</h1>
       <p class="banner">这里是程序员的聚集地，根据你的兴趣认识更多的朋友</p>
       <tabs :labels="labels" @active-change="activeChange" v-show="showCommon">
-        <group-topics :fetch-topic="fetchTopic" :identifier="tabIndex"></group-topics>
+        <group-topics ref="groupTopics0" :fetch-topic="fetchTopic" :identifier="tabIndex" :page="page"></group-topics>
       </tabs>
       <section v-show="showMyTopics">
-        <group-topics :fetch-topic="fetchMyTopic" :identifier="0"></group-topics>
+        <group-topics ref="groupTopics1" :fetch-topic="fetchMyTopic" :identifier="0" :page="page"></group-topics>
       </section>
       <section v-show="showMyReply">
-        <group-topics :fetch-topic="fetchMyReplyTopic" :identifier="0"></group-topics>
+        <group-topics ref="groupTopics2" :fetch-topic="fetchMyReplyTopic"
+                      :identifier="0" :page="page"></group-topics>
       </section>
+      <pagination :page="page+1" :total="total" @page-change="onPageChange"></pagination>
+      <br/>
       <section class="to-all-group">
         加入自己感兴趣的圈子吧
         <nuxt-link to="/all-group">发现圈子</nuxt-link>
@@ -56,27 +59,29 @@
 </template>
 
 <script>
-  import {GET_CHECK_MY_GROUP, GET_HOT_TOPIC_TODAY, GET_RECOMMEND_GROUP, GET_TOPIC} from "../assets/js/api";
+  import {GET_CHECK_MY_FOCUS_GROUP, GET_CHECK_TOPIC_NUM, GET_HOT_TOPIC_TODAY, GET_RECOMMEND_GROUP, GET_TOPIC} from "../assets/js/api";
   import Tabs from "../components/Tabs";
   import GroupTag from "../components/GroupTag";
   import Editor from "../components/Editor";
   import MButton from "../components/MButton";
   import GroupTopics from "../components/GroupTopics";
+  import Pagination from "../components/Pagination";
 
   export default {
     name: "groups",
-    components: {GroupTopics, MButton, Editor, GroupTag, Tabs},
+    components: {Pagination, GroupTopics, MButton, Editor, GroupTag, Tabs},
     props: {},
     head() {
       return {title: '技术圈 - SegmentFault 思否'}
     },
     async asyncData({app}) {
-      const [hotTopic, recommendGroups, myFocusGroup] = await Promise.all([
+      const [hotTopic, recommendGroups, myFocusGroup, topicNumber] = await Promise.all([
         app.$axios.$get(GET_HOT_TOPIC_TODAY),
         app.$axios.$get(GET_RECOMMEND_GROUP),
-        app.$axios.$get(GET_CHECK_MY_GROUP),
+        app.$axios.$get(GET_CHECK_MY_FOCUS_GROUP),
+        app.$axios.$get(GET_CHECK_TOPIC_NUM)
       ])
-      return {hotTopic, recommendGroups, myFocusGroup}
+      return {hotTopic, recommendGroups, myFocusGroup, topicNumber}
     },
     data() {
       return {
@@ -84,7 +89,8 @@
         labels: ['全部', '我关注的', '技术', '创意', '好玩', '酷工作', '其他'],
         showMyReply: false,
         showCommon: true,
-        showMyTopics: false
+        showMyTopics: false,
+        page: 0
       }
     },
     watch: {
@@ -107,41 +113,82 @@
         }
       },
     },
-    computed: {},
+    computed: {
+      total() {
+        switch (this.tabIndex) {
+          case 0:
+            return this.topicNumber.all
+          case 1:
+            return this.topicNumber.myFocus
+          case 2:
+            return this.topicNumber.tech
+          case 3:
+            return this.topicNumber.mind
+          case 4:
+            return this.topicNumber.fun
+          case 5:
+            return this.topicNumber.job
+          case 6:
+            return this.topicNumber.other
+        }
+      }
+    },
     methods: {
       activeChange(index) {
         this.tabIndex = index
       },
-      fetchTopic(topicArray, identifier, finish) {
-        if (topicArray[identifier]) {
-          return
+      onPageChange(page) {
+        this.page = page - 1
+        if (this.showCommon) {
+          this.$refs.groupTopics0.$emit('force-fetch')
+        } else if (this.showMyTopics) {
+          this.$refs.groupTopics1.$emit('force-fetch')
+        } else if (this.showMyReply) {
+          this.$refs.groupTopics2.$emit('force-fetch')
         }
-        this.$axios.$get(GET_TOPIC, {
-          params: {index: identifier, page: 0, size: 20}
-        }).then(res => {
-          topicArray[identifier] = res
-          finish(0)
-        })
       },
-      fetchMyTopic(topicArray, identifier, finish) {
-        if (topicArray[identifier]) {
+      fetchTopic(topicArray, identifier, finish, clearPage) {
+        if (clearPage) {
+          this.page = 0
+        }
+        if (topicArray[identifier] && topicArray[identifier][this.page]) {
           return
         }
         this.$axios.$get(GET_TOPIC, {
-          params: {index: identifier, page: 0, size: 20, userId: this.$store.state.user.id}
+          params: {index: identifier, page: this.page, size: 20}
         }).then(res => {
-          topicArray[identifier] = res
+          if (!topicArray[identifier]) {
+            topicArray[identifier] = []
+          }
+          topicArray[identifier][this.page] = res
           finish()
         })
       },
-      fetchMyReplyTopic(topicArray, identifier, finish) {
-        if (topicArray[identifier]) {
+      fetchMyTopic(topicArray, identifier, finish, clearPage) {
+        if (clearPage) {
+          this.page = 0
+        }
+        if (topicArray[identifier] && topicArray[identifier][this.page]) {
           return
         }
         this.$axios.$get(GET_TOPIC, {
-          params: {index: identifier, page: 0, size: 20, userId: this.$store.state.user.id, userReply: true}
+          params: {index: identifier, page: this.page, size: 20, userId: this.$store.state.user.id}
         }).then(res => {
-          topicArray[identifier] = res
+          topicArray[identifier][this.page] = res
+          finish()
+        })
+      },
+      fetchMyReplyTopic(topicArray, identifier, finish, clearPage) {
+        if (clearPage) {
+          this.page = 0
+        }
+        if (topicArray[identifier] && topicArray[identifier][this.page]) {
+          return
+        }
+        this.$axios.$get(GET_TOPIC, {
+          params: {index: identifier, page: this.page, size: 20, userId: this.$store.state.user.id, userReply: true}
+        }).then(res => {
+          topicArray[identifier][this.page] = res
           finish()
         })
       },
