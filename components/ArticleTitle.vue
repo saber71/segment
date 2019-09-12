@@ -7,7 +7,7 @@
       <div class="tag" v-for="val in article.tags">
         <Tag :tag="val"></Tag>
       </div>
-      <span class="readNum">{{$formatNumber(article.readNum)}}次阅读</span>
+      <span class="readNum" v-if="article.readNum">{{$formatNumber(article.readNum)}}次阅读</span>
     </section>
   </div>
 </template>

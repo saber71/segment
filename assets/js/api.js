@@ -53,6 +53,8 @@ export const POST_CHECK_COMMIT_NOTE = '/check/commit/note'
 export const POST_CHECK_NEW_TOPIC = '/check/new/topic'
 
 // 登陆前
+export const GET_TOPIC_DETAIL = '/topic/detail'
+export const GET_NEWEST_TOPIC = '/group/topic/newest'
 export const GET_HOT_TOPIC_TODAY = '/topic/hot/today'
 export const GET_ALL_GROUP = '/all/groups'
 export const GET_GROUP_TOPIC_CONTENT = '/group/topic/content'

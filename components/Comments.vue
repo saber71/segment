@@ -22,7 +22,7 @@
           <sub-comment :target="target" :comment="val" v-show="val.subComments.length>0||val.reply"></sub-comment>
         </section>
       </section>
-      <m-button class="fetch-comment" :callback="fetch" v-show="comments.length<total">点击加载更多</m-button>
+      <m-button class="fetch-comment" :callback="fetch" v-show="currentComments<total">点击加载更多</m-button>
       <section class="reply-comment">
         <section class="inner">
           <div class="avatar">
@@ -48,7 +48,7 @@
     name: "Comments",
     components: {SubComment, MButton},
     props: {
-      targetId: {
+      targetId: {//文章、笔记、帖子的id
         type: Number,
         required: true
       },
@@ -60,7 +60,7 @@
         type: Number,
         required: true
       },
-      target: {
+      target: {//评论的类型，
         type: Number,
         default: TARGET_ARTICLE
       }
@@ -70,7 +70,8 @@
         defaultAvatar: require('static/icon/user.png'),
         commentTxt: '',
         page: 0,
-        size: 10
+        size: 10,
+        currentComments: 0,
       }
     },
     watch: {},
@@ -95,8 +96,14 @@
           }
         }).then(res => {
           this.prepare(res)
-          res.forEach(val => this.comments.push(val))
+          this.computeCurrentComponentNum(res)
           finish()
+        })
+      },
+      computeCurrentComponentNum(res) {
+        res.forEach(val => {
+          this.comments.push(val)
+          this.currentComments += val.totalSubComments + 1
         })
       },
       postComment(finish) {
@@ -143,6 +150,7 @@
     },
     mounted() {
       this.prepare(this.comments)
+      this.computeCurrentComponentNum(this.comments)
     },
     created() {
     },
