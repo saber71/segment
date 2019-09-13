@@ -9,7 +9,7 @@
       </div>
       <div class="text">
         <div class="top-side">
-          <nuxt-link class="name" :to="'/user/info?id='+authorData.authorId">{{authorData.name}}</nuxt-link>
+          <nuxt-link class="name" :to="'/user?id='+authorData.authorId">{{authorData.name}}</nuxt-link>
           <div class="authentication" v-if="authorData.authentication">
             <user-authentication :text="authorData.authentication"></user-authentication>
           </div>

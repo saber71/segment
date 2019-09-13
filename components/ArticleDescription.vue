@@ -12,7 +12,7 @@
         <div class="avatar">
           <img :src="article.avatar">
         </div>
-        <nuxt-link class="author" :to="'/user/'+article.authorId">{{article.author}}</nuxt-link>
+        <nuxt-link class="author" :to="'/user?id='+article.authorId">{{article.author}}</nuxt-link>
         <span class="date">{{$formatDate(article.datetime)}}</span>
         发布于
         <a class="channels" v-if="article.channels" :href="'/article-channel/'+article.channelsId">{{article.channels}}</a>

@@ -31,22 +31,14 @@ export const POST_CHECK_GOOD_ARTICLE = '/check/article/good'
 export const POST_CHECK_GOOD_COMMENT = '/check/good/comment'
 export const POST_CHECK_SUB_COMMENT_COMMIT = '/check/subComment/commit'
 export const POST_CHECK_COMMENT_COMMIT = '/check/comment/commit'
-export const POST_CHECK_READ_ARTICLE_NOTIFICATION =
-  "/check/new/notification/articles/read";
-export const POST_CHECK_READ_CHAT_NOTIFICATION =
-  "/check/new/notification/chat/read";
-export const POST_CHECK_READ_GOOD_NOTIFICATION =
-  "/check/new/notification/good/read";
-export const POST_CHECK_READ_FANS_NOTIFICATION =
-  "/check/new/notification/fans/read";
-export const POST_CHECK_READ_ALL_ARTICLE_NOTIFICATION =
-  "/check/new/notification/articles/read/all";
-export const POST_CHECK_READ_ALL_CHAT_NOTIFICATION =
-  "/check/new/notification/chat/read/all";
-export const POST_CHECK_READ_ALL_GOOD_NOTIFICATION =
-  "/check/new/notification/good/read/all";
-export const POST_CHECK_READ_ALL_FANS_NOTIFICATION =
-  "/check/new/notification/fans/read/all";
+export const POST_CHECK_READ_ARTICLE_NOTIFICATION = "/check/new/notification/articles/read";
+export const POST_CHECK_READ_CHAT_NOTIFICATION = "/check/new/notification/chat/read";
+export const POST_CHECK_READ_GOOD_NOTIFICATION = "/check/new/notification/good/read";
+export const POST_CHECK_READ_FANS_NOTIFICATION = "/check/new/notification/fans/read";
+export const POST_CHECK_READ_ALL_ARTICLE_NOTIFICATION = "/check/new/notification/articles/read/all";
+export const POST_CHECK_READ_ALL_CHAT_NOTIFICATION = "/check/new/notification/chat/read/all";
+export const POST_CHECK_READ_ALL_GOOD_NOTIFICATION = "/check/new/notification/good/read/all";
+export const POST_CHECK_READ_ALL_FANS_NOTIFICATION = "/check/new/notification/fans/read/all";
 export const POST_CHECK_EVENT = '/check/event/commit'
 export const POST_CHECK_FORK_NOTE = '/check/fork/note'
 export const POST_CHECK_COLLECT_NOTE = '/check/collect/note'
@@ -56,6 +48,7 @@ export const POST_CHECK_FOCUS_GROUP = '/check/focus/group'
 export const POST_CHECK_COMMIT_ARTICLE = '/check/commit/article'
 
 // 登陆前
+export const GET_USER_SPACE_DATA = '/user/space-data'
 export const GET_EVENT = '/event'
 export const GET_SEARCH_KEYWORD = '/search/keyword'
 export const GET_SEARCH_TOTAL_NUM = '/search/total/num'
@@ -129,10 +122,8 @@ export const GET_CHECK_ARTICLE_NEWEST = "/check/article/newest";
 export const GET_CHECK_ARTICLE_HOTTEST = "/check/article/hottest";
 export const GET_CHECK_ATTITUDE_TO_ARTICLE = '/check/attitudeTo'
 export const GET_CHECK_FOCUS_TAGS = '/check/focus/tags'
-export const GET_CHECK_NEW_NOTIFICATION_NUMBER =
-  "/check/new/notification/number";
-export const GET_CHECK_NEW_ARTICLE_NOTIFICATION =
-  "/check/new/notification/articles";
+export const GET_CHECK_NEW_NOTIFICATION_NUMBER = "/check/new/notification/number";
+export const GET_CHECK_NEW_ARTICLE_NOTIFICATION = "/check/new/notification/articles";
 export const GET_CHECK_NEW_CHAT_NOTIFICATION = "/check/new/notification/chat";
 export const GET_CHECK_NEW_GOOD_NOTIFICATION = "/check/new/notification/good";
 export const GET_CHECK_NEW_FANS_NOTIFICATION = "/check/new/notification/fans";

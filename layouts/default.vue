@@ -88,7 +88,7 @@
                   <nuxt-link to="/create-article" tag="li">写文章</nuxt-link>
                   <nuxt-link to="/create-note" tag="li">做笔记</nuxt-link>
                 </ul>
-                <div class="popup-bottom">草稿箱</div>
+                <!--                <div class="popup-bottom">草稿箱</div>-->
               </div>
             </div>
             <div class="notification" tabindex="0" @focusout="clearNewNotificationNumber">
@@ -220,7 +220,7 @@
                     <li>付费问答</li>
                   </ul>
                   <ul>
-                    <li>我的主页</li>
+                    <nuxt-link :to="'/user?id='+user.id" tag="li">我的主页</nuxt-link>
                     <li>我的档案</li>
                     <li>我的资产</li>
                     <li>个人设置</li>
