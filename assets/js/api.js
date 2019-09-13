@@ -54,8 +54,12 @@ export const POST_CHECK_NEW_TOPIC = '/check/new/topic'
 export const POST_CHECK_FOCUS_GROUP = '/check/focus/group'
 
 // 登陆前
+export const GET_SEARCH_KEYWORD = '/search/keyword'
+export const GET_SEARCH_TOTAL_NUM = '/search/total/num'
+export const GET_SEARCH = '/search'
 export const GET_USER_OTHER_LIKE_GROUP = '/group/user/other-like'
 export const GET_GROUP_USER = '/group/user'
+export const GET_GROUP_USER_SEARCH = '/group/user/search'
 export const GET_TOPIC_DETAIL = '/topic/detail'
 export const GET_NEWEST_TOPIC = '/group/topic/newest'
 export const GET_HOT_TOPIC_TODAY = '/topic/hot/today'

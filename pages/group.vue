@@ -30,7 +30,7 @@
       </section>
       <section class="box">
         <h2>
-          <nuxt-link :to="'/group-user-list?id='+group.id">{{group.focusNum}}</nuxt-link>
+          <nuxt-link :to="'/group-user-list?id='+group.id+'&name='+group.name">{{group.focusNum}}</nuxt-link>
           人关注
         </h2>
         <ul class="avatar-list">
@@ -68,6 +68,9 @@
     name: "group",
     components: {Pagination, GroupTopics, MButton, MdRender, Breadcrumb},
     props: {},
+    head() {
+      return {title: '圈子 - ' + this.group.name + ' - SegmentFault 思否'}
+    },
     watchQuery: ['id'],
     async asyncData({app, query}) {
       const id = query.id

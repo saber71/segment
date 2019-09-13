@@ -67,8 +67,7 @@
             </li>
           </ul>
           <div class="search-box">
-            <input class="common-input" v-model="searchTxt" placeholder="搜索问题或关键字" @keypress.enter="search">
-            <img src="/icon/search-dark.png" @click="search">
+            <search-input></search-input>
           </div>
         </div>
         <div class="right">
@@ -371,6 +370,7 @@
   } from "../assets/js/event-bus";
   import {LS_ACCOUNT} from "../assets/js/const";
   import Logo from "../components/Logo";
+  import SearchInput from "../components/SearchInput";
 
   const r = mock.Random
   let sendingLogin = false, sendingRegister = false;
@@ -378,7 +378,7 @@
 
   export default {
     name: "default",
-    components: {Logo},
+    components: {SearchInput, Logo},
     props: {},
     data() {
       return {
@@ -391,7 +391,6 @@
         showTagGroup: false,
         containerRef: undefined,
         notificationPopupBannerIndex: 0,
-        searchTxt: '',
         phone: '',
         username: '',
         password: '',
@@ -867,10 +866,6 @@
           this.showPopup = false
         }, 1000)
       },
-      search() {
-        alert(this.searchTxt)
-        //  todo search
-      },
       onSuccessLogin() {
         this.showLoginCard = false
         sendingLogin = false
@@ -990,6 +985,8 @@
     overflow-x: hidden;
 
     header {
+      position: relative;
+      z-index: 1;
       background-color: #FAFAFA;
       box-shadow: 0 0 10px 1px rgba(0, 0, 0, 0.3);
 
@@ -1169,16 +1166,6 @@
             position: relative;
             width: 240px;
             margin-left: 30px;
-
-            img {
-              position: absolute;
-              width: 16px;
-              height: 16px;
-              top: 7px;
-              right: 5px;
-              opacity: 0.5;
-              cursor: pointer;
-            }
 
             @media(max-width: 992px) {
               display: none;

@@ -2,7 +2,8 @@ export const state = () => ({
   homeActiveMenu: '首页',
   user: undefined,
   defaultLayoutTopHeight: 0,
-  formInputValidate: true
+  formInputValidate: true,
+  searchText: ''
   // eventsDescriptionLess
 })
 
@@ -25,4 +26,7 @@ export const mutations = {
   setDefaultLayoutTopHeight(state, val) {
     state.defaultLayoutTopHeight = val
   },
+  setSearchText(state, val) {
+    state.searchText = val
+  }
 }
