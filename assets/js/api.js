@@ -1,4 +1,5 @@
-export const IS_DEV = process.env.NODE_ENV === 'development'
+// export const IS_DEV = process.env.NODE_ENV === 'development'
+export const IS_DEV = false
 export const SOCKET_URL = IS_DEV ? 'http://localhost:8081' : 'http://47.103.82.183:8081'
 export const SOCKET_ARTICLE = SOCKET_URL + '/article?user='
 export const HOST = IS_DEV ? 'http://localhost:1999' : 'http://47.103.82.183:1999'

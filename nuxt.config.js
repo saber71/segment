@@ -1,5 +1,6 @@
 const env = process.env.NODE_ENV
-const isDev = env === 'development'
+// const isDev = env === 'development'
+const isDev = false
 export default {
   mode: 'universal',
   /*
