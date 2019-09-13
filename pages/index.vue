@@ -150,7 +150,7 @@
         <div class="recommend-event">
           <section class="head">
             <label>活动推荐</label>
-            <a href="#">更多</a>
+            <nuxt-link to="/events">更多</nuxt-link>
           </section>
           <ul class="events">
             <li v-for="val in eventDescription">
@@ -159,7 +159,7 @@
                 <div class="day">{{new Date(val.datetime).getDate()}}</div>
               </div>
               <div class="right-side">
-                <a class="name" href="#">{{val.name}}</a>
+                <nuxt-link class="name" :to="'/event?id='+val.id">{{val.name}}</nuxt-link>
                 <p class="info">
                   {{val.city}} · {{$formatDate(val.datetime)}} {{$getWeekDay(val.datetime)}}
                   <label class="yellow" v-if="val.joining">报名中</label>
@@ -963,7 +963,7 @@
               .left-side {
                 text-align: center;
                 color: #017E66;
-                width: 50px;
+                min-width: 50px;
 
                 .month {
                   font-size: 1.0rem;

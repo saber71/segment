@@ -8,3 +8,4 @@ export const TARGET_ARTICLE = 1
 export const TARGET_NOTE = 2
 export const TARGET_QUESTION = 3
 export const TARGET_TOPIC = 4
+export const TARGET_EVENT = 5

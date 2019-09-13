@@ -52,8 +52,10 @@ export const POST_CHECK_COLLECT_NOTE = '/check/collect/note'
 export const POST_CHECK_COMMIT_NOTE = '/check/commit/note'
 export const POST_CHECK_NEW_TOPIC = '/check/new/topic'
 export const POST_CHECK_FOCUS_GROUP = '/check/focus/group'
+export const POST_CHECK_COMMIT_ARTICLE = '/check/commit/article'
 
 // 登陆前
+export const GET_EVENT = '/event'
 export const GET_SEARCH_KEYWORD = '/search/keyword'
 export const GET_SEARCH_TOTAL_NUM = '/search/total/num'
 export const GET_SEARCH = '/search'

@@ -1,9 +1,14 @@
 <template>
-  <div id="create-question">
-    <head-for-creator text="提问" :save="post" save-text="提交问题"></head-for-creator>
+  <div id="create-article">
+    <head-for-creator text="写文章" :save="post" save-text="发布问题"></head-for-creator>
     <section class="body">
       <div class="name">
-        <input class="common-input" v-model="name" placeholder="标题：一句话说清问题，用问号结尾">
+        <div class="selector">
+          <input type="radio" id="1" v-model="type" name="type" :value="0"><label for="1">原创</label>
+          <input type="radio" id="2" v-model="type" name="type" :value="1"><label for="2">转载</label>
+          <input type="radio" id="3" v-model="type" name="type" :value="2"><label for="3">翻译</label>
+        </div>
+        <input class="common-input" v-model="name" placeholder="标题">
       </div>
       <div class="tags" tabindex="1" @focusin="focusTag=true" @focusout="focusTag=false">
         <input class="common-input" placeholder="标签（最多5个）" v-model="tag" @input="fetchSearchTags"
@@ -14,9 +19,6 @@
         </div>
         <ul class="search-popup border-shadow" v-show="tag!==''&&focusTag">
           <li class="item" v-for="(val,index) in searchTags" v-html="val" @click="selectItem(index)"></li>
-          <li class="create-tag" v-show="searchTags.length===0" @click="createTag">
-            创建新标签：<strong>{{tag}}</strong>
-          </li>
         </ul>
         <section class="hot-tag-popup border-shadow" v-show="tag===''&&focusTag">
           <p class="labels">
@@ -37,21 +39,19 @@
 </template>
 
 <script>
-  import {GET_SIMILAR_TAGS, POST_CHECK_CREATE_QUESTION} from "../assets/js/api";
-  import MButton from "../components/MButton";
+  import HeadForCreator from "../components/HeadForCreator";
   import Tag from "../components/Tag";
   import {tagGroups} from "../assets/js/tags";
+  import {GET_SIMILAR_TAGS, POST_CHECK_COMMIT_ARTICLE} from "../assets/js/api";
   import Editor from "../components/Editor";
-  import Logo from "../components/Logo";
-  import HeadForCreator from "../components/HeadForCreator";
 
   export default {
-    name: "create-question",
-    components: {HeadForCreator, Logo, Editor, Tag, MButton},
+    name: "create-article",
+    components: {Editor, Tag, HeadForCreator},
     layout: 'none',
     props: {},
     head() {
-      return {title: '提出问题 - SegmentFault 思否'}
+      return {title: '写文章 - SegmentFault 思否'}
     },
     data() {
       return {
@@ -65,6 +65,7 @@
         hotTags: tagGroups,
         hotTagsIndex: 0,
         subfield: true,
+        type: 0
       }
     },
     watch: {},
@@ -80,14 +81,13 @@
         }
         const base64 = require('js-base64').Base64
         const txt = base64.encode(this.content)
-        this.$axios.$post(POST_CHECK_CREATE_QUESTION, {
-          content: txt, name: this.name, tags: this.selectedTags
+        this.$axios.$post(POST_CHECK_COMMIT_ARTICLE, {
+          content: txt, name: this.name, tags: this.selectedTags, type: this.type
         }).then(() => {
           if (finish) {
             finish()
           }
-          alert('问题提交成功！！！')
-          this.$router.push({name: 'questions'})
+          alert('发布文章成功！！！')
         })
       },
       fetchSearchTags() {
@@ -113,10 +113,6 @@
         this.selectedTags.push(this.backupSearchTags[index])
         this.focusTag = false
       },
-      createTag() {
-        //todo 创建新标签
-        alert('TODO 创建新标签')
-      },
       getTagName(val) {
         if (typeof val === 'object') {
           return val.name
@@ -129,9 +125,6 @@
       },
     },
     mounted() {
-      const resize = () => this.subfield = window.innerWidth > 765
-      window.onresize = resize
-      resize()
     },
     created() {
     },
@@ -143,7 +136,7 @@
 <style scoped lang="scss">
   @import "../assets/css/var";
 
-  #create-question {
+  #create-article {
     height: 100vh;
     overflow: hidden auto;
 
@@ -160,8 +153,17 @@
       .name {
         padding-bottom: 20px;
 
+        .selector {
+          font-size: 1.8rem;
+          color: #333333;
+          padding-bottom: 5px;
+
+          label {
+            margin-right: 5px;
+          }
+        }
+
         .common-input {
-          flex-grow: 1;
           font-size: 1.8rem;
           line-height: 50px;
           height: 50px;

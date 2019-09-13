@@ -81,5 +81,18 @@ export default {
     */
     extend(config, ctx) {
     }
+  },
+  vue: {
+    config: {
+      productionTip: false,
+      devtools: false,
+      silent: true,
+      performance: false
+    },
+  },
+  loaders: {
+    vue: {
+      hotReload: false
+    }
   }
 }

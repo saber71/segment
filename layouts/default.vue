@@ -19,7 +19,7 @@
               <nuxt-link to="/article-channels" tag="span">专栏</nuxt-link>
             </li>
             <li :class="{'active-li':activeLi==='课程'}">
-              <nuxt-link to="/course" tag="span">课程</nuxt-link>
+              <nuxt-link to="/" tag="span">课程</nuxt-link>
             </li>
             <li :class="{'active-li':activeLi==='圈子'}">
               <nuxt-link to="/groups" tag="span">圈子</nuxt-link>
@@ -54,7 +54,7 @@
                 </ul>
                 <ul class="right-side">
                   <li class="right-item" v-for="val in eventsDescriptionInMenu">
-                    <p>{{val.name}}</p>
+                    <nuxt-link :to="'/event?id='+val.id">{{val.name}}</nuxt-link>
                     <div>
                       {{val.city}} · {{$formatDate(val.datetime)}} {{$getWeekDay(val.datetime)}} <span class="joining" v-if="val.joining">报名中</span>
                     </div>
@@ -84,10 +84,9 @@
               <img class="cross" src="/icon/add.png">
               <div class="popup  border-shadow">
                 <ul class="popup-top">
-                  <li>提问题</li>
-                  <li>发头条</li>
-                  <li>写文章</li>
-                  <li>做笔记</li>
+                  <nuxt-link to="/create-question" tag="li">提问题</nuxt-link>
+                  <nuxt-link to="/create-article" tag="li">写文章</nuxt-link>
+                  <nuxt-link to="/create-note" tag="li">做笔记</nuxt-link>
                 </ul>
                 <div class="popup-bottom">草稿箱</div>
               </div>
@@ -225,7 +224,7 @@
                     <li>我的档案</li>
                     <li>我的资产</li>
                     <li>个人设置</li>
-                    <li>退出</li>
+                    <li @click="logout">退出</li>
                   </ul>
                 </div>
               </div>
@@ -244,7 +243,7 @@
           <img src="/icon/home-black.png" v-if="activeLi!=='首页'">
           <img src="/icon/home-green.png" v-else>
         </nuxt-link>
-        <nuxt-link to="/">
+        <nuxt-link to="/questions">
           <img src="/icon/ask-black.png" v-if="activeLi!=='问答'">
           <img src="/icon/ask-green.png" v-else>
         </nuxt-link>
@@ -256,10 +255,9 @@
         <div class="more" tabindex="3">
           <img src="/icon/more-black.png">
           <ul class="popup border-shadow">
-            <li>职位</li>
-            <li>活动</li>
-            <li>标签</li>
-            <li>徽章</li>
+            <nuxt-link to="/groups" tag="li">职位</nuxt-link>
+            <nuxt-link to="/events" tag="li">活动</nuxt-link>
+            <nuxt-link to="/tags" tag="li">标签</nuxt-link>
           </ul>
         </div>
       </section>
@@ -705,6 +703,9 @@
       },
     },
     methods: {
+      logout() {
+        this.$store.commit('setUser', undefined)
+      },
       computeTopHeight() {
         let height = this.$refs['default-layout-header'].getBoundingClientRect().height
         if (this.showBanner && this.$refs.banner) {
@@ -1102,7 +1103,8 @@
                     box-sizing: border-box;
                     cursor: default;
 
-                    p {
+                    a {
+                      display: block;
                       color: $green;
                       font-size: 1.5rem;
                       line-height: 1.2;
