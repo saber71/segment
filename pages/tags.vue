@@ -12,7 +12,7 @@
            @focusin="focusInput=true" @focusout="focusInput=false">
         <input class="common-input" v-model="searchTxt" @keypress.enter="clickSimilarTag(similarTags[activeSimilarItem])"
                @input="fetchSimilarTags" :disabled="readyTags.length===5" placeholder="添加关注的标签">
-        <label>（左右拖动进行导航标签排序**生产模式拖拽不起作用，取消关注即可移除）</label>
+        <label>（左右拖动进行导航标签排序）</label>
         <ul class="popup border-shadow" v-show="similarTags.length>0&&focusInput">
           <li v-for="(val,index) in similarTags" @click="clickSimilarTag(val)" v-html="val"
               @mouseenter="activeSimilarItem=index"

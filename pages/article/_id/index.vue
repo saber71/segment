@@ -302,8 +302,6 @@
         this.fetchAttitudeToArticle()
       }
     },
-    created() {
-    },
     beforeDestroy() {
       eventBus.$off(ON_DEFAULT_LAYOUT_SCROLL, this.onScroll)
       eventBus.$off(ON_MD_INDEX_CHANGE_TITLE)

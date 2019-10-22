@@ -1,6 +1,6 @@
 const env = process.env.NODE_ENV
-// const isDev = env === 'development'
-const isDev = false
+const isDev = env === 'development'
+// const isDev = false
 export default {
   mode: 'universal',
   /*
@@ -83,17 +83,17 @@ export default {
     extend(config, ctx) {
     }
   },
-  vue: {
-    config: {
-      productionTip: false,
-      devtools: false,
-      silent: true,
-      performance: false
-    },
-  },
-  loaders: {
-    vue: {
-      hotReload: false
-    }
-  }
+  // vue: {
+  //   config: {
+  //     productionTip: false,
+  //     devtools: false,
+  //     silent: true,
+  //     performance: false
+  //   },
+  // },
+  // loaders: {
+  //   vue: {
+  //     hotReload: false
+  //   }
+  // }
 }

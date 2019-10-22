@@ -3,12 +3,12 @@
     <h3 class="number">{{total}}条评论</h3>
     <section class="content-part">
       <section class="comment" v-for="val in comments">
-        <nuxt-link :to="'/user/'+val.authorId">
+        <nuxt-link :to="{name:'user',query:{id:val.authorId}}">
           <img :src="val.avatar">
         </nuxt-link>
         <section class="text">
           <p>
-            <nuxt-link :to="'/user/'+val.authorId">
+            <nuxt-link :to="{name:'user',query:{id:val.authorId}}">
               <span class="author">{{val.author}}</span>
             </nuxt-link>
             <span class="date">{{$formatDate(val.datetime)}}</span>
@@ -43,10 +43,11 @@
   import SubComment from "./SubComment";
   import {TARGET_ARTICLE} from "../assets/js/const";
   import {GET_COMMENT, POST_CHECK_COMMENT_COMMIT, POST_CHECK_GOOD_COMMENT} from "../assets/js/api";
+  import MdRender from "./MdRender";
 
   export default {
     name: "Comments",
-    components: {SubComment, MButton},
+    components: {MdRender, SubComment, MButton},
     props: {
       targetId: {//文章、笔记、帖子的id
         type: Number,
