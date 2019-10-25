@@ -950,7 +950,10 @@
         this.containerRef.scrollTop = position
       })
       eventBus.$on(SUCCESS_LOGIN, () => this.onSuccessLogin())
-      eventBus.$on(SHOW_LOGIN__CARD, () => this.showLoginCard = true)
+      eventBus.$on(SHOW_LOGIN__CARD, () => {
+        this.showLoginCard = true
+        this.$router.push({path: '/'})
+      })
       eventBus.$on(SHOW_REGISTER_CARD, () => this.showRegisterCard = true)
       eventBus.$on(FORCE_EMIT_DEFAULT_LAYOUT_SCROLL, () => {
         this.onContainerScroll(true)
