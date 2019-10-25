@@ -128,7 +128,7 @@
                         <img class="white" src="/icon/good-white-full.png">
                       </div>
                       <span class="good-number" v-show="val.goodNum>0">x {{val.goodNum}} ·</span>赞
-                      <a class="author">{{val.author}}</a>
+                      <nuxt-link class="author" :to="{name:'user',query:{id:val.authorId}}">{{val.author}}</nuxt-link>
                       <user-authentication :text="val.authorAuthentication"></user-authentication>
                       <span class="datetime">{{$formatDatetime(val.datetime)}}</span>
                     </div>
@@ -448,11 +448,6 @@
 </script>
 
 <style lang="scss">
-  /* Sample `apply` at-rules with Tailwind CSS
-  #Index {
-    @apply min-h-screen flex justify-center items-center text-center mx-auto;
-  }
-  */
   @import "../assets/css/var";
 
   #Index {
@@ -626,6 +621,7 @@
               box-sizing: border-box;
               color: white;
               font-size: 2.4rem;
+              font-weight: normal;
             }
           }
 
@@ -808,6 +804,7 @@
                 margin-bottom: 5px;
                 display: flex;
                 justify-content: space-between;
+                font-weight: normal;
 
                 img {
                   width: 80px;

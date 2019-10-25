@@ -42,7 +42,7 @@ export default {
   ** Global CSS
   */
   css: [
-    '@/assets/css/global.scss',
+    '@/assets/css/global.css',
   ],
   /*
   ** Plugins to load before mounting the App
@@ -54,17 +54,6 @@ export default {
     '~/plugins/vue-highlightjs',
     {src: '@/plugins/mavon-editor', ssr: false},
   ],
-  /*
-  ** Nuxt.js dev-modules
-  */
-  devModules: [
-    // Doc: https://github.com/nuxt-community/nuxt-tailwindcss
-    '@nuxtjs/tailwindcss',
-  ],
-  tailwindcss: {
-    configPath: '~/tailwind.config.js',
-    cssPath: '~/assets/css/tailwind.css'
-  },
   /*
   ** Nuxt.js modules
   */

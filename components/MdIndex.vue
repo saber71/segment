@@ -32,8 +32,6 @@
       }
     },
     mounted() {
-    },
-    created() {
       eventBus.$on(ON_MD_RENDER_SCROLL, (refArray, toTop) => {
         if (this.indexArray.length === 0) {
           readyIndex(this.indexArray, refArray, 0)
@@ -156,6 +154,7 @@
           cursor: pointer;
           padding: 5px 0;
           font-size: 1.4rem;
+          color: #555555;
 
           &:hover {
             text-decoration: underline;

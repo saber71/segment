@@ -13,7 +13,7 @@
             </nuxt-link>
             <span class="date">{{$formatDate(val.datetime)}}</span>
           </p>
-          <p class="content">{{val.content}}</p>
+          <md-render :content="val.content"></md-render>
           <p class="good-reply">
             <img class="good-icon" @click="goodComment(val)" :class="{'active':val.isGood}" src="/icon/good-green-full.png">
             <span class="good-num">{{val.isGood?'已赞':'赞'}}{{val.goodNum>0?'x '+val.goodNum:''}}</span>

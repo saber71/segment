@@ -56,8 +56,7 @@
         // .use(require('markdown-it-lazy-image'))
         .use(require('markdown-it-plugin-underline'))
         .use(require('markdown-it-abbr'))
-      const base64 = require('js-base64').Base64
-      const tokens = md.parse(base64.decode(this.content), {})
+      const tokens = md.parse(this.content, {})
       forEachTokens(tokens, this.titleArray)
       // console.log(JSON.stringify(this.titleArray))
       const hljs = require('highlight.js')
@@ -101,8 +100,10 @@
   }
 
   function collectIndex(token, titleArray, nextToken) {
+    console.log(token.tag)
     const count = titleCounts[token.tag]
     if (count > 0) {
+      console.log(count + 1)
       titleCounts[token.tag]++
       if (!token.attrs) {
         token.attrs = []

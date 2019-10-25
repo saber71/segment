@@ -234,7 +234,6 @@
       const indexComponetHeight = indexComponent.getBoundingClientRect().height
       const indexRef = this.$refs.index
       const content = this.$refs.content
-      const contentHeight = content.getBoundingClientRect().height - 30
       const contentLeft = content.getBoundingClientRect().left
       const indexHeight = indexRef.getBoundingClientRect().height
       const indexScrollHeight = indexRef.scrollHeight
@@ -249,6 +248,7 @@
           this.showFloatPart = toTop - IndexRef.offsetTop >= 100
         }
         this.offsetTop = toTop - rightSide.offsetTop
+        const contentHeight = content.getBoundingClientRect().height - 30
         if (this.offsetTop + indexHeight >= contentHeight) {
           this.offsetTop = contentHeight - indexHeight
           this.indexStyle.position = 'absolute'

@@ -19,7 +19,7 @@
           <nuxt-link :to="'/question/'+question.id">{{$formatDatetime(question.activeDatetime)}}提出问题</nuxt-link>
         </div>
         <div v-else>
-          <nuxt-link :to="'/user?name='+question.newestAnswerAuthorId">{{question.newestAnswerAuthor}}</nuxt-link>
+          <nuxt-link :to="'/user?id='+question.newestAnswerAuthorId">{{question.newestAnswerAuthor}}</nuxt-link>
           <nuxt-link :to="'/question/'+question.id">{{$formatDatetime(question.activeDatetime)}}回答问题</nuxt-link>
         </div>
       </div>

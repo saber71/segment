@@ -21,8 +21,8 @@
             <li :class="{'active-li':activeLi==='课程'}">
               <nuxt-link to="/" tag="span">课程</nuxt-link>
             </li>
-            <li :class="{'active-li':activeLi==='圈子'}">
-              <nuxt-link to="/groups" tag="span">圈子</nuxt-link>
+            <li :class="{'active-li':activeLi==='圈子'}" @click="toGroup">
+              <span>圈子</span>
             </li>
             <li :class="{'active-li':activeLi==='发现'}">发现
               <div class="triangle"></div>
@@ -703,6 +703,13 @@
       },
     },
     methods: {
+      toGroup() {
+        if (this.user) {
+          this.$router.push({name: 'groups'})
+        } else {
+          this.showLoginCard = true
+        }
+      },
       logout() {
         this.$store.commit('setUser', undefined)
       },
@@ -1905,6 +1912,7 @@
 
           .login-button {
             background-color: $green;
+            color: #fff;
 
             &:hover {
               background-color: $darker-green;
