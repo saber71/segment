@@ -16,7 +16,6 @@
         <span class="date">{{$formatDate(article.datetime)}}</span>
         发布于
         <a class="channels" v-if="article.channels" :href="'/article-channel/'+article.channelsId">{{article.channels}}</a>
-        <nuxt-link class="channels" v-else :to="'/user/'+article.authorId+'/articles'">self文章</nuxt-link>
         <img class="collect-icon" src="/icon/bookmark.svg">
         <m-button class="collect-txt" :click="collectArticle" :param="article">{{article.isCollect?'已收藏':'收藏'}}</m-button>
       </div>

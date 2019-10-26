@@ -18,9 +18,9 @@
             <li :class="{'active-li':activeLi==='专栏'}">
               <nuxt-link to="/article-channels" tag="span">专栏</nuxt-link>
             </li>
-            <li :class="{'active-li':activeLi==='课程'}">
-              <nuxt-link to="/" tag="span">课程</nuxt-link>
-            </li>
+            <!--<li :class="{'active-li':activeLi==='课程'}">-->
+            <!--<nuxt-link to="/" tag="span">课程</nuxt-link>-->
+            <!--</li>-->
             <li :class="{'active-li':activeLi==='圈子'}" @click="toGroup">
               <span>圈子</span>
             </li>
@@ -951,8 +951,8 @@
       })
       eventBus.$on(SUCCESS_LOGIN, () => this.onSuccessLogin())
       eventBus.$on(SHOW_LOGIN__CARD, () => {
+        this.$router.push({name: 'index'})
         this.showLoginCard = true
-        this.$router.push({path: '/'})
       })
       eventBus.$on(SHOW_REGISTER_CARD, () => this.showRegisterCard = true)
       eventBus.$on(FORCE_EMIT_DEFAULT_LAYOUT_SCROLL, () => {
