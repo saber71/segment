@@ -265,8 +265,8 @@
     <section ref="banner" class="banner" v-if="showBanner">
       <section class="default-container container">
         <section class="left">
-          <h1>在 SegmentFault，学习技能、解决问题</h1>
-          <p>每个月，我们帮助 1000 万的开发者解决各种各样的技术问题。并助力他们在
+          <h1>在 博客社区，学习技能、解决问题</h1>
+          <p>每个月，我们帮助成千上万开发者解决各种各样的技术问题。并助力他们在
             技术能力、职业生涯、影响力上获得提升。</p>
         </section>
         <section class="right">
