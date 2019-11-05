@@ -729,7 +729,7 @@
         if (force || now - this.previous >= 100) {
           const top = this.containerRef.scrollTop
           const width = window.innerWidth
-          this.showHeaderBottom = width <= 992 && top <= 50
+          this.showHeaderBottom = width <= 992
           this.showToTop = width > 992 && top > 50
           eventBus.$emit(ON_DEFAULT_LAYOUT_SCROLL, top)
           this.previous = now
