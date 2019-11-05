@@ -212,7 +212,7 @@
         prefix = '(' + len + ') ' + prefix
       }
       return {
-        title: prefix + 'SegmentFault 思否'
+        title: prefix + '博客社区'
       }
     },
     data() {

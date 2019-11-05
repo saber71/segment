@@ -25,7 +25,7 @@
     name: "user",
     props: {},
     head() {
-      return {title: this.userData.name + ' - SegmentFault 思否'}
+      return {title: this.userData.name + ' - 博客社区'}
     },
     async asyncData({app, query}) {
       const id = query.id

@@ -51,7 +51,7 @@
     layout: 'none',
     props: {},
     head() {
-      return {title: '写文章 - SegmentFault 思否'}
+      return {title: '写文章 - 博客社区'}
     },
     data() {
       return {

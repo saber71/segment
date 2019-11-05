@@ -37,7 +37,7 @@
     props: {},
     head() {
       return {
-        title: '所有标签 - SegmentFault 思否'
+        title: '所有标签 - 博客社区'
       }
     },
     async asyncData({app}) {

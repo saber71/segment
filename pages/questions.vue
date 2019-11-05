@@ -53,7 +53,7 @@
     components: {RPBoard, RecommendLesson, MButton, Pagination, QuestionBanner, Tabs},
     props: {},
     head() {
-      const suffix = ' - SegmentFault 思否'
+      const suffix = ' - 博客社区'
       let prefix
       switch (this.tabActiveIndex) {
         case 0:

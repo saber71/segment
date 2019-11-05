@@ -58,7 +58,7 @@
     components: {Comments, MButton, MdRender},
     props: {},
     head() {
-      return {title: this.note.name + ' - SegmentFault 思否'}
+      return {title: this.note.name + ' - 博客社区'}
     },
     watchQuery: ['id'],
     async asyncData({app, query}) {

@@ -1,7 +1,8 @@
 <template>
   <div id="Logo" @mouseenter="showImg2=true" @mouseleave="showImg2=false">
-    <img class="img1" src="/logo.svg">
-    <img class="img2" src="/logo-tooltip.png" v-show="showImg2">
+    <!--<img class="img1" src="/logo.svg">-->
+    <!--<img class="img2" src="/logo-tooltip.png" v-show="showImg2">-->
+    博客社区
   </div>
 </template>
 
@@ -32,6 +33,8 @@
     width: 150px;
     min-width: 150px;
     cursor: pointer;
+    font-size: 30px;
+    font-weight: bold;
 
     .img2 {
       position: absolute;

@@ -73,7 +73,7 @@
     components: {Editor, Pagination, MButton, DownFetchContent, QuestionAuthor, MdRender, GoodOrBad, ArticleTitle, Breadcrumb},
     props: {},
     head() {
-      const title = this.question.tags[0] + ' - ' + this.question.name + ' - SegmentFault 思否'
+      const title = this.question.tags[0] + ' - ' + this.question.name + ' - 博客社区'
       return {title}
     },
     async asyncData({app, query}) {

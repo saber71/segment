@@ -52,7 +52,7 @@
     props: {},
     head() {
       return {
-        title: '标签树 - SegmentFault 思否'
+        title: '标签树 - 博客社区'
       }
     },
     data() {

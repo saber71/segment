@@ -42,7 +42,7 @@
     components: {Comments, MdRender, Breadcrumb},
     props: {},
     head() {
-      return {title: this.topic.group + ' - ' + this.topic.name + ' - SegmentFault 思否'}
+      return {title: this.topic.group + ' - ' + this.topic.name + ' - 博客社区'}
     },
     watchQuery: ['id'],
     async asyncData({app, query}) {

@@ -36,7 +36,7 @@
     components: {Comments, MdRender},
     props: {},
     head() {
-      return {title: '活动邀请 | ' + this.event.name + ' - SegemntFault 思否'}
+      return {title: '活动邀请 | ' + this.event.name + ' - 博客社区'}
     },
     async asyncData({app, query}) {
       const id = query.id

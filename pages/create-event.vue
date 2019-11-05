@@ -181,7 +181,7 @@
     components: {MButton, Breadcrumb, Editor, InputDatetime, SelectTags, ErrorTipInput},
     props: {},
     head() {
-      return {title: '提交活动 -  SegmentFault 思否'}
+      return {title: '提交活动 -  博客社区'}
     },
     data() {
       return {

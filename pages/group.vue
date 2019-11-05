@@ -69,7 +69,7 @@
     components: {Pagination, GroupTopics, MButton, MdRender, Breadcrumb},
     props: {},
     head() {
-      return {title: '圈子 - ' + this.group.name + ' - SegmentFault 思否'}
+      return {title: '圈子 - ' + this.group.name + ' - 博客社区'}
     },
     watchQuery: ['id'],
     async asyncData({app, query}) {

@@ -72,7 +72,7 @@
     components: {Pagination, GroupTopics, MButton, Editor, GroupTag, Tabs},
     props: {},
     head() {
-      return {title: '技术圈 - SegmentFault 思否'}
+      return {title: '技术圈 - 博客社区'}
     },
     async asyncData({app}) {
       const [hotTopic, recommendGroups, myFocusGroup, topicNumber] = await Promise.all([

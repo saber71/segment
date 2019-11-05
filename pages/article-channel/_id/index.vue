@@ -63,7 +63,7 @@
     components: {ArrowPagination, Tag, Pagination, ArticleDescription, MButton},
     props: {},
     head() {
-      return {title: this.channel.name + ' - SegmentFault 思否'}
+      return {title: this.channel.name + ' - 博客社区'}
     },
     async asyncData({params, app}) {
       const channel = await app.$axios.$get(GET_ARTICLE_CHANNEL + '?channelId=' + params.id)

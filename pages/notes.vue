@@ -43,7 +43,7 @@
       if (this.activeLabelIndex === 1) {
         prefix = '公开的笔记'
       }
-      return {title: prefix + ' - SegmentFault 思否'}
+      return {title: prefix + ' - 博客社区'}
     },
     async asyncData({app}) {
       const noteNum = await app.$axios.$get(GET_CHECK_NOTES_NUMBER)

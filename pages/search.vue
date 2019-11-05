@@ -66,7 +66,7 @@
     components: {Pagination, Tag, MButton, SearchInput},
     props: {},
     head() {
-      return {title: '搜索 - SegmentFault 思否'}
+      return {title: '搜索 - 博客社区'}
     },
     watchQuery: ['txt'],
     data() {

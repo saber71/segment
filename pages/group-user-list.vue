@@ -41,7 +41,7 @@
     components: {MButton, Pagination, Breadcrumb},
     props: {},
     head() {
-      return {title: 'SegmentFault 思否'}
+      return {title: '博客社区'}
     },
     async asyncData({app, query}) {
       const id = query.id, name = query.name

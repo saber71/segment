@@ -100,7 +100,7 @@
     props: {},
     head() {
       return {
-        title: this.article.name + ' - 个人文章 - SegmentFault 思否'
+        title: this.article.name + ' - 个人文章 - 博客社区'
       }
     },
     async asyncData({app, params}) {

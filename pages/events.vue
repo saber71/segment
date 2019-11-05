@@ -93,7 +93,7 @@
     components: {Pagination, CarouselItem, Carousel},
     props: {},
     head() {
-      return {title: '活动 - SegmentFault 思否'}
+      return {title: '活动 - 博客社区'}
     },
     async asyncData({app}) {
       const oneDay = 86400000

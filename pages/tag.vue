@@ -141,7 +141,7 @@
           break
       }
       return {
-        title: prefix + '- SegementFault 思否'
+        title: prefix + '- 博客社区'
       }
     },
     async asyncData({app, query}) {
